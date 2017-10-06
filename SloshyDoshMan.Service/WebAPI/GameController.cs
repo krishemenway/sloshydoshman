@@ -1,8 +1,6 @@
-﻿using SloshyDoshMan.PlayedGames;
-using SloshyDoshMan.Players;
+﻿using KrisHemenway.Common;
+using SloshyDoshMan.PlayedGames;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http;
 
 namespace SloshyDoshMan.WebAPI
@@ -18,7 +16,7 @@ namespace SloshyDoshMan.WebAPI
 
 			if(playedGame == null)
 			{
-				return Ok(new { Success = false, ErrorMessage = "Could not find game" });
+				return Ok(Result.Failure("Could not find game"));
 			}
 
 			var viewModel = new GameViewModel
@@ -27,38 +25,8 @@ namespace SloshyDoshMan.WebAPI
 				Scoreboard = new ScoreboardStore().GetScoreboard(playedGame)
 			};
 
-			return Ok(viewModel);
+			return Ok(Result<GameViewModel>.Successful(viewModel));
 		}
-
-		[HttpGet]
-		[Route("player")]
-		public IHttpActionResult Player([FromUri] long steamId)
-		{
-			var player = new PlayerStore().FindPlayer(steamId);
-			var store = new PlayerStatisticsStore();
-
-			var playerViewModel = new PlayerViewModel
-			{
-				SteamId = player.SteamId.ToString(),
-				UserName = player.Name,
-				AllGames = new PlayedGameStore().FindAllGames(steamId),
-				MapStatistics = store.FindMapStatistics(steamId),
-				PerkStatistics = store.FindPerkStatistics(steamId)
-			};
-
-			return Ok(playerViewModel);
-		}
-	}
-
-	public class PlayerViewModel
-	{
-		public string SteamId { get; set; }
-		public string UserName { get; set; }
-		public IReadOnlyList<IPlayedGame> AllGames { get; set; }
-		public int TotalKills => PerkStatistics.Sum(x => x.TotalKills);
-		public int TotalGames => MapStatistics.Sum(x => x.GamesPlayed);
-		public IReadOnlyList<PlayerMapStatistic> MapStatistics { get; set; }
-		public IReadOnlyList<PlayerPerkStatistic> PerkStatistics { get; set; }
 	}
 
 	public class GameViewModel

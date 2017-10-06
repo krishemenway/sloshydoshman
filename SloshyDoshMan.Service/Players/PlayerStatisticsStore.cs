@@ -14,6 +14,7 @@ namespace SloshyDoshMan.Players
 
 	public class PlayerMapStatistic
 	{
+		public long SteamId { get; set; }
 		public string Map { get; set; }
 		public string Difficulty { get; set; }
 		public Difficulty GameDifficulty => DifficultyHelpers.Convert(Difficulty);
@@ -21,6 +22,7 @@ namespace SloshyDoshMan.Players
 		public int GamesWon { get; set; }
 		public int TotalKills { get; set; }
 		public int FarthestWave { get; set; }
+		public bool IsWorkshop { get; set; }
 	}
 
 	public class PlayerStatisticsStore
@@ -30,7 +32,9 @@ namespace SloshyDoshMan.Players
 			const string sql = @"
 				SELECT
 					allmaps.map,
+					allmaps.isworkshop,
 					allmaps.difficulty,
+					userstats.steamid,
 					userstats.gamesplayed,
 					userstats.totalkills,
 					userstats.farthestwave,
@@ -38,10 +42,10 @@ namespace SloshyDoshMan.Players
 				FROM (
 					SELECT
 						m.map,
+						m.is_workshop as isworkshop,
 						d.difficulty
 					FROM server_map m
 					CROSS JOIN server_difficulties d
-					WHERE is_workshop = false  
 				) as allmaps
 				LEFT JOIN (
 					SELECT
@@ -56,13 +60,14 @@ namespace SloshyDoshMan.Players
 					WHERE 
 						steam_id = @SteamId
 					GROUP BY pg.map, pg.game_difficulty
-				) AS gamestats ON allmaps.difficulty = gamestats.game_difficulty AND allmaps.map = gamestats.map
+				) AS gamestats ON lower(allmaps.difficulty) = lower(gamestats.game_difficulty) AND lower(allmaps.map) = lower(gamestats.map)
 				LEFT JOIN (
 					SELECT
+						ppg.steam_id as steamid,
 						pg.map,
 						pg.game_difficulty as difficulty,
 						COUNT(DISTINCT ppw.played_game_id) as gamesplayed,
-    					SUM(CASE WHEN pg.players_won THEN 1 ELSE 0 END) as gameswon,
+						SUM(CASE WHEN pg.players_won THEN 1 ELSE 0 END) as gameswon,
 						SUM(COALESCE(ppw.kills,0)) as totalkills,
 						MAX(pg.reached_wave) as farthestwave
 					FROM player_played_wave ppw
@@ -73,13 +78,14 @@ namespace SloshyDoshMan.Players
 						on pg.played_game_id = ppw.played_game_id
 					WHERE
 						ppg.steam_id = @SteamId
-					GROUP BY pg.map, pg.game_difficulty
-				) AS userstats ON allmaps.difficulty = userstats.difficulty AND allmaps.map = userstats.map";
+					GROUP BY ppg.steam_id, pg.map, pg.game_difficulty
+				) AS userstats ON allmaps.difficulty = userstats.difficulty AND lower(allmaps.map) = lower(userstats.map)";
 
 			using (var connection = Database.CreateConnection())
 			{
 				return connection
 					.Query<PlayerMapStatistic>(sql, new { steamId })
+					.Where(x => !x.IsWorkshop || x.GamesPlayed > 0)
 					.OrderBy(x => x.Map).ThenBy(x => x.GameDifficulty)
 					.ToList()
 					.AsReadOnly();

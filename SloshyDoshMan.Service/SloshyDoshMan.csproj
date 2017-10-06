@@ -142,6 +142,7 @@
     <Compile Include="HttpServer\GracefulShutdownMiddleware.cs" />
     <Compile Include="HttpServer\RequestLoggingMiddleware.cs" />
     <Compile Include="HttpServer\WebApiExceptionHandler.cs" />
+    <Compile Include="Maps\MapStatisticsStore.cs" />
     <Compile Include="Maps\MapStore.cs" />
     <Compile Include="PlayedGames\PlayedGame.cs" />
     <Compile Include="PlayedGames\PlayedGameStore.cs" />
@@ -161,6 +162,8 @@
     <Compile Include="Service.cs" />
     <Compile Include="WebAPI\GameController.cs" />
     <Compile Include="WebAPI\HomeController.cs" />
+    <Compile Include="WebAPI\MapController.cs" />
+    <Compile Include="WebAPI\PlayerController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

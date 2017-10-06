@@ -1,4 +1,5 @@
-﻿using SloshyDoshMan.PlayedGames;
+﻿using KrisHemenway.Common;
+using SloshyDoshMan.PlayedGames;
 using SloshyDoshMan.Players;
 using SloshyDoshMan.Servers;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ namespace SloshyDoshMan.WebAPI
 		[Route("ServerStats")]
 		public IHttpActionResult ServerStatistics()
 		{
-			return Ok(new ServerStatisticsStore().CalculateStatistics());
+			var statistics = new ServerStatisticsStore().CalculateStatistics();
+			return Ok(Result<ServerStatistics>.Successful(statistics));
 		}
 
 		[HttpGet]
@@ -24,15 +26,27 @@ namespace SloshyDoshMan.WebAPI
 			var playedGameStore = new PlayedGameStore();
 			var totalGames = playedGameStore.GetTotalGamesCount();
 			var recentGames = playedGameStore.FindRecentGames(count, startingAt);
+			var response = new RecentGamesResponse { TotalGames = totalGames, RecentGames = recentGames };
 
-			return Ok(new { TotalGames = totalGames, RecentGames = recentGames});
+			return Ok(Result<RecentGamesResponse>.Successful(response));
 		}
 
 		[HttpGet]
 		[Route("Search")]
 		public IHttpActionResult PlayerSearch(string query)
 		{
-			return Ok(new PlayerStore().Search(query).Select(x => new PlayerViewModel() { UserName = x.Name, SteamId = x.SteamId.ToString(), PerkStatistics = new List<PlayerPerkStatistic>(), MapStatistics = new List<PlayerMapStatistic>() }));
+			var playerSearchResults = new PlayerStore()
+				.Search(query)
+				.Select(x => new PlayerViewModel() { UserName = x.Name, SteamId = x.SteamId.ToString(), PerkStatistics = new List<PlayerPerkStatistic>(), MapStatistics = new List<PlayerMapStatistic>() })
+				.ToList();
+
+			return Ok(Result<IReadOnlyList<PlayerViewModel>>.Successful(playerSearchResults));
 		}
+	}
+
+	public class RecentGamesResponse
+	{
+		public int TotalGames { get; set; }
+		public IReadOnlyList<IPlayedGame> RecentGames { get; set; }
 	}
 }

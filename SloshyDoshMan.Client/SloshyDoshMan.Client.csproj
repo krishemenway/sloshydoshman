@@ -68,7 +68,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SloshyDoshMan\SloshyDoshMan.Shared\SloshyDoshMan.Shared.csproj">
+    <ProjectReference Include="..\SloshyDoshMan.Shared\SloshyDoshMan.Shared.csproj">
       <Project>{5e9f1cc7-398c-4b0f-87d3-34a3e385bde4}</Project>
       <Name>SloshyDoshMan.Shared</Name>
     </ProjectReference>

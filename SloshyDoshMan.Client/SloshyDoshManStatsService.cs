@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SloshyDoshMan.Shared;
 using System;
 using System.Net.Http;
@@ -17,9 +18,10 @@ namespace SloshyDoshMan.Client
 		{
 			using (var httpClient = new HttpClient())
 			{
-				Console.WriteLine(DateTime.Now.ToString("o") + " " + JsonConvert.SerializeObject(gameState));
-				var gameStateContent = new StringContent(JsonConvert.SerializeObject(gameState), Encoding.UTF8, "application/json");
-				httpClient.PostAsync(new Uri(SaveGameStatePath), gameStateContent).Wait();
+				var serializedGameState = JsonConvert.SerializeObject(gameState);
+
+				Program.LoggerFactory.CreateLogger<SloshyDoshManStatsService>().LogInformation($"Received Game State: {serializedGameState}");
+				httpClient.PostAsync(new Uri(SaveGameStatePath), new StringContent(serializedGameState, Encoding.UTF8, "application/json")).Wait();
 			}
 		}
 

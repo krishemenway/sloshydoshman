@@ -1,30 +1,34 @@
-﻿using Topshelf;
-using Topshelf.Common.Logging;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
-namespace SloshyDoshMan
+namespace SloshyDoshMan.Service
 {
-	class Program
+	public class Program
 	{
-		public static void Main()
+		public static void Main(string[] args)
 		{
-			HostFactory.Run(x =>
-			{
-				x.Service<Service>(s =>
-				{
-					s.ConstructUsing(name => new Service());
-					s.WhenStarted(tc => tc.Start());
-					s.WhenStopped(tc => tc.Stop());
-				});
+			Configuration = new ConfigurationBuilder()
+				.SetBasePath(ExecutablePath)
+				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+				.AddEnvironmentVariables()
+				.Build();
 
-				x.RunAsLocalSystem();
-				x.StartAutomaticallyDelayed();
-				x.UseCommonLogging();
+			WebHost = new WebHostBuilder()
+				.UseKestrel()
+				.UseConfiguration(Configuration)
+				.UseStartup<Startup>()
+				.UseUrls($"http://*:{WebPort}")
+				.Build();
 
-				x.SetDescription("SloshyDoshMan api and management service");
-				x.SetDisplayName("SloshyDoshManService");
-				x.SetServiceName("SloshyDoshManService");
-			});
+			WebHost.Run();
 		}
 
+		public static int WebPort => Configuration.GetValue<int>("WebPort");
+
+		public static IConfigurationRoot Configuration { get; private set; }
+		public static IWebHost WebHost { get; private set; }
+
+		public static string ExecutablePath => Directory.GetCurrentDirectory();
 	}
 }

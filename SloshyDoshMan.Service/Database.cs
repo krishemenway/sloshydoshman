@@ -1,8 +1,8 @@
-﻿using Npgsql;
-using System;
+﻿using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System.Data.Common;
 
-namespace SloshyDoshMan
+namespace SloshyDoshMan.Service
 {
 	public static class Database
 	{
@@ -13,21 +13,24 @@ namespace SloshyDoshMan
 			return connection;
 		}
 
+		public static string DatabaseName
+		{
+			get { return Program.Configuration.GetValue<string>("DatabaseName"); }
+		}
+
 		public static string Host
 		{
-			get { return Environment.GetEnvironmentVariable("PushServiceHost", EnvironmentVariableTarget.Machine); }
+			get { return Program.Configuration.GetValue<string>("DatabaseHost"); }
 		}
 
 		public static string User
 		{
-			get { return Environment.GetEnvironmentVariable("PushServiceUser", EnvironmentVariableTarget.Machine); }
+			get { return Program.Configuration.GetValue<string>("DatabaseUser"); }
 		}
 
 		public static string Password
 		{
-			get { return Environment.GetEnvironmentVariable("PushServicePassword", EnvironmentVariableTarget.Machine); }
+			get { return Program.Configuration.GetValue<string>("DatabasePassword"); }
 		}
-
-		public const string DatabaseName = "kf2stats";
 	}
 }

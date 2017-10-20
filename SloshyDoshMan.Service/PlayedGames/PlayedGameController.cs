@@ -1,16 +1,13 @@
-﻿using KrisHemenway.Common;
-using SloshyDoshMan.PlayedGames;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Web.Http;
 
-namespace SloshyDoshMan.WebAPI
+namespace SloshyDoshMan.Service.PlayedGames
 {
-	[RoutePrefix("webapi")]
-	public class GameController : ApiController
+	[Route("webapi")]
+	public class PlayedGameController : Controller
 	{
-		[HttpGet]
-		[Route("game")]
-		public IHttpActionResult Game([FromUri] Guid playedGameId)
+		[HttpGet(nameof(Game))]
+		public IActionResult Game([FromQuery] Guid playedGameId)
 		{
 			var playedGame = new PlayedGameStore().FindPlayedGame(playedGameId);
 
@@ -25,7 +22,7 @@ namespace SloshyDoshMan.WebAPI
 				Scoreboard = new ScoreboardStore().GetScoreboard(playedGame)
 			};
 
-			return Ok(Result<GameViewModel>.Successful(viewModel));
+			return Json(Result<GameViewModel>.Successful(viewModel));
 		}
 	}
 

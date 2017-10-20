@@ -1,14 +1,13 @@
-﻿using Common.Logging;
-using KrisHemenway.Common;
-using KrisHemenway.PushNotifications;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SloshyDoshMan.PlayedGames;
-using SloshyDoshMan.Players;
+using SloshyDoshMan.Service.Notifications;
+using SloshyDoshMan.Service.PlayedGames;
+using SloshyDoshMan.Service.Players;
 using SloshyDoshMan.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SloshyDoshMan
+namespace SloshyDoshMan.Service.PlayedGameState
 {
 	public class RefreshGameStateAction
 	{
@@ -18,7 +17,7 @@ namespace SloshyDoshMan
 			IPlayerPlayedWaveStore playerPlayedWaveStore = null,
 			IPlayerPlayedGameStore playerPlayedGameStore = null,
 			IPushNotificationSender pushNotificationSender = null,
-			ILog log = null)
+			ILogger<RefreshGameStateAction> logger = null)
 		{
 			_playedGameStore = playedGameStore ?? new PlayedGameStore();
 			_playerStore = playerStore ?? new PlayerStore();
@@ -26,13 +25,13 @@ namespace SloshyDoshMan
 			_playerPlayedWaveStore = playerPlayedWaveStore ?? new PlayerPlayedWaveStore();
 			_playerPlayedGameStore = playerPlayedGameStore ?? new PlayerPlayedGameStore();
 
-			_log = log ?? LogManager.GetLogger<RefreshGameStateAction>();
 			_pushNotificationSender = pushNotificationSender ?? new PushNotificationSender();
+			_logger = logger ?? new LoggerFactory().CreateLogger<RefreshGameStateAction>();
 		}
 
 		public void RefreshGameState(GameState newGameState)
 		{
-			_log.DebugFormat("Refreshing with Game State: {0}", JsonConvert.SerializeObject(newGameState));
+			_logger.LogDebug("Refreshing with Game State: {0}", JsonConvert.SerializeObject(newGameState));
 
 			RemoveOrFixInvalidPlayers(newGameState);
 			_playerStore.SaveAllPlayers(newGameState.Players);
@@ -48,7 +47,7 @@ namespace SloshyDoshMan
 					TypeName = "SloshyDoshManIncServerUpdate"
 				};
 
-				_log.Debug(details.Content);
+				_logger.LogDebug(details.Content);
 				_pushNotificationSender.NotifyAll(details);
 				_playedGameStore.StartNewGame(newGameState);
 				currentPlayedGame = _playedGameStore.FindCurrentGame();
@@ -98,6 +97,6 @@ namespace SloshyDoshMan
 		private static IGameState LastGameState { get; set; }
 		private static Dictionary<long, bool> SteamIdsAliveInFinalWave { get; set; } = new Dictionary<long, bool>();
 
-		private readonly ILog _log;
+		private readonly ILogger<RefreshGameStateAction> _logger;
 	}
 }

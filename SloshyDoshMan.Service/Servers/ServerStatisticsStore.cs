@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SloshyDoshMan.Servers
+namespace SloshyDoshMan.Service.Servers
 {
 	public class ServerStatisticsStore
 	{

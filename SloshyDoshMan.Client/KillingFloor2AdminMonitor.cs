@@ -1,4 +1,5 @@
-﻿using SloshyDoshMan.Shared;
+﻿using Microsoft.Extensions.Logging;
+using SloshyDoshMan.Shared;
 using System;
 using System.Linq;
 using System.Timers;
@@ -25,7 +26,7 @@ namespace SloshyDoshMan.Client
 
 		public void StartMonitoring()
 		{
-			RefreshStateTimer = new Timer(Settings.Instance.RefreshIntervalInMilliseconds);
+			RefreshStateTimer = new Timer(Program.Settings.RefreshIntervalInMilliseconds);
 			RefreshStateTimer.Elapsed += RefreshStateTimer_Elapsed;
 			RefreshStateTimer.Start();
 		}
@@ -39,33 +40,33 @@ namespace SloshyDoshMan.Client
 				var oldGameState = CurrentGameState;
 				CurrentGameState = _killingFloor2AdminScraper.GetCurrentGameState();
 
-				if(oldGameState != null && ShouldSendAdvertisement(oldGameState, CurrentGameState))
+				if (oldGameState != null && ShouldSendAdvertisement(oldGameState, CurrentGameState))
 				{
-					_killingFloor2AdminClient.SendMessage(Settings.Instance.AdvertisementMessage);
+					_killingFloor2AdminClient.SendMessage(Program.Settings.AdvertisementMessage);
 				}
 
-				if(oldGameState == null || GameStateHasChanged(oldGameState, CurrentGameState))
+				if (oldGameState == null || GameStateHasChanged(oldGameState, CurrentGameState))
 				{
 					_sloshyDoshManStatsService.SaveGameState(CurrentGameState);
 				}
 			}
-			catch(AggregateException aggregateException)
+			catch (AggregateException aggregateException)
 			{
 				aggregateException.InnerExceptions
 					.Select(x => x.Message).ToList()
-					.ForEach(Console.WriteLine);
+					.ForEach((exception) => { Program.LoggerFactory.CreateLogger<KillingFloor2AdminMonitor>().LogError(exception, "Something went wrong refreshing game state"); });
 			}
-			catch(Exception exception)
+			catch (Exception exception)
 			{
-				Console.WriteLine(exception.Message);
+				Program.LoggerFactory.CreateLogger<KillingFloor2AdminMonitor>().LogError(exception, "Something went wrong refreshing game state");
 			}
-			
+
 			RefreshStateTimer.Start();
 		}
 
 		public void StopMonitoring()
 		{
-			if(RefreshStateTimer != null)
+			if (RefreshStateTimer != null)
 			{
 				RefreshStateTimer.Stop();
 				RefreshStateTimer.Dispose();
@@ -74,28 +75,28 @@ namespace SloshyDoshMan.Client
 
 		private static bool GameStateHasChanged(GameState oldState, GameState newState)
 		{
-			if(oldState.CurrentWave != newState.CurrentWave || oldState.Difficulty != newState.Difficulty || oldState.GameLength != newState.GameLength || oldState.Map != newState.Map)
+			if (oldState.CurrentWave != newState.CurrentWave || oldState.Difficulty != newState.Difficulty || oldState.GameLength != newState.GameLength || oldState.Map != newState.Map)
 			{
 				return true;
 			}
 
-			if(oldState.Players.Count != newState.Players.Count)
+			if (oldState.Players.Count != newState.Players.Count)
 			{
 				return true;
 			}
 
 			var matchingPlayerCount = oldState.Players.Select(x => x.SteamId).Intersect(newState.Players.Select(x => x.SteamId)).Count();
 
-			if(matchingPlayerCount != oldState.Players.Count || matchingPlayerCount != newState.Players.Count)
+			if (matchingPlayerCount != oldState.Players.Count || matchingPlayerCount != newState.Players.Count)
 			{
 				return true;
 			}
-			
-			foreach(var player in oldState.Players)
+
+			foreach (var player in oldState.Players)
 			{
 				var newStatePlayer = newState.Players.FirstOrDefault(x => x.SteamId == player.SteamId);
 
-				if(newStatePlayer.Kills != player.Kills || newStatePlayer.Perk != player.Perk)
+				if (newStatePlayer.Kills != player.Kills || newStatePlayer.Perk != player.Perk)
 				{
 					return true;
 				}
@@ -104,9 +105,9 @@ namespace SloshyDoshMan.Client
 			return false;
 		}
 
-		private static bool ShouldSendAdvertisement(GameState oldGameState, GameState newGameState)
+		private bool ShouldSendAdvertisement(GameState oldGameState, GameState newGameState)
 		{
-			return Settings.Instance.EnableAdvertisement && oldGameState.CurrentWave < newGameState.CurrentWave && newGameState.CurrentWave % 2 == 0;
+			return Program.Settings.EnableAdvertisement && oldGameState.CurrentWave < newGameState.CurrentWave && newGameState.CurrentWave.IsEven();
 		}
 
 		private GameState CurrentGameState { get; set; }
@@ -115,5 +116,13 @@ namespace SloshyDoshMan.Client
 		private readonly IKillingFloor2AdminScraper _killingFloor2AdminScraper;
 		private readonly ISloshyDoshManStatsService _sloshyDoshManStatsService;
 		private IKillingFloor2AdminClient _killingFloor2AdminClient;
+	}
+
+	public static class IntExtensions
+	{
+		public static bool IsEven(this int value)
+		{
+			return value % 2 == 0;
+		}
 	}
 }

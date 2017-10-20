@@ -4,7 +4,7 @@ using System.Linq;
 using SloshyDoshMan.Shared;
 using System.Collections.Generic;
 
-namespace SloshyDoshMan.PlayedGames
+namespace SloshyDoshMan.Service.PlayedGames
 {
 	public interface IPlayedGameStore
 	{

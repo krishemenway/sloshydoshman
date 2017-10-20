@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using System;
 
-namespace SloshyDoshMan.Servers
+namespace SloshyDoshMan.Service.Servers
 {
 	public interface IServerStore
 	{

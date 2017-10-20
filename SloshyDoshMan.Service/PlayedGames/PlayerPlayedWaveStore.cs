@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using SloshyDoshMan.Shared;
 
-namespace SloshyDoshMan.PlayedGames
+namespace SloshyDoshMan.Service.PlayedGames
 {
 	public interface IPlayerPlayedWaveStore
 	{

@@ -3,7 +3,7 @@ using SloshyDoshMan.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SloshyDoshMan.Players
+namespace SloshyDoshMan.Service.Players
 {
 	public class PlayerPerkStatistic
 	{

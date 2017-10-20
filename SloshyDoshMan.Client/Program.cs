@@ -1,43 +1,47 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using System;
 using System.Threading;
 
 namespace SloshyDoshMan.Client
 {
 	public class Program
 	{
-		static void Main()
+		public static void Main(string[] args)
 		{
-			Console.CancelKeyPress += delegate {
-				_quitFlag = true;
+			AddLogging();
+			ShowSettings();
+			StartMonitoring();
+		}
+
+		private static void AddLogging()
+		{
+			LoggerFactory.AddConsole();
+		}
+
+		private static void ShowSettings()
+		{
+			LoggerFactory.CreateLogger<Program>().LogInformation($"Loaded Settings: {JsonConvert.SerializeObject(Settings)}");
+			LoggerFactory.CreateLogger<Program>().LogInformation($"Change your settings by adding EnvironmentVariables or modifying the appsettings.json");
+		}
+
+		private static void StartMonitoring()
+		{
+			Console.CancelKeyPress += (sender, eArgs) =>
+			{
+				QuitEvent.Set();
+				eArgs.Cancel = true;
 			};
 
-			PrintSplash();
-			var monitor = new KillingFloor2AdminMonitor();
-			monitor.StartMonitoring();
-
-			while (!_quitFlag)
-			{
-				Thread.Sleep(1);
-			}
-
-			monitor.StopMonitoring();
+			Monitor.StartMonitoring();
+			QuitEvent.WaitOne();
+			Monitor.StopMonitoring();
 		}
 
-		private static void PrintSplash()
-		{
-			Console.WriteLine("-- SloshyDoshMan KF2 Stats Scraper --");
-			Console.WriteLine("- Update the settings.json to configure for your local server");
-			Console.WriteLine("CTRL-C to quit");
-		}
-		
-		public static string ExecutingDirectory
-		{
-			get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); }
-		}
+		public static readonly LoggerFactory LoggerFactory = new LoggerFactory();
+		public static readonly Settings Settings = new Settings();
+		private static readonly IKillingFloor2AdminMonitor Monitor = new KillingFloor2AdminMonitor();
 
-
-		static bool _quitFlag = false;
+		private static ManualResetEvent QuitEvent = new ManualResetEvent(false);
 	}
 }

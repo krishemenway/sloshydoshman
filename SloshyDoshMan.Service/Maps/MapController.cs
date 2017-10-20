@@ -1,18 +1,15 @@
-﻿using KrisHemenway.Common;
-using SloshyDoshMan.Maps;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Http;
 
-namespace SloshyDoshMan.WebAPI
+namespace SloshyDoshMan.Service.Maps
 {
-	[RoutePrefix("webapi")]
-	public class MapController : ApiController
+	[Route("webapi")]
+	public class MapController : Controller
 	{
-		[HttpGet]
-		[Route("map")]
-		public IHttpActionResult Map([FromUri] string mapName)
+		[HttpGet(nameof(Map))]
+		public IActionResult Map([FromQuery] string mapName)
 		{
 			var serverMaps = new MapStore().FindAllMaps();
 			
@@ -26,7 +23,7 @@ namespace SloshyDoshMan.WebAPI
 				PlayerMapScores = new MapStatisticsStore().FindTopPlayersForMap(mapName)
 			};
 
-			return Ok(Result<MapStatsRepsonse>.Successful(mapStatsRepsonse));
+			return Json(Result<MapStatsRepsonse>.Successful(mapStatsRepsonse));
 		}
 	}
 

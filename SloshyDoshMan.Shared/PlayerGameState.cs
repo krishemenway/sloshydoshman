@@ -1,5 +1,4 @@
-﻿
-namespace SloshyDoshMan.Shared
+﻿namespace SloshyDoshMan.Shared
 {
 	public class PlayerGameState
 	{

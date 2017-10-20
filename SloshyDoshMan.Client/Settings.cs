@@ -1,43 +1,34 @@
-﻿
+﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
 using System.IO;
 
 namespace SloshyDoshMan.Client
 {
 	public class Settings
 	{
-		static Settings()
+		public Settings()
 		{
-			if (File.Exists(SettingsJsonPath))
-			{
-				using (var file = File.OpenText(SettingsJsonPath))
-				{
-					Instance = JsonConvert.DeserializeObject<Settings>(file.ReadToEnd());
-				}
-			}
-			else
-			{
-				Console.WriteLine($"Could not find settings.json file! Looked here: {SettingsJsonPath}");
-				Instance = new Settings();
-			}
+			Configuration = new ConfigurationBuilder()
+				.SetBasePath(ExecutablePath)
+				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+				.AddEnvironmentVariables()
+				.Build();
 		}
-		
-		public string KF2AdminHost { get; set; } = "localhost";
-		public int KF2AdminPort { get; set; } = 3005;
 
-		public string KF2AdminUserName { get; set; } = "admin";
-		public string KF2AdminPassword { get; set; } = "123";
-		
-		public double RefreshIntervalInMilliseconds { get; set; } = 20000;
+		public string KF2AdminHost => Configuration.GetValue<string>("KF2AdminHost");
+		public int KF2AdminPort => Configuration.GetValue<int>("KF2AdminPort");
 
-		public bool EnableAdvertisement { get; set; } = true;
-		public string AdvertisementMessage { get; set; } = "Check out your stats for this server @ sloshydoshman.com";
+		public string KF2AdminUserName => Configuration.GetValue<string>("KF2AdminUserName");
+		public string KF2AdminPassword => Configuration.GetValue<string>("KF2AdminPassword");
 
-		public static Settings Instance { get; set; }
+		public double RefreshIntervalInMilliseconds => Configuration.GetValue<double>("RefreshIntervalInMilliseconds");
 
-		private static string SettingsJsonPath = Path.Combine(Program.ExecutingDirectory, "settings.json");
+		public bool EnableAdvertisement => Configuration.GetValue<bool>("EnableAdvertisement");
+		public string AdvertisementMessage => Configuration.GetValue<string>("AdvertisementMessage");
+
+		public string ExecutablePath => Directory.GetCurrentDirectory();
+
+		[JsonIgnore]
+		public IConfiguration Configuration { get; }
 	}
-
-
 }

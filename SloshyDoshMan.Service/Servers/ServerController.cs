@@ -1,10 +1,9 @@
-﻿using System.Net.Http;
-using System.Web.Http;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SloshyDoshMan.Servers
+namespace SloshyDoshMan.Service.Servers
 {
-	[RoutePrefix("api/servers")]
-	public class ServerController : ApiController
+	[Route("api/servers")]
+	public class ServerController : Controller
 	{
 		public ServerController() : this(null) { }
 
@@ -15,14 +14,13 @@ namespace SloshyDoshMan.Servers
 			_serverStore = serverStore ?? new ServerStore();
 			_registerServerRequestValidator = registerRequestValidator ?? new RegisterServerRequestValidator();
 		}
-		
-		[HttpPost]
-		[Route("register")]
-		public IHttpActionResult Register([FromBody] RegisterServerRequest registerServerRequest)
+
+		[HttpPost("register")]
+		public IActionResult Register([FromBody] RegisterServerRequest registerServerRequest)
 		{
 			if(_registerServerRequestValidator.Validate(registerServerRequest))
 			{
-				var server = _serverStore.CreateNewServer(registerServerRequest.ServerName, Request.GetOwinContext().Request.RemoteIpAddress);
+				var server = _serverStore.CreateNewServer(registerServerRequest.ServerName, Request.HttpContext.Connection.RemoteIpAddress.ToString());
 				return Ok(server);
 			}
 			

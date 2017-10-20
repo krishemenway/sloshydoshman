@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 using SloshyDoshMan.Shared;
 using System;
 
-namespace SloshyDoshMan.PlayedGames
+namespace SloshyDoshMan.Service.PlayedGames
 {
 	public interface IPlayedGame
 	{

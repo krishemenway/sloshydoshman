@@ -1,18 +1,15 @@
-﻿using KrisHemenway.Common;
-using SloshyDoshMan.PlayedGames;
-using SloshyDoshMan.Players;
+﻿using Microsoft.AspNetCore.Mvc;
+using SloshyDoshMan.Service.PlayedGames;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Http;
 
-namespace SloshyDoshMan.WebAPI
+namespace SloshyDoshMan.Service.Players
 {
-	[RoutePrefix("webapi")]
-	public class PlayerController : ApiController
+	[Route("webapi")]
+	public class PlayerController : Controller
 	{
-		[HttpGet]
-		[Route("player")]
-		public IHttpActionResult Player([FromUri] long steamId)
+		[HttpGet("player")]
+		public IActionResult Player([FromQuery] long steamId)
 		{
 			var player = new PlayerStore().FindPlayer(steamId);
 			var store = new PlayerStatisticsStore();
@@ -26,7 +23,7 @@ namespace SloshyDoshMan.WebAPI
 				PerkStatistics = store.FindPerkStatistics(steamId)
 			};
 
-			return Ok(Result<PlayerViewModel>.Successful(playerViewModel));
+			return Json(Result<PlayerViewModel>.Successful(playerViewModel));
 		}
 	}
 

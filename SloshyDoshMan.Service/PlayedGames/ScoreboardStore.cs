@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SloshyDoshMan.PlayedGames
+namespace SloshyDoshMan.Service.PlayedGames
 {
 	public interface IScoreboard
 	{

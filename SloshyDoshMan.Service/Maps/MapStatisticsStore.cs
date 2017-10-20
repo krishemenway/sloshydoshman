@@ -3,7 +3,7 @@ using SloshyDoshMan.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SloshyDoshMan.Maps
+namespace SloshyDoshMan.Service.Maps
 {
 	public class MapStatisticsStore
 	{

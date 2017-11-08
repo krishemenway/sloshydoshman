@@ -13,24 +13,10 @@ namespace SloshyDoshMan.Service
 			return connection;
 		}
 
-		public static string DatabaseName
-		{
-			get { return Program.Configuration.GetValue<string>("DatabaseName"); }
-		}
+		public static string Host => Program.Configuration.GetValue<string>("DatabaseHost");
+		public static string DatabaseName => Program.Configuration.GetValue<string>("DatabaseName");
 
-		public static string Host
-		{
-			get { return Program.Configuration.GetValue<string>("DatabaseHost"); }
-		}
-
-		public static string User
-		{
-			get { return Program.Configuration.GetValue<string>("DatabaseUser"); }
-		}
-
-		public static string Password
-		{
-			get { return Program.Configuration.GetValue<string>("DatabasePassword"); }
-		}
+		public static string User => Program.Configuration.GetValue<string>("DatabaseUser");
+		public static string Password => Program.Configuration.GetValue<string>("DatabasePassword");
 	}
 }

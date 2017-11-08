@@ -94,6 +94,8 @@ namespace SloshyDoshMan.Service.PlayedGameState
 		private readonly IPlayerPlayedWaveStore _playerPlayedWaveStore;
 
 		private readonly IPushNotificationSender _pushNotificationSender;
+		private readonly ILogger<RefreshGameStateAction> _logger;
+
 		private static IGameState LastGameState { get; set; }
 		private static Dictionary<long, bool> SteamIdsAliveInFinalWave { get; set; } = new Dictionary<long, bool>();
 

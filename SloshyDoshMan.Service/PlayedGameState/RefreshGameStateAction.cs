@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SloshyDoshMan.Service.Maps;
 using SloshyDoshMan.Service.Notifications;
 using SloshyDoshMan.Service.PlayedGames;
 using SloshyDoshMan.Service.Players;
 using SloshyDoshMan.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,9 +33,11 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 		public void RefreshGameState(GameState newGameState)
 		{
+			FixMapName(newGameState);
+			RemoveOrFixInvalidPlayers(newGameState);
+
 			_logger.LogDebug("Refreshing with Game State: {0}", JsonConvert.SerializeObject(newGameState));
 
-			RemoveOrFixInvalidPlayers(newGameState);
 			_playerStore.SaveAllPlayers(newGameState.Players);
 
 			var currentPlayedGame = _playedGameStore.FindCurrentGame();
@@ -80,7 +84,16 @@ namespace SloshyDoshMan.Service.PlayedGameState
 				LastGameState = newGameState;
 			}
 		}
-		
+
+		private void FixMapName(GameState newGameState)
+		{
+			if (MapsByMapName.Value.TryGetValue(newGameState.Map.ToLower(), out var map))
+			{
+				newGameState.Map = map.Name;
+			}
+			
+		}
+
 		private void RemoveOrFixInvalidPlayers(GameState newGameState)
 		{
 			var existingPlayers = _playerStore.FindPlayersByName(newGameState.Players.Select(x => x.Name).ToList());
@@ -98,7 +111,6 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 		private static IGameState LastGameState { get; set; }
 		private static Dictionary<long, bool> SteamIdsAliveInFinalWave { get; set; } = new Dictionary<long, bool>();
-
-		private readonly ILogger<RefreshGameStateAction> _logger;
+		private static Lazy<Dictionary<string, Map>> MapsByMapName { get; set; } = new Lazy<Dictionary<string, Map>>(() => new MapStore().FindAllMaps().ToDictionary(x => x.Name.ToLower(), x => x));
 	}
 }

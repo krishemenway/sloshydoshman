@@ -1,0 +1,15 @@
+.perk-icon {
+	display: inline-block;
+	&.width-128 { width: 128px; height: 128px; background-size: 128px 128px; }
+	&.width-32 { width: 32px; height: 32px; background-size: 32px 32px; }
+	&.Berserker { background-image: url('/perks/Berserker-128.png'); }
+	&.Commando { background-image: url('/perks/Commando-128.png'); }
+	&.Demolitionist { background-image: url('/perks/Demolitionist-128.png'); }
+	&.Medic { background-image: url('/perks/Field Medic-128.png'); }
+	&.Firebug { background-image: url('/perks/Firebug-128.png'); }
+	&.Gunslinger { background-image: url('/perks/Gunslinger-128.png'); }
+	&.Sharpshooter { background-image: url('/perks/Sharpshooter-128.png'); }
+	&.Support { background-image: url('/perks/Support-128.png'); }
+	&.Survivalist { background-image: url('/perks/Survivalist-128.png'); }
+	&.SWAT { background-image: url('/perks/SWAT-128.png'); }
+}

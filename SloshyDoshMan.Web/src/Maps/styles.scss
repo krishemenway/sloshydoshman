@@ -1,0 +1,29 @@
+.map-cover {
+	width: 480px;
+	height: 240px;
+	background: url('/maps/Placeholder-480x240.jpg') no-repeat transparent;
+	background-size: 100% auto;
+	position: relative;
+	overflow: hidden;
+
+	&.half {
+		width: 240px;
+		height: 120px;
+	}
+
+	&.KF-Farmhouse { background-image: url('/maps/KF-Farmhouse-480x240.jpg'); }
+	&.KF-BlackForest { background-image: url('/maps/KF-BlackForest-480x240.jpg'); }
+	&.KF-Outpost { background-image: url('/maps/KF-Outpost-480x240.jpg'); }
+	&.KF-Prison { background-image: url('/maps/KF-Prison-480x240.jpg'); }
+	&.KF-BioticsLab { background-image: url('/maps/KF-BioticsLab-480x240.jpg'); }
+	&.KF-BurningParis { background-image: url('/maps/KF-BurningParis-480x240.jpg'); }
+	&.KF-HostileGrounds { background-image: url('/maps/KF-HostileGrounds-480x240.jpg'); }
+	&.KF-ZedLanding { background-image: url('/maps/KF-ZedLanding-480x240.jpg'); }
+	&.KF-TheDescent { background-image: url('/maps/KF-TheDescent-480x240.jpg'); }
+	&.KF-ContainmentStation { background-image: url('/maps/KF-ContainmentStation-480x240.jpg'); }
+	&.KF-Nuked { background-image: url('/maps/KF-Nuked-480x240.jpg'); }
+	&.KF-Catacombs { background-image: url('/maps/KF-Catacombs-480x240.jpg'); }
+	&.KF-EvacuationPoint { background-image: url('/maps/KF-EvacuationPoint-480x240.jpg'); }
+	&.KF-VolterManor { background-image: url('/maps/KF-VolterManor-480x240.jpg'); }
+	&.KF-InfernalRealm { background-image: url('/maps/KF-InfernalRealm-480x240.jpg'); }
+}

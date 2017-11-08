@@ -1,0 +1,15 @@
+.recent-win-player {
+	border: 1px solid #282828;
+	border-top-width: 5px;
+	background-color: rgba(0,0,0,.5);
+}
+
+.recent-win-game {
+	border: 1px solid transparent;
+	cursor: pointer;
+
+	&.selected {
+		border-color: #282828;
+		background-color: rgba(0,0,0,.5);
+	}
+}

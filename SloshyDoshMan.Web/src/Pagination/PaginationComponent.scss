@@ -1,0 +1,23 @@
+.pages-control {
+	position: relative;
+
+	.previous { left: 0; }
+	.next { right: 0; }
+
+	.previous, .next {
+		width: 50px;
+		height: 40px;
+
+		background-color: #181818;
+		border-radius: 3px;
+		border: 1px solid #080808;
+
+		position: absolute;
+		top: 0;
+
+		&:disabled { 
+			background-color: transparent;
+			border-color: #080808;
+		}
+	}
+}

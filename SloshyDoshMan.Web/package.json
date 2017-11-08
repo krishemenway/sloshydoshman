@@ -1,0 +1,30 @@
+{
+  "name": "sloshydoshman-web",
+  "version": "0.0.1",
+  "description": "Project for building the SloshyDoshMan website",
+  "main": "server.js",
+  "author": "thelinkstate",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/krishemenway/killing-floor-2-stat-scraper.git"
+  },
+  "dependencies": {},
+  "peerDependencies": {},
+  "devDependencies": {
+    "@types/knockout": "*",
+    "@types/moment": "*",
+    "@types/jquery": "^3.1.0",
+    "grunt": "*",
+    "grunt-cli": "*",
+    "grunt-sass": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-browserify": "*",
+    "grunt-webpack": "*",
+    "grunt-ts": "^6.0.0-beta.16",
+    "jit-grunt": "*",
+    "typescript": "*",
+    "webpack": "*"
+  }
+}

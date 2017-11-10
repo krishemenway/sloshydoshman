@@ -20,14 +20,14 @@ export function GoToView(view: string, data?: Dictionary<string>) {
 
 export class AppViewModel {
 	constructor(params?: any) {
-		this.CurrentView = HashChange.CreateObservable("v", null);
+		this.CurrentView = HashChange.CreateObservable<string|null>("v", null);
 
 		if(!this.CurrentView()) {
 			GoToView(HomeView.ComponentName);
 		}
 	}
 
-	public CurrentView: KnockoutObservable<string>;
+	public CurrentView: KnockoutObservable<string|null>;
 }
 
 ko.components.register(ComponentName, {

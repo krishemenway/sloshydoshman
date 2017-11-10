@@ -36,7 +36,7 @@ class ServerStatisticsViewModel {
 			return [];
 		}
 
-		return this.Stats().Perks.map((perk: PerkStatistics) => <PieChartData>{
+		return stats.Perks.map((perk: PerkStatistics) => <PieChartData>{
 			Label: perk.PerkName,
 			Value: perk.TotalWavesPlayed
 		});
@@ -49,7 +49,7 @@ class ServerStatisticsViewModel {
 			return [];
 		}
 
-		return this.Stats().Perks.map((perk: PerkStatistics) => <PieChartData>{
+		return stats.Perks.map((perk: PerkStatistics) => <PieChartData>{
 			Label: perk.PerkName,
 			Value: perk.TotalKills
 		});

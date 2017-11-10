@@ -22,8 +22,6 @@ module.exports = function(grunt) {
 				noImplicitReturns: true,
 				noImplicitThis: true,
 				noUnusedLocals: true,
-				noUnusedParameters: false,
-				strictNullChecks: false,
 				pretty: false,
 				fast: 'never',
 				baseUrl: '<%= project.src %>'

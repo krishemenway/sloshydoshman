@@ -116,15 +116,19 @@ export class ServerRecentWinsViewModel {
 		}
 
 		return selectedWinGame.Scoreboard.Players.filter((player) => {
-			return !!player.PlayerWaveInfo[recentWin.TotalWaves+1] && !!player.PlayerWaveInfo[recentWin.TotalWaves+1].Perk;
+			if (recentWin === null) {
+				return false;
+			}
+
+			return !!player.PlayerWaveInfo[recentWin.TotalWaves+1].Perk;
 		});
 	}
 
 	public RecentWins: KnockoutObservableArray<PlayedGame>;
 	public SelectedRecentWin: KnockoutObservable<PlayedGame|null>;
+	public RecentWinPlayers: KnockoutComputed<ScoreboardPlayer[]>;
 
 	private RotateSelectedGameInterval: number;
-	private RecentWinPlayers: KnockoutComputed<ScoreboardPlayer[]>;
 	private GamesByPlayedGameId: Dictionary<KnockoutObservable<GameViewModel|null>>;
 }
 

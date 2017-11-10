@@ -15,7 +15,7 @@ class PlayerProfileViewModel {
 		this.PlayerViewModel = ko.observable(null);
 		this.SteamId = ko.observable(null).extend({hashchange: 'SteamId'});
 		this.PageNumber = ko.observable(1);
-		this.TotalGamesCount = ko.pureComputed(() => this.PlayerViewModel().AllGames.length, this);
+		this.TotalGamesCount = ko.pureComputed(this.CalculateTotalGamesCount, this);
 		this.RecentGamesPage = ko.pureComputed(this.GetRecentGamesPage, this);
 		this.SteamIdSubscription = this.SteamId.subscribe(() => this.InitializePlayer());
 		this.InitializePlayer();
@@ -34,9 +34,19 @@ class PlayerProfileViewModel {
 	}
 
 	private GetRecentGamesPage = () => {
+		let player = this.PlayerViewModel();
+		if (player === null) {
+			return [];
+		}
+
 		let selectedIndex = this.PageNumber()-1;
 		let startIndex = selectedIndex*this.RecentGamesPageSize;
-		return this.PlayerViewModel().AllGames.slice(startIndex, startIndex + this.RecentGamesPageSize);
+		return player.AllGames.slice(startIndex, startIndex + this.RecentGamesPageSize);
+	}
+
+	private CalculateTotalGamesCount = () => {
+		let playerModel = this.PlayerViewModel();
+		return playerModel !== null ? playerModel.AllGames.length : 0;
 	}
 
 	private InitializePlayer = () => {

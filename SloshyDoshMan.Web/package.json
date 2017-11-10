@@ -1,12 +1,12 @@
 {
   "name": "sloshydoshman-web",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Project for building the SloshyDoshMan website",
   "main": "server.js",
   "author": "thelinkstate",
   "repository": {
     "type": "git",
-    "url": "git://github.com/krishemenway/killing-floor-2-stat-scraper.git"
+    "url": "git://github.com/krishemenway/sloshydoshman.git"
   },
   "dependencies": {},
   "peerDependencies": {},

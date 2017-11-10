@@ -23,7 +23,7 @@ module.exports = function(grunt) {
 				noImplicitThis: true,
 				noUnusedLocals: true,
 				noUnusedParameters: false,
-				//strictNullChecks: true,
+				strictNullChecks: false,
 				pretty: false,
 				fast: 'never',
 				baseUrl: '<%= project.src %>'

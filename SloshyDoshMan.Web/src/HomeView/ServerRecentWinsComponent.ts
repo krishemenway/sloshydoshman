@@ -116,7 +116,7 @@ export class ServerRecentWinsViewModel {
 		}
 
 		return selectedWinGame.Scoreboard.Players.filter((player) => {
-			if (recentWin === null) {
+			if (recentWin === null || !player.PlayerWaveInfo[recentWin.TotalWaves+1]) {
 				return false;
 			}
 

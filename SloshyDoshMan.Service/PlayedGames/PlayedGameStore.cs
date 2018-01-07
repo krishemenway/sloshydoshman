@@ -9,7 +9,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 	public interface IPlayedGameStore
 	{
 		IPlayedGame FindPlayedGame(Guid playedGameId);
-		IPlayedGame FindCurrentGame();
+		IPlayedGame FindCurrentGame(Guid serverId);
 		IReadOnlyList<IPlayedGame> FindRecentGames(int totalRecentGames, int startingAt);
 
 		void StartNewGame(GameState newGameState);
@@ -37,7 +37,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 			}
 		}
 
-		public IPlayedGame FindCurrentGame()
+		public IPlayedGame FindCurrentGame(Guid serverId)
 		{
 			const string sql = @"
 				SELECT
@@ -51,17 +51,23 @@ namespace SloshyDoshMan.Service.PlayedGames
 					time_finished as TimeFinished,
 					players_won as PlayersWon
 				FROM played_game
+				WHERE server_id = @ServerId
 				ORDER BY time_started DESC
 				LIMIT 1";
 
 			using (var connection = Database.CreateConnection())
 			{
 				var playedGame = connection
-					.Query<PlayedGameRecord>(sql)
+					.Query<PlayedGameRecord>(sql, new { serverId })
 					.Select(CreateGame)
 					.SingleOrDefault();
 
-				return playedGame != null && !playedGame.TimeFinished.HasValue ? playedGame : null;
+				if (playedGame == null || playedGame.TimeFinished.HasValue)
+				{
+					return null;
+				}
+
+				return playedGame;
 			}
 		}
 
@@ -171,8 +177,8 @@ namespace SloshyDoshMan.Service.PlayedGames
 		{
 			const string sql = @"
 				INSERT INTO played_game
-				(played_game_id, map, game_type, game_length, game_difficulty, reached_wave, total_waves)
-				SELECT @PlayedGameId, @Map, @GameType, @GameLength, @Difficulty, @ReachedWave, @TotalWaves";
+				(played_game_id, map, game_type, game_length, game_difficulty, reached_wave, total_waves, server_id)
+				SELECT @PlayedGameId, @Map, @GameType, @GameLength, @Difficulty, @ReachedWave, @TotalWaves, @ServerId";
 
 			using (var connection = Database.CreateConnection())
 			{
@@ -184,7 +190,8 @@ namespace SloshyDoshMan.Service.PlayedGames
 					GameLength = newGameState.GameLength.ToString("G"),
 					newGameState.Difficulty,
 					ReachedWave = newGameState.CurrentWave,
-					newGameState.TotalWaves
+					newGameState.TotalWaves,
+					newGameState.ServerId
 				};
 
 				connection.Execute(sql, sqlParams);

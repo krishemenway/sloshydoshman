@@ -21,8 +21,8 @@ namespace SloshyDoshMan.Client
 
 		private static void ShowSettings()
 		{
-			LoggerFactory.CreateLogger<Program>().LogInformation($"Loaded Settings: {JsonConvert.SerializeObject(Settings)}");
-			LoggerFactory.CreateLogger<Program>().LogInformation($"Change your settings by adding EnvironmentVariables or modifying the appsettings.json");
+			LoggerFactory.CreateLogger<Program>().LogInformation($"Using settings: {JsonConvert.SerializeObject(Settings)}");
+			LoggerFactory.CreateLogger<Program>().LogInformation($"Change your settings by adding EnvironmentVariables or modifying the appsettings.json or using command line parameters");
 		}
 
 		private static void StartMonitoring()

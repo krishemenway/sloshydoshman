@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SloshyDoshMan.Shared
 {
 	public interface IGameState
 	{
+		Guid ServerId { get; }
 		string ServerName { get; }
 
 		int CurrentWave { get; set; }
@@ -19,6 +21,7 @@ namespace SloshyDoshMan.Shared
 
 	public class GameState : IGameState
 	{
+		public Guid ServerId { get; set; }
 		public string ServerName { get; set; }
 
 		public int CurrentWave { get; set; }

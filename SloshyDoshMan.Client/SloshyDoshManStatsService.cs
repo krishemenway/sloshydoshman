@@ -25,6 +25,7 @@ namespace SloshyDoshMan.Client
 			}
 		}
 
-		public const string SaveGameStatePath = "http://localhost:8098/api/kf2/gamestate/save";
+		private static string SaveGameStatePath => LazySaveGameStatePath.Value;
+		private static Lazy<string> LazySaveGameStatePath => new Lazy<string>(() => $"http://{Program.Settings.SloshyDoshManServiceHost}:{Program.Settings.SloshyDoshManServicePort}/api/kf2/gamestate/save");
 	}
 }

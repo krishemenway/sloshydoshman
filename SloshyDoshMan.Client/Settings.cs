@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace SloshyDoshMan.Client
@@ -15,6 +16,8 @@ namespace SloshyDoshMan.Client
 				.Build();
 		}
 
+		public Guid ServerId => Configuration.GetValue<Guid>("ServerId");
+
 		public string KF2AdminHost => Configuration.GetValue<string>("KF2AdminHost");
 		public int KF2AdminPort => Configuration.GetValue<int>("KF2AdminPort");
 
@@ -25,6 +28,9 @@ namespace SloshyDoshMan.Client
 
 		public bool EnableAdvertisement => Configuration.GetValue<bool>("EnableAdvertisement");
 		public string AdvertisementMessage => Configuration.GetValue<string>("AdvertisementMessage");
+
+		public string SloshyDoshManServiceHost => Configuration.GetValue<string>("SloshyDoshManServiceHost"); 
+		public int SloshyDoshManServicePort => Configuration.GetValue<int>("SloshyDoshManServicePort");
 
 		public string ExecutablePath => Directory.GetCurrentDirectory();
 

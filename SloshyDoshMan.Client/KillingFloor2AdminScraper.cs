@@ -36,6 +36,7 @@ namespace SloshyDoshMan.Client
 
 				return new GameState
 				{
+					ServerId = Program.Settings.ServerId,
 					ServerName = currentGameElements[1].InnerText,
 					Map = currentGameElements[7].Attributes["title"],
 					Difficulty = currentRulesElements[3].InnerText,

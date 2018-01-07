@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SloshyDoshMan.Service.Maps;
 using SloshyDoshMan.Service.Notifications;
@@ -40,7 +41,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 			_playerStore.SaveAllPlayers(newGameState.Players);
 
-			var currentPlayedGame = _playedGameStore.FindCurrentGame();
+			var currentPlayedGame = _playedGameStore.FindCurrentGame(newGameState.ServerId);
 
 			if (currentPlayedGame == null && newGameState.CurrentWave == 1)
 			{
@@ -54,7 +55,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 				_logger.LogDebug(details.Content);
 				_pushNotificationSender.NotifyAll(details);
 				_playedGameStore.StartNewGame(newGameState);
-				currentPlayedGame = _playedGameStore.FindCurrentGame();
+				currentPlayedGame = _playedGameStore.FindCurrentGame(newGameState.ServerId);
 			}
 
 			if(currentPlayedGame != null)
@@ -62,9 +63,9 @@ namespace SloshyDoshMan.Service.PlayedGameState
 				if (newGameState.CurrentWave < currentPlayedGame.ReachedWave || newGameState.Map != currentPlayedGame.Map || newGameState.GameLength != currentPlayedGame.Length || newGameState.Difficulty != currentPlayedGame.Difficulty)
 				{
 					var reachedBossWave = currentPlayedGame.ReachedWave > currentPlayedGame.TotalWaves;
-					var playersWon = reachedBossWave && SteamIdsAliveInFinalWave.Values.Any(isAlive => isAlive);
+					var playersWon = reachedBossWave && FindPlayersWithLivingStatusForServer(newGameState.ServerId).Values.Any(isAlive => isAlive);
 					_playedGameStore.EndGame(currentPlayedGame, playersWon);
-					SteamIdsAliveInFinalWave.Clear();
+					SteamIdsAliveInFinalWaveByServerIdMemoryCache.Remove(newGameState.ServerId);
 				}
 				else
 				{
@@ -80,18 +81,21 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 			if(newGameState.CurrentWave > newGameState.TotalWaves)
 			{
-				SteamIdsAliveInFinalWave.Merge(newGameState.Players.ToDictionary(x => x.SteamId, x => x.Health > 0));
-				LastGameState = newGameState;
+				var playersLivingStatusBySteamId = newGameState.Players.ToDictionary(x => x.SteamId, x => x.Health > 0);
+				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Set(newGameState.ServerId, FindPlayersWithLivingStatusForServer(newGameState.ServerId).Merge(playersLivingStatusBySteamId));
 			}
 		}
 
 		private void FixMapName(GameState newGameState)
 		{
-			if (MapsByMapName.Value.TryGetValue(newGameState.Map.ToLower(), out var map))
+			if (MapsByMapNameCache.TryGetValue<Map>(newGameState.Map.ToLower(), out var map))
 			{
 				newGameState.Map = map.Name;
 			}
-			
+			else
+			{
+				new MapStore().FindAllMaps().ToList().ForEach((m) => MapsByMapNameCache.Set(m.Name.ToLower(), m));
+			}
 		}
 
 		private void RemoveOrFixInvalidPlayers(GameState newGameState)
@@ -99,6 +103,8 @@ namespace SloshyDoshMan.Service.PlayedGameState
 			var existingPlayers = _playerStore.FindPlayersByName(newGameState.Players.Select(x => x.Name).ToList());
 			newGameState.Players = newGameState.Players.GroupBy(x => x.Name).Select(x => x.First()).ToList();
 		}
+
+		private Dictionary<long, bool> FindPlayersWithLivingStatusForServer(Guid serverId) => SteamIdsAliveInFinalWaveByServerIdMemoryCache.GetOrCreate(serverId, (entry) => new Dictionary<long, bool>());
 
 		private readonly IPlayerStore _playerStore;
 		private readonly IPlayedGameStore _playedGameStore;
@@ -109,8 +115,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 		private readonly IPushNotificationSender _pushNotificationSender;
 		private readonly ILogger<RefreshGameStateAction> _logger;
 
-		private static IGameState LastGameState { get; set; }
-		private static Dictionary<long, bool> SteamIdsAliveInFinalWave { get; set; } = new Dictionary<long, bool>();
-		private static Lazy<Dictionary<string, Map>> MapsByMapName { get; set; } = new Lazy<Dictionary<string, Map>>(() => new MapStore().FindAllMaps().ToDictionary(x => x.Name.ToLower(), x => x));
+		private static IMemoryCache SteamIdsAliveInFinalWaveByServerIdMemoryCache { get; set; } = new MemoryCache(new MemoryCacheOptions());
+		private static IMemoryCache MapsByMapNameCache { get; set; } = new MemoryCache(new MemoryCacheOptions());
 	}
 }

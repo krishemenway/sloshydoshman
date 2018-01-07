@@ -15,7 +15,7 @@ namespace SloshyDoshMan.Service
 
 			try
 			{
-				SetupConfiguration();
+				SetupConfiguration(args);
 				StartWebHost();
 			}
 			catch (Exception exception)
@@ -28,12 +28,13 @@ namespace SloshyDoshMan.Service
 			}
 		}
 
-		private static void SetupConfiguration()
+		private static void SetupConfiguration(string[] args)
 		{
 			Configuration = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
 				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
+				.AddCommandLine(args)
 				.Build();
 		}
 

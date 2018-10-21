@@ -20,6 +20,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 			IPlayerPlayedWaveStore playerPlayedWaveStore = null,
 			IPlayerPlayedGameStore playerPlayedGameStore = null,
 			IPushNotificationSender pushNotificationSender = null,
+			IMapStore mapStore = null,
 			ILogger<RefreshGameStateAction> logger = null)
 		{
 			_playedGameStore = playedGameStore ?? new PlayedGameStore();
@@ -29,6 +30,8 @@ namespace SloshyDoshMan.Service.PlayedGameState
 			_playerPlayedGameStore = playerPlayedGameStore ?? new PlayerPlayedGameStore();
 
 			_pushNotificationSender = pushNotificationSender ?? new PushNotificationSender();
+			_mapStore = mapStore ?? new MapStore();
+
 			_logger = logger ?? new LoggerFactory().CreateLogger<RefreshGameStateAction>();
 		}
 
@@ -88,13 +91,9 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 		private void FixMapName(GameState newGameState)
 		{
-			if (MapsByMapNameCache.TryGetValue<Map>(newGameState.Map.ToLower(), out var map))
+			if (_mapStore.FindMap(newGameState.Map, out var map))
 			{
 				newGameState.Map = map.Name;
-			}
-			else
-			{
-				new MapStore().FindAllMaps().ToList().ForEach((m) => MapsByMapNameCache.Set(m.Name.ToLower(), m));
 			}
 		}
 
@@ -113,9 +112,9 @@ namespace SloshyDoshMan.Service.PlayedGameState
 		private readonly IPlayerPlayedWaveStore _playerPlayedWaveStore;
 
 		private readonly IPushNotificationSender _pushNotificationSender;
+		private readonly IMapStore _mapStore;
 		private readonly ILogger<RefreshGameStateAction> _logger;
 
 		private static IMemoryCache SteamIdsAliveInFinalWaveByServerIdMemoryCache { get; set; } = new MemoryCache(new MemoryCacheOptions());
-		private static IMemoryCache MapsByMapNameCache { get; set; } = new MemoryCache(new MemoryCacheOptions());
 	}
 }

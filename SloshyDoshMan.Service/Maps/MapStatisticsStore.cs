@@ -5,7 +5,12 @@ using System.Linq;
 
 namespace SloshyDoshMan.Service.Maps
 {
-	public class MapStatisticsStore
+	public interface IMapStatisticsStore
+	{
+		IReadOnlyList<PlayerMapScore> FindTopPlayersForMap(string mapName);
+	}
+
+	public class MapStatisticsStore : IMapStatisticsStore
 	{
 		public IReadOnlyList<PlayerMapScore> FindTopPlayersForMap(string mapName)
 		{

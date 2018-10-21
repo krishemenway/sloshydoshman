@@ -1,6 +1,8 @@
-﻿using Dapper;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Reflection;
 
 namespace SloshyDoshMan.Service.Maps
 {
@@ -8,22 +10,17 @@ namespace SloshyDoshMan.Service.Maps
 	{
 		public IReadOnlyList<Map> FindAllMaps()
 		{
-			const string sql = @"
-				SELECT
-					m.map as Name,
-					m.is_workshop as IsWorkshop
-				FROM server_map m";
+			return LazyMapList.Value;
+		}
 
-			using (var connection = Database.CreateConnection())
+		private static IReadOnlyList<Map> LoadMapList()
+		{
+			using (var streamReader = new StreamReader(Assembly.GetEntryAssembly().GetManifestResourceStream("SloshyDoshMan.Service.Maps.Maps.json")))
 			{
-				return connection.Query<Map>(sql).ToList();
+				return JsonConvert.DeserializeObject<IReadOnlyList<Map>>(streamReader.ReadToEnd());
 			}
 		}
-	}
 
-	public class Map
-	{
-		public string Name { get; set; }
-		public bool IsWorkshop { get; set; }
+		public static Lazy<IReadOnlyList<Map>> LazyMapList = new Lazy<IReadOnlyList<Map>>(LoadMapList);
 	}
 }

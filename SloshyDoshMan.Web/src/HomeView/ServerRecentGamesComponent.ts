@@ -1,7 +1,6 @@
 import {ResultOf} from "CommonDataStructures/ResultOf";
 import {PlayedGame, RecentGameResponse} from "Server";
 import {GoToView} from "App";
-import * as HashChange from "KnockoutHelpers/HashchangeExtender";
 import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import * as Pagination from "Pagination/PaginationComponent";
 import * as GameView from "GameView/PlayedGameComponent";
@@ -14,15 +13,10 @@ class RecentGamesViewModel {
 	constructor(params?: any) {
 		this.HasLoadedGames = ko.observable(false);
 		this.LoadedGames = ko.observableArray([]);
-		this.PageNumber = HashChange.CreateObservable<number>("p", 1);
+		this.PageNumber = ko.observable(1);
 		this.TotalNumberOfGames = ko.observable(0);
 
-		if(this.PageNumber() === undefined || this.PageNumber() === null) {
-			this.PageNumber(1);
-		}
-
-		this.LoadPage(this.PageNumber());
-
+		this.LoadPage(1);
 		this.PageNumberSubscription = this.PageNumber.subscribe((newPage: number) => this.LoadPage(newPage));
 	}
 
@@ -34,8 +28,8 @@ class RecentGamesViewModel {
 		GoToView(GameView.ComponentName, {"PlayedGameId": game.PlayedGameId});
 	}
 
-	private LoadPage(pageNumber: number) {
-		let startingAt = this.PageSize*(this.PageNumber()-1);
+	private LoadPage(page: number) {
+		let startingAt = this.PageSize*(page-1);
 		$.get(`/webapi/home/recentgames?count=${this.PageSize}&startingAt=${startingAt}`).done(this.HandleGamesResponse);
 	}
 

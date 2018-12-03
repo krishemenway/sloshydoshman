@@ -4,27 +4,36 @@
   "description": "Project for building the SloshyDoshMan website",
   "main": "server.js",
   "author": "thelinkstate",
+  "engines": {
+    "node": "10.13.0",
+    "npm": "6.4.1"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/krishemenway/sloshydoshman.git"
   },
+  "scripts": {
+    "dev-server": "run ./dev-server.js"
+  },
   "dependencies": {},
   "peerDependencies": {},
   "devDependencies": {
-    "@types/knockout": "3.4.0",
-    "@types/moment": "*",
-    "@types/jquery": "^3.1.0",
-    "grunt": "*",
-    "grunt-cli": "*",
-    "grunt-sass": "*",
-    "grunt-contrib-clean": "*",
-    "grunt-contrib-watch": "*",
-    "grunt-contrib-copy": "*",
-    "grunt-browserify": "*",
-    "grunt-webpack": "*",
-    "grunt-ts": "^6.0.0-beta.16",
-    "jit-grunt": "*",
-    "typescript": "*",
-    "webpack": "*"
+    "@types/knockout": "3.4.60",
+    "@types/jquery": "3.3.22",
+    "grunt": "1.0.3",
+    "grunt-cli": "1.3.2",
+    "grunt-sass": "3.0.2",
+    "grunt-contrib-clean": "2.0.0",
+    "grunt-contrib-watch": "1.1.0",
+    "grunt-contrib-copy": "1.0.0",
+    "grunt-browserify": "5.3.0",
+    "grunt-webpack": "3.1.3",
+    "grunt-ts": "6.0.0-beta.21",
+    "express": "4.16.4",
+    "jit-grunt": "0.10.0",
+    "moment": "2.22.2",
+    "node-sass": "4.10.0",
+    "typescript": "3.2.1",
+    "webpack": "4.26.1"
   }
 }

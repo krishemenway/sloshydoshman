@@ -1,5 +1,6 @@
 'use strict';
 var path = require('path');
+var sass = require('node-sass');
 
 module.exports = function(grunt) {
 	grunt.initConfig({
@@ -52,11 +53,15 @@ module.exports = function(grunt) {
 			}
 		},
 		sass: {
-			dist: {
-				options: {
-					style: 'expanded'
-				},
-				files: { 
+			options: {
+				style: 'expanded',
+				implementation: sass,
+				includePaths: [
+					"<%=project.src%>"
+				]
+			},
+			build: {
+				files: {
 					'<%=project.out%>/manifest.css': '<%=project.src%>/manifest.scss'
 				}
 			}
@@ -116,5 +121,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-ts');
 	grunt.loadNpmTasks('grunt-webpack');
 
-	grunt.registerTask('default', ['clean:build','ts','clean:out','sass','copy','webpack:prod']);
+	grunt.registerTask('build', ['clean:build','ts','clean:out','sass','copy','webpack:prod']);
+	grunt.registerTask('default', ['build']);
 };

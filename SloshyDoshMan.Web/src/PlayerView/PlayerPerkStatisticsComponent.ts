@@ -20,7 +20,7 @@ ko.components.register(ComponentName, {
 			<!-- ko foreach: PerkStatistics -->
 				<div class="margin-bottom inline-block width-50">
 					<div class="margin-bottom-half">
-						<span class="vert-middle perk-icon width-32" data-bind="css: Perk"></span>
+						<span class="vert-middle perk-icon width-32" data-bind="css: Perk, attr: {title: Perk}"></span>
 						<span class="vert-middle margin-left font-16 small-caps" data-bind="text: Perk" />
 					</div>
 

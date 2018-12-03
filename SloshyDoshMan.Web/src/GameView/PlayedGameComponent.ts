@@ -79,7 +79,7 @@ ko.components.register(ComponentName, {
 							<!-- ko foreach: new Array($component.Game().PlayedGame.TotalWaves+1) -->
 							<td class="padding-half text-center" data-bind="with: player.PlayerWaveInfo[$index()+1]">
 								<span>
-									<div class="perk-icon width-32 block-center" data-bind="css: Perk" />
+									<div class="perk-icon width-32 block-center" data-bind="css: Perk, attr: {title: Perk}" />
 									<div class="wave-kill-count" data-bind="text: Kills" />
 								</span>
 							</td>

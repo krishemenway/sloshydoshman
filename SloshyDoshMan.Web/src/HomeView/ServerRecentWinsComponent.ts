@@ -139,7 +139,7 @@ ko.components.register(Name, {
 			<div class="font-24 text-white small-caps">Recent Wins</div>
 			<div class="flex-row padding-bottom" data-bind="foreach: RecentWins">
 				<div class="flex-even-distribution recent-win-game" data-bind="click: $component.GoToGame, event: {mouseover: $component.OnHover}, css: {selected: $component.SelectedRecentWin() === $data}">
-					<div class="map-cover margin-bottom" data-bind="css: Map" style="width: 238px; height: 119px;" />
+					<div class="map-cover margin-bottom" data-bind="css: Map" />
 					<div class="text-white font-14 text-center margin-bottom-half" data-bind="text: Map" />
 					<div class="text-gray font-14 text-center margin-bottom" data-bind="momentFormatDate: {Format: 'MMM Do YYYY', Date: TimeFinished}" />
 				</div>

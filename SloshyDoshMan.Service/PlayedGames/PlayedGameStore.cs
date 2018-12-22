@@ -11,10 +11,13 @@ namespace SloshyDoshMan.Service.PlayedGames
 		IPlayedGame FindPlayedGame(Guid playedGameId);
 		IPlayedGame FindCurrentGame(Guid serverId);
 		IReadOnlyList<IPlayedGame> FindRecentGames(int totalRecentGames, int startingAt);
+		IReadOnlyList<IPlayedGame> FindAllGames(long steamId);
 
 		void StartNewGame(GameState newGameState);
 		void EndGame(IPlayedGame currentPlayedGame, bool playersWon);
 		void UpdateGame(IPlayedGame playedGame, GameState newGameState);
+
+		int GetTotalGamesCount();
 	}
 
 	public class PlayedGameStore : IPlayedGameStore

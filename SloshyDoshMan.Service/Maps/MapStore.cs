@@ -27,9 +27,7 @@ namespace SloshyDoshMan.Service.Maps
 
 		private static IReadOnlyDictionary<string, Map> LoadMapList()
 		{
-			var stream = Assembly.GetEntryAssembly().GetManifestResourceStream("SloshyDoshMan.Service.Maps.Maps.json");
-
-			using (var streamReader = new StreamReader(stream))
+			using (var streamReader = new StreamReader(MapsResourceStream))
 			{
 				return JsonConvert
 					.DeserializeObject<IReadOnlyList<Map>>(streamReader.ReadToEnd())
@@ -37,6 +35,7 @@ namespace SloshyDoshMan.Service.Maps
 			}
 		}
 
-		public static Lazy<IReadOnlyDictionary<string, Map>> LazyMapList = new Lazy<IReadOnlyDictionary<string, Map>>(LoadMapList);
+		private static Stream MapsResourceStream => Assembly.GetEntryAssembly().GetManifestResourceStream("SloshyDoshMan.Service.Maps.Maps.json");
+		private static Lazy<IReadOnlyDictionary<string, Map>> LazyMapList = new Lazy<IReadOnlyDictionary<string, Map>>(LoadMapList);
 	}
 }

@@ -21,7 +21,7 @@ class PlayedGameViewModel {
 	}
 
 	private InitializeGame = () => {
-		$.get(`/webapi/game?playedGameId=${this.PlayedGameId()}`).done((response: ResultOf<GameViewModel>) => this.Game(response.Data));
+		$.get(`/webapi/games/profile?playedGameId=${this.PlayedGameId()}`).done((response: ResultOf<GameViewModel>) => this.Game(response.Data));
 	}
 
 	public Game: KnockoutObservable<GameViewModel|null>;

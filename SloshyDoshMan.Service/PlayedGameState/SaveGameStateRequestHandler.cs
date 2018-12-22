@@ -12,16 +12,16 @@ using System.Linq;
 
 namespace SloshyDoshMan.Service.PlayedGameState
 {
-	public class RefreshGameStateAction
+	public class SaveGameStateRequestHandler
 	{
-		public RefreshGameStateAction(
+		public SaveGameStateRequestHandler(
 			IPlayedGameStore playedGameStore = null, 
 			IPlayerStore playerStore = null,
 			IPlayerPlayedWaveStore playerPlayedWaveStore = null,
 			IPlayerPlayedGameStore playerPlayedGameStore = null,
 			IPushNotificationSender pushNotificationSender = null,
 			IMapStore mapStore = null,
-			ILogger<RefreshGameStateAction> logger = null)
+			ILogger<SaveGameStateRequestHandler> logger = null)
 		{
 			_playedGameStore = playedGameStore ?? new PlayedGameStore();
 			_playerStore = playerStore ?? new PlayerStore();
@@ -32,10 +32,10 @@ namespace SloshyDoshMan.Service.PlayedGameState
 			_pushNotificationSender = pushNotificationSender ?? new PushNotificationSender();
 			_mapStore = mapStore ?? new MapStore();
 
-			_logger = logger ?? new LoggerFactory().CreateLogger<RefreshGameStateAction>();
+			_logger = logger ?? new LoggerFactory().CreateLogger<SaveGameStateRequestHandler>();
 		}
 
-		public void RefreshGameState(GameState newGameState)
+		public Result HandleRequest(GameState newGameState)
 		{
 			FixMapName(newGameState);
 			RemoveOrFixInvalidPlayers(newGameState);
@@ -87,6 +87,8 @@ namespace SloshyDoshMan.Service.PlayedGameState
 				var playersLivingStatusBySteamId = newGameState.Players.ToDictionary(x => x.SteamId, x => x.Health > 0);
 				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Set(newGameState.ServerId, FindPlayersWithLivingStatusForServer(newGameState.ServerId).Merge(playersLivingStatusBySteamId));
 			}
+
+			return Result.Successful;
 		}
 
 		private void FixMapName(GameState newGameState)
@@ -113,7 +115,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 		private readonly IPushNotificationSender _pushNotificationSender;
 		private readonly IMapStore _mapStore;
-		private readonly ILogger<RefreshGameStateAction> _logger;
+		private readonly ILogger<SaveGameStateRequestHandler> _logger;
 
 		private static IMemoryCache SteamIdsAliveInFinalWaveByServerIdMemoryCache { get; set; } = new MemoryCache(new MemoryCacheOptions());
 	}

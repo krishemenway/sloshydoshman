@@ -50,7 +50,7 @@ class PlayerProfileViewModel {
 	}
 
 	private InitializePlayer = () => {
-		$.get(`/webapi/player?steamId=${this.SteamId()}`).done((response: ResultOf<PlayerViewModel>) => this.PlayerViewModel(response.Data));
+		$.get(`/webapi/players/profile?steamId=${this.SteamId()}`).done((response: ResultOf<PlayerViewModel>) => this.PlayerViewModel(response.Data));
 	}
 
 	public RecentGamesPageSize: number = 8;

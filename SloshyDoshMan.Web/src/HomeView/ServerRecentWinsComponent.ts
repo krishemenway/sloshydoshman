@@ -85,7 +85,7 @@ export class ServerRecentWinsViewModel {
 	}
 
 	private LoadServerStats = (gamesToSearch: number) : void => {
-		$.get(`/webapi/home/recentgames?count=${gamesToSearch}&startingAt=0`).done((response: ResultOf<RecentGameResponse>) => {
+		$.get(`/webapi/games/recent?count=${gamesToSearch}&startingAt=0`).done((response: ResultOf<RecentGameResponse>) => {
 			this.RecentWins(response.Data.RecentGames.filter((playedGame) => playedGame.PlayersWon).slice(0, 4));
 
 			if(this.RecentWins().length < 4) {
@@ -99,7 +99,7 @@ export class ServerRecentWinsViewModel {
 
 	private LoadPlayerDataForRecentWins = () : void => {
 		this.RecentWins().forEach(playedGame => {
-			$.get(`/webapi/game?playedGameId=${playedGame.PlayedGameId}`)
+			$.get(`/webapi/games/profile?playedGameId=${playedGame.PlayedGameId}`)
 			 .done((response: ResultOf<GameViewModel>) => this.FindOrCreatePlayerGameData(playedGame)(response.Data));
 		});
 	}

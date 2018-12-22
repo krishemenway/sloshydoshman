@@ -30,7 +30,7 @@ class RecentGamesViewModel {
 
 	private LoadPage(page: number) {
 		let startingAt = this.PageSize*(page-1);
-		$.get(`/webapi/home/recentgames?count=${this.PageSize}&startingAt=${startingAt}`).done(this.HandleGamesResponse);
+		$.get(`/webapi/games/recent?count=${this.PageSize}&startingAt=${startingAt}`).done(this.HandleGamesResponse);
 	}
 
 	private HandleGamesResponse = (response: ResultOf<RecentGameResponse>) => {

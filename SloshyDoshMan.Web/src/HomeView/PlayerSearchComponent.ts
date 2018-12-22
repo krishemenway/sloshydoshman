@@ -38,7 +38,7 @@ class PlayerSearchViewModel {
 			this.SearchResults([]);
 			this.SelectedPage(1);
 		} else {
-			$.get(`/webapi/home/search?query=${newQuery}`).done((response: ResultOf<PlayerSearchResult[]>) => { this.SearchResults(response.Data); this.SelectedPage(1); });
+			$.get(`/webapi/players/search?query=${newQuery}`).done((response: ResultOf<PlayerSearchResult[]>) => { this.SearchResults(response.Data); this.SelectedPage(1); });
 		}
 	}
 

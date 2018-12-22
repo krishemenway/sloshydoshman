@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace SloshyDoshMan.Service.Maps
 {
@@ -7,9 +6,9 @@ namespace SloshyDoshMan.Service.Maps
 	public class MapController : Controller
 	{
 		[HttpGet(nameof(Map))]
-		public IActionResult Map([FromQuery] string mapName)
+		public IActionResult Map([FromQuery] MapStatisticsRequest request)
 		{
-			return Json(new MapStatisticsRequestHandler().HandleRequest(mapName));
+			return Json(new MapStatisticsRequestHandler().HandleRequest(request));
 		}
 	}
 }

@@ -1,34 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace SloshyDoshMan.Service.PlayedGames
 {
-	[Route("webapi")]
+	[Route("webapi/games")]
 	public class PlayedGameController : Controller
 	{
-		[HttpGet(nameof(Game))]
-		public IActionResult Game([FromQuery] Guid playedGameId)
+		[HttpGet(nameof(Profile))]
+		[ProducesResponseType(200, Type = typeof(Result<PlayedGameProfile>))]
+		public IActionResult Profile([FromQuery] PlayedGameProfileRequest request)
 		{
-			var playedGame = new PlayedGameStore().FindPlayedGame(playedGameId);
-
-			if(playedGame == null)
-			{
-				return Ok(Result.Failure("Could not find game"));
-			}
-
-			var viewModel = new GameViewModel
-			{
-				PlayedGame = playedGame,
-				Scoreboard = new ScoreboardStore().GetScoreboard(playedGame)
-			};
-
-			return Json(Result<GameViewModel>.Successful(viewModel));
+			return Json(new PlayedGameProfileRequestHandler().HandleRequest(request));
 		}
-	}
 
-	public class GameViewModel
-	{
-		public IPlayedGame PlayedGame { get; set; }
-		public IScoreboard Scoreboard { get; set; }
+		[HttpGet(nameof(Recent))]
+		[ProducesResponseType(200, Type = typeof(Result<PlayedGameProfile>))]
+		public IActionResult Recent([FromQuery] RecentGamesRequest request)
+		{
+			return Json(new RecentGamesRequestHandler().HandleRequest(request));
+		}
+
+		[HttpGet(nameof(Statistics))]
+		[ProducesResponseType(200, Type = typeof(Result<OverallStats>))]
+		public IActionResult Statistics()
+		{
+			return Json(new OverallStatsRequestHandler().HandleRequest());
+		}
 	}
 }

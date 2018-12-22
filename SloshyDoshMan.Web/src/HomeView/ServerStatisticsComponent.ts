@@ -26,7 +26,7 @@ class ServerStatisticsViewModel {
 	}
 
 	public LoadServerStats = () => {
-		$.ajax({url: "/webapi/home/serverstats"}).done((response : ResultOf<ServerStatistics>) => { this.Stats(response.Data); });
+		$.ajax({url: "/webapi/games/statistics"}).done((response : ResultOf<ServerStatistics>) => { this.Stats(response.Data); });
 	}
 
 	private TotalPerkWavesChartData = () : PieChartData[] => {

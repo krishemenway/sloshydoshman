@@ -1,31 +1,16 @@
 ﻿using Dapper;
-using SloshyDoshMan.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SloshyDoshMan.Service.Players
 {
-	public class PlayerPerkStatistic
+	public interface IPlayerStatisticsStore
 	{
-		public string Perk { get; set; }
-		public int TotalWavesPlayed { get; set; }
-		public int TotalKills { get; set; }
+		IReadOnlyList<PlayerMapStatistic> FindMapStatistics(long steamId);
+		IReadOnlyList<PlayerPerkStatistic> FindPerkStatistics(long steamId);
 	}
 
-	public class PlayerMapStatistic
-	{
-		public long SteamId { get; set; }
-		public string Map { get; set; }
-		public string Difficulty { get; set; }
-		public Difficulty GameDifficulty => DifficultyHelpers.Convert(Difficulty);
-		public int GamesPlayed { get; set; }
-		public int GamesWon { get; set; }
-		public int TotalKills { get; set; }
-		public int FarthestWave { get; set; }
-		public bool IsWorkshop { get; set; }
-	}
-
-	public class PlayerStatisticsStore
+	public class PlayerStatisticsStore : IPlayerStatisticsStore
 	{
 		public IReadOnlyList<PlayerMapStatistic> FindMapStatistics(long steamId)
 		{

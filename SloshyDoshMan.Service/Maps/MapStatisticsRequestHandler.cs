@@ -10,11 +10,11 @@
 			_mapStatisticsStore = mapStatisticsStore ?? new MapStatisticsStore();
 		}
 
-		public Result<MapStatisticsRepsonse> HandleRequest(string mapName)
+		public Result<MapStatisticsRepsonse> HandleRequest(MapStatisticsRequest request)
 		{
-			if (!_mapStore.FindMap(mapName, out var map))
+			if (!_mapStore.FindMap(request.MapName, out var map))
 			{
-				return Result<MapStatisticsRepsonse>.Failure("Unknown Map Received");
+				return Result<MapStatisticsRepsonse>.Failure($"Unknown Map: {request.MapName}");
 			}
 
 			var response = new MapStatisticsRepsonse

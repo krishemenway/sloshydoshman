@@ -13,6 +13,8 @@ namespace SloshyDoshMan.Service.Players
 
 		void SaveAllPlayers(IReadOnlyList<PlayerGameState> players);
 		void SavePlayer(PlayerGameState playerGameState);
+
+		IReadOnlyList<Player> Search(string query);
 	}
 
 	public class PlayerStore : IPlayerStore

@@ -34,7 +34,7 @@ ko.components.register(ComponentName, {
 		<div class="center-layout-1000" data-bind="with: Game">
 			<div class="flex-row margin-bottom">
 				<div class="red-handle-container flex-fill-remaining margin-right-half text-white">
-					<div class="inset-text gray-9f font-34 bold margin-bottom" data-bind="text: PlayedGame.Map" />
+					<div class="gray-9f font-30 bold margin-bottom" data-bind="text: PlayedGame.Map" />
 					<div class="margin-bottom-half">
 						<!-- ko if: PlayedGame.PlayersWon -->Boss Defeated!<!-- /ko -->
 						<!-- ko ifnot: PlayedGame.PlayersWon -->Wave <!-- ko text: PlayedGame.ReachedWave --><!-- /ko --><!-- /ko -->
@@ -58,7 +58,7 @@ ko.components.register(ComponentName, {
 			</div>
 
 			<div class="game-scoreboard red-handle-container margin-bottom text-white">
-				<table class="font-12">
+				<table class="font-12 block-center">
 					<thead>
 						<tr>
 							<th class="inset-text gray-9f to-lower font-48 bold">Kills</th>
@@ -78,10 +78,8 @@ ko.components.register(ComponentName, {
 
 							<!-- ko foreach: new Array($component.Game().PlayedGame.TotalWaves+1) -->
 							<td class="padding-half text-center" data-bind="with: player.PlayerWaveInfo[$index()+1]">
-								<span>
-									<div class="perk-icon width-32 block-center" data-bind="css: Perk, attr: {title: Perk}" />
-									<div class="wave-kill-count" data-bind="text: Kills" />
-								</span>
+								<div class="perk-icon width-32 block-center" data-bind="css: Perk, attr: {title: Perk}" />
+								<div class="wave-kill-count text-center" data-bind="text: Kills" />
 							</td>
 							<!-- /ko -->
 						</tr>

@@ -55,12 +55,12 @@ ko.components.register(Name, {
 			<div class="font-36 text-white small-caps text-center margin-top-half">all games</div>
 			<div class="red-handle-container text-white">
 				<table class="bg-alternating-colors margin-bottom font-14 text-center width-100">
-					<thead><tr><td></td><td></td><td>Length</td><td>Waves</td></tr></thead>
+					<thead><tr><td></td><td></td><td class="text-center">Length</td><td class="text-center">Waves</td></tr></thead>
 					<tbody>
 						<!-- ko foreach: LoadedGames -->
 						<tr class="clickable" style="line-height: 26px" data-bind="click: $component.SelectGame">
 							<td class="padding-half text-left" style="width: 69%"><!-- ko text: Map --><!-- /ko -->&nbsp;<span class="text-gray margin-left" data-bind="${MomentFormatDate.Name}: {Format: 'MMMM Do, YYYY', Date: TimeStarted}"></span></td>
-							<td class="padding-half text-center" style="width: 11%" data-bind="text: Difficulty"></td>
+							<td class="padding-half text-center" style="width: 11%; min-width: 106px" data-bind="text: Difficulty"></td>
 							<td class="padding-half text-center" style="width: 10%" data-bind="text: Length"></td>
 							<td class="padding-half text-center" style="width: 10%"><!-- ko text: ReachedWave --><!-- /ko -->&nbsp;/&nbsp;<!-- ko text: TotalWaves --><!-- /ko --></td>
 						</tr>

@@ -147,9 +147,9 @@ ko.components.register(Name, {
 
 			<div class="flex-row">
 				<!-- ko foreach: RecentWinPlayers -->
-				<div class="flex-even-distribution text-white text-center recent-win-player padding clickable" data-bind="click: $component.GoToPlayer" style="height: 90px; overflow: hidden;">
+				<div class="flex-even-distribution text-white text-center recent-win-player padding clickable" data-bind="click: $component.GoToPlayer">
 					<div class="perk-icon width-32" data-bind="css: $component.FindPerkForRecentWin($data)" />
-					<div class="font-12" data-bind="html: UserName" />
+					<div class="font-12 text-center" data-bind="html: UserName" />
 				</div>
 				<!-- /ko -->
 			</div>

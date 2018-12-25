@@ -82,7 +82,7 @@ class ClickableNumberRangeViewModel {
 ko.components.register(Name, {
 	viewModel: ClickableNumberRangeViewModel,
 	template: `
-		<div class="clickable-number-range">
+		<div class="clickable-number-range text-center">
 			<!-- ko foreach: BeginRange() -->
 			<button class="select-number-button text-center" data-bind="click: $component.OnNumberClicked, text: $data, css: {selected: $data===$component.SelectedIndex()}"></button>&nbsp;
 			<!-- /ko -->

@@ -52,6 +52,7 @@
 	{ "Name": "KF-Outpost", "IsWorkshop": false },
 	{ "Name": "KF-Parking_Garage-v1012", "IsWorkshop": true },
 	{ "Name": "KF-PowerCore", "IsWorkshop": false },
+	{ "Name": "KF-PowerCore_Holdout", "IsWorkshop": false },
 	{ "Name": "KF-Prison", "IsWorkshop": false },
 	{ "Name": "KF-RatsManorV2-4", "IsWorkshop": true },
 	{ "Name": "KF-Rig", "IsWorkshop": true },

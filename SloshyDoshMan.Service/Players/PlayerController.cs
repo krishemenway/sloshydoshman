@@ -15,7 +15,7 @@ namespace SloshyDoshMan.Service.Players
 
 		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(Result<IReadOnlyList<PlayerProfile>>))]
-		public IActionResult Search(PlayerSearchRequest request)
+		public IActionResult Search([FromQuery] PlayerSearchRequest request)
 		{
 			return Json(new PlayerSearchRequestHandler().HandleRequest(request));
 		}

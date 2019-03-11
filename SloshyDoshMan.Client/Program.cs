@@ -29,14 +29,11 @@ namespace SloshyDoshMan.Client
 		{
 			try
 			{
-				var serverName = new KillingFloor2AdminScraper().FindServerName();
-				var request = new RegisterServerRequest { KF2ServerIP = Settings.KF2AdminHost, ServerName = serverName };
-
-				new SloshyDoshManService().RegisterServer(request);
+				new SloshyDoshManService().RegisterServer(new RegisterServerRequest { KF2ServerIP = Settings.KF2AdminHost });
 			}
 			catch (Exception e)
 			{
-				LoggerFactory.CreateLogger<Program>().LogError("Failure during server registration", e);
+				LoggerFactory.CreateLogger<Program>().LogError($"Failure during server registration: {e.Message}; {e.StackTrace}", e);
 			}
 		}
 

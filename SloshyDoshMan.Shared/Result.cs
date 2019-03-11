@@ -1,4 +1,4 @@
-﻿namespace SloshyDoshMan.Service
+﻿namespace SloshyDoshMan.Shared
 {
 	public class Result
 	{

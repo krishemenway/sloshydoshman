@@ -60,9 +60,15 @@ namespace SloshyDoshMan.Client
 						return task.Result;
 					});
 
-				var server = JsonConvert.DeserializeObject<IServer>(response.Result.Content.ReadAsStringAsync().Result);
-				_logger.LogInformation($"Registered Server: {server.ServerId}");
-				Program.ServerId = server.ServerId;
+				var result = JsonConvert.DeserializeObject<Result<Server>>(response.Result.Content.ReadAsStringAsync().Result);
+
+				if (!result.Success)
+				{
+					throw new Exception(result.ErrorMessage);
+				}
+
+				_logger.LogInformation($"Registered Server: {result.Data.ServerId}");
+				Program.ServerId = result.Data.ServerId;
 			}
 		}
 

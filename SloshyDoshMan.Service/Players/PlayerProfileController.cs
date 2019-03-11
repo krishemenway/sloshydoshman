@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SloshyDoshMan.Service.PlayedGames;
+using SloshyDoshMan.Shared;
 
 namespace SloshyDoshMan.Service.Players
 {

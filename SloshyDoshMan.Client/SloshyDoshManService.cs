@@ -49,7 +49,7 @@ namespace SloshyDoshMan.Client
 				_logger.LogInformation($"Registering Server");
 
 				var response = httpClient
-					.PostAsync(new Uri(SaveGameStatePath), new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"))
+					.PostAsync(new Uri(RegisterServerPath), new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"))
 					.ContinueWith(task =>
 					{
 						if (task.IsFaulted || task.IsCanceled)
@@ -60,7 +60,8 @@ namespace SloshyDoshMan.Client
 						return task.Result;
 					});
 
-				var result = JsonConvert.DeserializeObject<Result<Server>>(response.Result.Content.ReadAsStringAsync().Result);
+				var responseContent = response.Result.Content.ReadAsStringAsync().Result;
+				var result = JsonConvert.DeserializeObject<Result<Server>>(responseContent);
 
 				if (!result.Success)
 				{

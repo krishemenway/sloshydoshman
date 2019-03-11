@@ -6,8 +6,6 @@ namespace SloshyDoshMan.Service.Servers
 	[Route("api/servers")]
 	public class RegisterServerController : Controller
 	{
-		public RegisterServerController() : this(null) { }
-
 		public RegisterServerController(
 			IServerStore serverStore = null,
 			IRegisterServerRequestValidator registerRequestValidator = null)

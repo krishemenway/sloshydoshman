@@ -3,11 +3,11 @@
 namespace SloshyDoshMan.Service.Servers
 {
 	[Route("api/servers")]
-	public class ServerController : Controller
+	public class RegisterServerController : Controller
 	{
-		public ServerController() : this(null) { }
+		public RegisterServerController() : this(null) { }
 
-		public ServerController(
+		public RegisterServerController(
 			IServerStore serverStore = null,
 			IRegisterServerRequestValidator registerRequestValidator = null)
 		{
@@ -16,15 +16,16 @@ namespace SloshyDoshMan.Service.Servers
 		}
 
 		[HttpPost("register")]
-		public IActionResult Register([FromBody] RegisterServerRequest registerServerRequest)
+		[ProducesResponseType(200, Type = typeof(Result<IServer>))]
+		public IActionResult HandleRequest([FromBody] RegisterServerRequest request)
 		{
-			if(_registerServerRequestValidator.Validate(registerServerRequest))
+			if(!_registerServerRequestValidator.Validate(request, out var result))
 			{
-				var server = _serverStore.CreateNewServer(registerServerRequest.ServerName, Request.HttpContext.Connection.RemoteIpAddress.ToString());
-				return Ok(server);
+				return Ok(result);
 			}
-			
-			return BadRequest("Bitch");
+
+			var server = _serverStore.CreateNewServer(request.ServerName, Request.HttpContext.Connection.RemoteIpAddress.ToString());
+			return Ok(Result<IServer>.Successful(server));
 		}
 
 		private readonly IServerStore _serverStore;

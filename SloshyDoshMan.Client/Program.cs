@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SloshyDoshMan.Shared;
 using System;
+using System.IO;
 using System.Threading;
 
 namespace SloshyDoshMan.Client
@@ -10,6 +12,13 @@ namespace SloshyDoshMan.Client
 	{
 		public static void Main(string[] args)
 		{
+			Configuration = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+				.AddEnvironmentVariables()
+				.AddCommandLine(args)
+				.Build();
+
 			AddLogging();
 			ShowSettings();
 			RegisterServer();
@@ -52,6 +61,8 @@ namespace SloshyDoshMan.Client
 		public static readonly Settings Settings = new Settings();
 		public static Guid? ServerId { get; set; }
 		private static readonly IKillingFloor2AdminMonitor Monitor = new KillingFloor2AdminMonitor();
+
+		public static IConfiguration Configuration { get; private set; }
 
 		private static ManualResetEvent QuitEvent = new ManualResetEvent(false);
 	}

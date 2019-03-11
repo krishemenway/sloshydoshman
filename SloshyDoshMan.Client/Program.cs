@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SloshyDoshMan.Shared;
 using System;
 using System.Threading;
 
@@ -11,7 +12,16 @@ namespace SloshyDoshMan.Client
 		{
 			AddLogging();
 			ShowSettings();
+			RegisterServer();
 			StartMonitoring();
+		}
+
+		private static void RegisterServer()
+		{
+			var serverName = new KillingFloor2AdminScraper().FindServerName();
+			var request = new RegisterServerRequest { KF2ServerIP = Settings.KF2AdminHost, ServerName = serverName };
+
+			new SloshyDoshManService().RegisterServer(request);
 		}
 
 		private static void AddLogging()
@@ -40,6 +50,7 @@ namespace SloshyDoshMan.Client
 
 		public static readonly LoggerFactory LoggerFactory = new LoggerFactory();
 		public static readonly Settings Settings = new Settings();
+		public static Guid? ServerId { get; set; }
 		private static readonly IKillingFloor2AdminMonitor Monitor = new KillingFloor2AdminMonitor();
 
 		private static ManualResetEvent QuitEvent = new ManualResetEvent(false);

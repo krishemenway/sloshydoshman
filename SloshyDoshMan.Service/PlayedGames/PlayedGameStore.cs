@@ -9,11 +9,11 @@ namespace SloshyDoshMan.Service.PlayedGames
 	public interface IPlayedGameStore
 	{
 		IPlayedGame FindPlayedGame(Guid playedGameId);
-		IPlayedGame FindCurrentGame(Guid serverId);
+		bool TryFindCurrentGame(Guid serverId, out IPlayedGame playedGame);
 		IReadOnlyList<IPlayedGame> FindRecentGames(int totalRecentGames, int startingAt);
 		IReadOnlyList<IPlayedGame> FindAllGames(long steamId);
 
-		void StartNewGame(GameState newGameState);
+		IPlayedGame StartNewGame(GameState newGameState);
 		void EndGame(IPlayedGame currentPlayedGame, bool playersWon);
 		void UpdateGame(IPlayedGame playedGame, GameState newGameState);
 
@@ -40,7 +40,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 			}
 		}
 
-		public IPlayedGame FindCurrentGame(Guid serverId)
+		public bool TryFindCurrentGame(Guid serverId, out IPlayedGame playedGame)
 		{
 			const string sql = @"
 				SELECT
@@ -60,17 +60,12 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 			using (var connection = Database.CreateConnection())
 			{
-				var playedGame = connection
+				playedGame = connection
 					.Query<PlayedGameRecord>(sql, new { serverId })
 					.Select(CreateGame)
 					.SingleOrDefault();
 
-				if (playedGame == null || playedGame.TimeFinished.HasValue)
-				{
-					return null;
-				}
-
-				return playedGame;
+				return playedGame != null && !playedGame.TimeFinished.HasValue;
 			}
 		}
 
@@ -176,18 +171,18 @@ namespace SloshyDoshMan.Service.PlayedGames
 			}
 		}
 
-		public void StartNewGame(GameState newGameState)
+		public IPlayedGame StartNewGame(GameState newGameState)
 		{
 			const string sql = @"
 				INSERT INTO played_game
 				(played_game_id, map, game_type, game_length, game_difficulty, reached_wave, total_waves, server_id)
-				SELECT @PlayedGameId, @Map, @GameType, @GameLength, @Difficulty, @ReachedWave, @TotalWaves, @ServerId";
+				VALUES (uuid_generate_v4(), @Map, @GameType, @GameLength, @Difficulty, @ReachedWave, @TotalWaves, @ServerId)
+				RETURNING played_game_id; ";
 
 			using (var connection = Database.CreateConnection())
 			{
 				var sqlParams = new
 				{
-					PlayedGameId = Guid.NewGuid(),
 					newGameState.Map,
 					newGameState.GameType,
 					GameLength = newGameState.GameLength.ToString("G"),
@@ -197,7 +192,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 					newGameState.ServerId
 				};
 
-				connection.Execute(sql, sqlParams);
+				return FindPlayedGame(connection.QuerySingle<Guid>(sql, sqlParams));
 			}
 		}
 

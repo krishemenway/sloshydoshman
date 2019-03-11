@@ -1,4 +1,6 @@
-﻿namespace SloshyDoshMan.Service.Servers
+﻿using SloshyDoshMan.Shared;
+
+namespace SloshyDoshMan.Service.Servers
 {
 	public interface IRegisterServerRequestValidator
 	{

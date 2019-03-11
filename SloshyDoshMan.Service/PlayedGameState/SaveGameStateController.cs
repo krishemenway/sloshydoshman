@@ -47,51 +47,50 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 			_playerStore.SaveAllPlayers(newGameState.Players);
 
-			var currentPlayedGame = _playedGameStore.FindCurrentGame(newGameState.ServerId);
-
-			if (currentPlayedGame == null && newGameState.CurrentWave == 1)
+			if (!_playedGameStore.TryFindCurrentGame(newGameState.ServerId, out var currentPlayedGame) && newGameState.CurrentWave == 1)
 			{
-				var details = new PushNotificationDetails
-				{
-					Title = $"SloshyDoshMan Inc",
-					Content = $"New game has started on map {newGameState.Map} with {newGameState.Players.Count} players!",
-					TypeName = "SloshyDoshManIncServerUpdate"
-				};
-
-				_logger.LogDebug(details.Content);
-				_pushNotificationSender.NotifyAll(details);
-				_playedGameStore.StartNewGame(newGameState);
-				currentPlayedGame = _playedGameStore.FindCurrentGame(newGameState.ServerId);
+				currentPlayedGame = StartNewGame(newGameState);
 			}
 
-			if(currentPlayedGame != null)
+			if (newGameState.CurrentWave < currentPlayedGame.ReachedWave || newGameState.Map != currentPlayedGame.Map || newGameState.GameLength != currentPlayedGame.Length || newGameState.Difficulty != currentPlayedGame.Difficulty)
 			{
-				if (newGameState.CurrentWave < currentPlayedGame.ReachedWave || newGameState.Map != currentPlayedGame.Map || newGameState.GameLength != currentPlayedGame.Length || newGameState.Difficulty != currentPlayedGame.Difficulty)
-				{
-					var reachedBossWave = currentPlayedGame.ReachedWave > currentPlayedGame.TotalWaves;
-					var playersWon = reachedBossWave && FindPlayersWithLivingStatusForServer(newGameState.ServerId).Values.Any(isAlive => isAlive);
-					_playedGameStore.EndGame(currentPlayedGame, playersWon);
-					SteamIdsAliveInFinalWaveByServerIdMemoryCache.Remove(newGameState.ServerId);
-				}
-				else
-				{
-					_playedGameStore.UpdateGame(currentPlayedGame, newGameState);
+				var reachedBossWave = currentPlayedGame.ReachedWave > currentPlayedGame.TotalWaves;
+				var playersWon = reachedBossWave && FindPlayersWithLivingStatusForServer(newGameState.ServerId).Values.Any(isAlive => isAlive);
+				_playedGameStore.EndGame(currentPlayedGame, playersWon);
+				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Remove(newGameState.ServerId);
+			}
+			else
+			{
+				_playedGameStore.UpdateGame(currentPlayedGame, newGameState);
 
-					foreach (var player in newGameState.Players.Where(x => !string.IsNullOrEmpty(x.Perk)))
-					{
-						_playerPlayedGameStore.RecordPlayersPlayedGame(currentPlayedGame, player);
-						_playerPlayedWaveStore.RecordPlayerPlayedWave(currentPlayedGame, player);
-					}
+				foreach (var player in newGameState.Players.Where(x => !string.IsNullOrEmpty(x.Perk)))
+				{
+					_playerPlayedGameStore.RecordPlayersPlayedGame(currentPlayedGame, player);
+					_playerPlayedWaveStore.RecordPlayerPlayedWave(currentPlayedGame, player);
 				}
 			}
 
-			if(newGameState.CurrentWave > newGameState.TotalWaves)
+			if (newGameState.CurrentWave > newGameState.TotalWaves)
 			{
 				var playersLivingStatusBySteamId = newGameState.Players.ToDictionary(x => x.SteamId, x => x.Health > 0);
 				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Set(newGameState.ServerId, FindPlayersWithLivingStatusForServer(newGameState.ServerId).Merge(playersLivingStatusBySteamId));
 			}
 
 			return Json(Result.Successful);
+		}
+
+		private IPlayedGame StartNewGame(GameState newGameState)
+		{
+			var details = new PushNotificationDetails
+			{
+				Title = $"SloshyDoshMan Inc",
+				Content = $"New game has started on map {newGameState.Map} with {newGameState.Players.Count} players!",
+				TypeName = "SloshyDoshManIncServerUpdate"
+			};
+
+			_logger.LogDebug(details.Content);
+			_pushNotificationSender.NotifyAll(details);
+			return _playedGameStore.StartNewGame(newGameState);
 		}
 
 		private void FixMapName(GameState newGameState)

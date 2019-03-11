@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SloshyDoshMan.Shared;
 
 namespace SloshyDoshMan.Service.Servers
 {
@@ -30,11 +31,5 @@ namespace SloshyDoshMan.Service.Servers
 
 		private readonly IServerStore _serverStore;
 		private readonly IRegisterServerRequestValidator _registerServerRequestValidator;
-	}
-
-	public class RegisterServerRequest
-	{
-		public string KF2ServerIP { get; set; }
-		public string ServerName { get; set; }
 	}
 }

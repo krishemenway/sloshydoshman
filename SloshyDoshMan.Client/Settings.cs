@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
 using System.IO;
 
 namespace SloshyDoshMan.Client
@@ -15,8 +14,6 @@ namespace SloshyDoshMan.Client
 				.AddEnvironmentVariables()
 				.Build();
 		}
-
-		public Guid ServerId => Configuration.GetValue<Guid>("ServerId");
 
 		public string KF2AdminHost => Configuration.GetValue<string>("KF2AdminHost");
 		public int KF2AdminPort => Configuration.GetValue<int>("KF2AdminPort");

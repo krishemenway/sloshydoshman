@@ -27,10 +27,17 @@ namespace SloshyDoshMan.Client
 
 		private static void RegisterServer()
 		{
-			var serverName = new KillingFloor2AdminScraper().FindServerName();
-			var request = new RegisterServerRequest { KF2ServerIP = Settings.KF2AdminHost, ServerName = serverName };
+			try
+			{
+				var serverName = new KillingFloor2AdminScraper().FindServerName();
+				var request = new RegisterServerRequest { KF2ServerIP = Settings.KF2AdminHost, ServerName = serverName };
 
-			new SloshyDoshManService().RegisterServer(request);
+				new SloshyDoshManService().RegisterServer(request);
+			}
+			catch (Exception e)
+			{
+				LoggerFactory.CreateLogger<Program>().LogError("Failure during server registration", e);
+			}
 		}
 
 		private static void AddLogging()

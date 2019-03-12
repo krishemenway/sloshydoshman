@@ -35,13 +35,18 @@ ko.components.register(ComponentName, {
 			<div class="flex-row margin-bottom">
 				<div class="red-handle-container flex-fill-remaining margin-right-half text-white">
 					<div class="gray-9f font-30 bold margin-bottom" data-bind="text: PlayedGame.Map" />
+
 					<div class="margin-bottom-half">
 						<!-- ko if: PlayedGame.PlayersWon -->Boss Defeated!<!-- /ko -->
 						<!-- ko ifnot: PlayedGame.PlayersWon -->Wave <!-- ko text: PlayedGame.ReachedWave --><!-- /ko --><!-- /ko -->
 					</div>
+
 					<div class="margin-bottom"><!-- ko text: Scoreboard.TotalKills --><!-- /ko --> Total Kills</div>
 
+					<div class="margin-bottom">Difficulty: <!-- ko text: PlayedGame.Difficulty --><!-- /ko --></div>
+
 					<div class="margin-bottom-half" data-bind="${MomentFormatDate.Name}: {Date: PlayedGame.TimeStarted, Format: 'dddd MMMM Do, YYYY'}" />
+
 					<div class="margin-bottom">
 						<!-- ko ${MomentFormatDate.Name}: {Date: PlayedGame.TimeStarted, Format: 'hh:mm:ss A'} --><!-- /ko -->
 						&nbsp;&ndash;&nbsp;

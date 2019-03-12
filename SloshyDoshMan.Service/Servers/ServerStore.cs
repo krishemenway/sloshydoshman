@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using SloshyDoshMan.Shared;
 using System;
 
 namespace SloshyDoshMan.Service.Servers
@@ -14,15 +15,14 @@ namespace SloshyDoshMan.Service.Servers
 		{
 			const string sql = @"
 				INSERT INTO server
-				(ServerId, ServerName, LastKnownIPAddress)
+				(server_id, name, last_known_ip)
 				VALUES
-				(@ServerId, @ServerName, @IpAddress)";
+				(uuid_generate_v4(), @ServerName, @IpAddress)
+				RETURNING server_id";
 
 			using(var connection = Database.CreateConnection())
 			{
-				var newServerId = Guid.NewGuid();
-
-				connection.Execute(sql, new { ServerId = newServerId, serverName, ipAddress });
+				var newServerId = connection.QuerySingle<Guid>(sql, new { serverName, ipAddress });
 
 				return new Server
 					{

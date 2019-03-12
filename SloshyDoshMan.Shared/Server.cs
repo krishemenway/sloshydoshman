@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SloshyDoshMan.Service.Servers
+namespace SloshyDoshMan.Shared
 {
 	public interface IServer
 	{

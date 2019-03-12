@@ -1,4 +1,6 @@
-﻿namespace SloshyDoshMan.Service.Maps
+﻿using SloshyDoshMan.Shared;
+
+namespace SloshyDoshMan.Service.Maps
 {
 	public class MapStatisticsRequestHandler
 	{

@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SloshyDoshMan.Shared;
 using System;
+using System.IO;
 using System.Threading;
 
 namespace SloshyDoshMan.Client
@@ -9,9 +12,29 @@ namespace SloshyDoshMan.Client
 	{
 		public static void Main(string[] args)
 		{
+			Configuration = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+				.AddEnvironmentVariables()
+				.AddCommandLine(args)
+				.Build();
+
 			AddLogging();
 			ShowSettings();
+			RegisterServer();
 			StartMonitoring();
+		}
+
+		private static void RegisterServer()
+		{
+			try
+			{
+				new SloshyDoshManService().RegisterServer(new RegisterServerRequest { KF2ServerIP = Settings.KF2AdminHost });
+			}
+			catch (Exception e)
+			{
+				LoggerFactory.CreateLogger<Program>().LogError($"Failure during server registration: {e.Message}; {e.StackTrace}", e);
+			}
 		}
 
 		private static void AddLogging()
@@ -40,7 +63,10 @@ namespace SloshyDoshMan.Client
 
 		public static readonly LoggerFactory LoggerFactory = new LoggerFactory();
 		public static readonly Settings Settings = new Settings();
+		public static Guid? ServerId { get; set; }
 		private static readonly IKillingFloor2AdminMonitor Monitor = new KillingFloor2AdminMonitor();
+
+		public static IConfiguration Configuration { get; private set; }
 
 		private static ManualResetEvent QuitEvent = new ManualResetEvent(false);
 	}

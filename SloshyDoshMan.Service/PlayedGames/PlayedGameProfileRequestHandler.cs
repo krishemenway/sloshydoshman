@@ -1,4 +1,6 @@
-﻿namespace SloshyDoshMan.Service.PlayedGames
+﻿using SloshyDoshMan.Shared;
+
+namespace SloshyDoshMan.Service.PlayedGames
 {
 	public class PlayedGameProfileRequestHandler
 	{

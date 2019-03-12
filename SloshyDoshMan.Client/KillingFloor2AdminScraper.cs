@@ -9,6 +9,7 @@ namespace SloshyDoshMan.Client
 	public interface IKillingFloor2AdminScraper
 	{
 		GameState GetCurrentGameState();
+		string FindServerName();
 	}
 
 	public class KillingFloor2AdminScraper : IKillingFloor2AdminScraper
@@ -18,8 +19,20 @@ namespace SloshyDoshMan.Client
 			_killingFloor2AdminClient = killingFloor2AdminClient ?? new KillingFloor2AdminClient();
 		}
 
+		public string FindServerName()
+		{
+			var scoreboardContent = CQ.Create(_killingFloor2AdminClient.GetScoreboardContent());
+			var currentGameElements = scoreboardContent.Select("#currentGame").Children();
+			return currentGameElements[1].InnerText;
+		}
+
 		public GameState GetCurrentGameState()
 		{
+			if (!Program.ServerId.HasValue)
+			{
+				throw new Exception("No ServerId received from server. Make sure you can reach the SloshyDoshMan service API from this client.");
+			}
+
 			var playerMetadataContent = CQ.Create(_killingFloor2AdminClient.GetPlayersContent());
 			var scoreboardContent = CQ.Create(_killingFloor2AdminClient.GetScoreboardContent());
 
@@ -36,7 +49,7 @@ namespace SloshyDoshMan.Client
 
 				return new GameState
 				{
-					ServerId = Program.Settings.ServerId,
+					ServerId = Program.ServerId.Value,
 					ServerName = currentGameElements[1].InnerText,
 					Map = currentGameElements[7].Attributes["title"],
 					Difficulty = currentRulesElements[3].InnerText,

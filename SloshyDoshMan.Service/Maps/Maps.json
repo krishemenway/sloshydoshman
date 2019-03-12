@@ -63,6 +63,7 @@
 	{ "Name": "KF-ShoppingSpree", "IsWorkshop": false },
 	{ "Name": "KF-SLS-Cell_Block_Six-Beta2", "IsWorkshop": true },
 	{ "Name": "KF-SpaceportPerdition", "IsWorkshop": true },
+	{ "Name": "KF-Spillway", "IsWorkshop": false },
 	{ "Name": "KF-TheDescent", "IsWorkshop": false },
 	{ "Name": "KF-TheDuke-B2", "IsWorkshop": true },
 	{ "Name": "KF-TheDuke", "IsWorkshop": true },

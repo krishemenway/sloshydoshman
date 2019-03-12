@@ -13,7 +13,8 @@
     "url": "git://github.com/krishemenway/sloshydoshman.git"
   },
   "scripts": {
-    "dev-server": "run ./dev-server.js"
+    "dev-server": "node ./dev-server.js",
+    "build": "grunt build"
   },
   "dependencies": {},
   "peerDependencies": {},

@@ -24,7 +24,7 @@ namespace SloshyDoshMan.Service.Players
 		{
 			if (_playerStore.TryFindPlayer(request.SteamId, out var player))
 			{
-				Log.Debug("Unable to find profile for steam id: {SteamId}", request.SteamId);
+				Log.Information("Unable to find profile for steam id: {SteamId}", request.SteamId);
 				return Json(Result<PlayerProfile>.Failure("Unable to find profile for steam id"));
 			}
 

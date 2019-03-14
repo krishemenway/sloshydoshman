@@ -43,7 +43,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 			FixMapName(newGameState);
 			RemoveOrFixInvalidPlayers(newGameState);
 
-			Log.Debug("Refreshing with Game State: {GameState}", JsonConvert.SerializeObject(newGameState));
+			Log.Information("Refreshing with Game State: {GameState}", JsonConvert.SerializeObject(newGameState));
 
 			_playerStore.SaveAllPlayers(newGameState.Players);
 
@@ -56,7 +56,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 			{
 				var playersWon = PlayersWonGame(newGameState, currentGame);
 				_playedGameStore.EndGame(currentGame, playersWon);
-				Log.Debug("Game Finished - {Map} {Difficulty} - {ReachedWave} / {TotalWaves} Won: {PlayersWin}", currentGame.Map, currentGame.Difficulty, currentGame.ReachedWave, currentGame.TotalWaves, playersWon);
+				Log.Information("Game Finished - {Map} {Difficulty} - {ReachedWave} / {TotalWaves} Won: {PlayersWin}", currentGame.Map, currentGame.Difficulty, currentGame.ReachedWave, currentGame.TotalWaves, playersWon);
 				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Remove(newGameState.ServerId);
 			}
 			else
@@ -96,7 +96,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 		{
 			var newGame = _playedGameStore.StartNewGame(newGameState);
 
-			Log.Debug("New Game On Server {ServerId} {Map} {Difficulty} {PlayerCount}", newGameState.ServerId, newGameState.Map, newGameState.Difficulty, newGameState.Players.Count);
+			Log.Information("New Game On Server {ServerId} {Map} {Difficulty} {PlayerCount}", newGameState.ServerId, newGameState.Map, newGameState.Difficulty, newGameState.Players.Count);
 			_pushNotificationSender.NotifyAll("SloshyDoshManIncServerUpdate", $"SloshyDoshMan Inc", $"New game has started on map {newGameState.Map} with {newGameState.Players.Count} players!");
 
 			return newGame;

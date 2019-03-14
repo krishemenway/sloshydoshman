@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SloshyDoshMan.Shared
+﻿namespace SloshyDoshMan.Shared
 {
 	public class RegisterServerRequest
 	{

@@ -22,7 +22,7 @@ namespace SloshyDoshMan.Service.Players
 		[ProducesResponseType(200, Type = typeof(Result<PlayerProfile>))]
 		public IActionResult HandleRequest([FromQuery]PlayerProfileRequest request)
 		{
-			if (_playerStore.TryFindPlayer(request.SteamId, out var player))
+			if (!_playerStore.TryFindPlayer(request.SteamId, out var player))
 			{
 				Log.Information("Unable to find profile for steam id: {SteamId}", request.SteamId);
 				return Json(Result<PlayerProfile>.Failure("Unable to find profile for steam id"));

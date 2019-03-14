@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog;
 using SloshyDoshMan.Service.Maps;
 using SloshyDoshMan.Service.Notifications;
 using SloshyDoshMan.Service.PlayedGames;
@@ -33,64 +34,81 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 			_pushNotificationSender = pushNotificationSender ?? new PushNotificationSender();
 			_mapStore = mapStore ?? new MapStore();
-
-			_logger = logger ?? new LoggerFactory().CreateLogger<SaveGameStateController>();
 		}
 
 		[HttpPost("save")]
+		[ProducesResponseType(200, Type = typeof(Result))]
 		public IActionResult HandleRequest([FromBody] GameState newGameState)
 		{
 			FixMapName(newGameState);
 			RemoveOrFixInvalidPlayers(newGameState);
 
-			_logger.LogDebug("Refreshing with Game State: {0}", JsonConvert.SerializeObject(newGameState));
+			Log.Debug("Refreshing with Game State: {GameState}", JsonConvert.SerializeObject(newGameState));
 
 			_playerStore.SaveAllPlayers(newGameState.Players);
 
-			if (!_playedGameStore.TryFindCurrentGame(newGameState.ServerId, out var currentPlayedGame) && newGameState.CurrentWave == 1)
+			if (!_playedGameStore.TryFindCurrentGame(newGameState.ServerId, out var currentGame) && newGameState.CurrentWave == 1)
 			{
-				currentPlayedGame = StartNewGame(newGameState);
+				currentGame = StartNewGame(newGameState);
 			}
 
-			if (newGameState.CurrentWave < currentPlayedGame.ReachedWave || newGameState.Map != currentPlayedGame.Map || newGameState.GameLength != currentPlayedGame.Length || newGameState.Difficulty != currentPlayedGame.Difficulty)
+			if (MapHasChanged(newGameState, currentGame))
 			{
-				var reachedBossWave = currentPlayedGame.ReachedWave > currentPlayedGame.TotalWaves;
-				var playersWon = reachedBossWave && FindPlayersWithLivingStatusForServer(newGameState.ServerId).Values.Any(isAlive => isAlive);
-				_playedGameStore.EndGame(currentPlayedGame, playersWon);
+				var playersWon = PlayersWonGame(newGameState, currentGame);
+				_playedGameStore.EndGame(currentGame, playersWon);
+				Log.Debug("Game Finished - {Map} {Difficulty} - {ReachedWave} / {TotalWaves} Won: {PlayersWin}", currentGame.Map, currentGame.Difficulty, currentGame.ReachedWave, currentGame.TotalWaves, playersWon);
 				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Remove(newGameState.ServerId);
 			}
 			else
 			{
-				_playedGameStore.UpdateGame(currentPlayedGame, newGameState);
-
-				foreach (var player in newGameState.Players.Where(x => !string.IsNullOrEmpty(x.Perk)))
-				{
-					_playerPlayedGameStore.RecordPlayersPlayedGame(currentPlayedGame, player);
-					_playerPlayedWaveStore.RecordPlayerPlayedWave(currentPlayedGame, player);
-				}
+				_playedGameStore.UpdateGame(currentGame, newGameState);
+				UpdatePlayerRecords(currentGame, newGameState);
 			}
 
 			if (newGameState.CurrentWave > newGameState.TotalWaves)
 			{
-				var playersLivingStatusBySteamId = newGameState.Players.ToDictionary(x => x.SteamId, x => x.Health > 0);
-				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Set(newGameState.ServerId, FindPlayersWithLivingStatusForServer(newGameState.ServerId).Merge(playersLivingStatusBySteamId));
+				var currentPlayerLivingStatus = newGameState.Players.ToDictionary(x => x.SteamId, x => x.Health > 0);
+				var newPlayerLivingStatus = FindPlayersWithLivingStatusForServer(newGameState.ServerId).Merge(currentPlayerLivingStatus);
+
+				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Set(newGameState.ServerId, newPlayerLivingStatus);
 			}
 
 			return Json(Result.Successful);
 		}
 
+		private bool PlayersWonGame(GameState newGameState, IPlayedGame currentGame)
+		{
+			var reachedBossWave = currentGame.ReachedWave > currentGame.TotalWaves;
+			var playersAlive = FindPlayersWithLivingStatusForServer(newGameState.ServerId).Values.Any(isAlive => isAlive);
+
+			return reachedBossWave && playersAlive;
+		}
+
+		private bool MapHasChanged(GameState newGameState, IPlayedGame currentGame)
+		{
+			return newGameState.CurrentWave < currentGame.ReachedWave 
+				|| newGameState.Map != currentGame.Map 
+				|| newGameState.GameLength != currentGame.Length 
+				|| newGameState.Difficulty != currentGame.Difficulty;
+		}
+
 		private IPlayedGame StartNewGame(GameState newGameState)
 		{
-			var details = new PushNotificationDetails
-			{
-				Title = $"SloshyDoshMan Inc",
-				Content = $"New game has started on map {newGameState.Map} with {newGameState.Players.Count} players!",
-				TypeName = "SloshyDoshManIncServerUpdate"
-			};
+			var newGame = _playedGameStore.StartNewGame(newGameState);
 
-			_logger.LogDebug(details.Content);
-			_pushNotificationSender.NotifyAll(details);
-			return _playedGameStore.StartNewGame(newGameState);
+			Log.Debug("New Game On Server {ServerId} {Map} {Difficulty} {PlayerCount}", newGameState.ServerId, newGameState.Map, newGameState.Difficulty, newGameState.Players.Count);
+			_pushNotificationSender.NotifyAll("SloshyDoshManIncServerUpdate", $"SloshyDoshMan Inc", $"New game has started on map {newGameState.Map} with {newGameState.Players.Count} players!");
+
+			return newGame;
+		}
+
+		private void UpdatePlayerRecords(IPlayedGame currentGame, GameState newGameState)
+		{
+			foreach (var player in newGameState.Players.Where(state => !string.IsNullOrEmpty(state.Perk)))
+			{
+				_playerPlayedGameStore.RecordPlayersPlayedGame(currentGame, player);
+				_playerPlayedWaveStore.RecordPlayerPlayedWave(currentGame, player);
+			}
 		}
 
 		private void FixMapName(GameState newGameState)
@@ -117,7 +135,6 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 		private readonly IPushNotificationSender _pushNotificationSender;
 		private readonly IMapStore _mapStore;
-		private readonly ILogger<SaveGameStateController> _logger;
 
 		private static IMemoryCache SteamIdsAliveInFinalWaveByServerIdMemoryCache { get; set; } = new MemoryCache(new MemoryCacheOptions());
 	}

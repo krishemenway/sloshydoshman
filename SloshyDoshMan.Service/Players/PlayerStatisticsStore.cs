@@ -89,7 +89,8 @@ namespace SloshyDoshMan.Service.Players
 				LEFT OUTER JOIN player_played_wave ppw
 					ON sp.name = ppw.perk
 					AND (ppw.steam_id = @SteamId OR ppw.steam_id IS NULL)
-				GROUP BY sp.name";
+				GROUP BY sp.name
+				ORDER BY totalwavesplayed DESC";
 			
 			using (var connection = Database.CreateConnection())
 			{

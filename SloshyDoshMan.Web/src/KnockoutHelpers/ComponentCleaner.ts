@@ -1,15 +1,16 @@
+import {components} from "knockout";
 import * as ko from "knockout";
 
-let componentLoader : KnockoutComponentTypes.Loader = {
+let componentLoader : components.Loader = {
 	loadTemplate: function(name: string, templateConfig: any, callback: (result: Node[]|null) => void) {
-		if (ko.components.defaultLoader.loadTemplate === undefined) {
+		if (ko.components.loaders[1].loadTemplate === undefined) {
 			throw "Something is wrong with knockout";
 		}
 
 		if(typeof templateConfig === "string") {
-			ko.components.defaultLoader.loadTemplate(name, templateConfig.replace(/[\t\n]/g, ''), callback);
+			ko.components.loaders[1].loadTemplate(name, templateConfig.replace(/[\t\n]/g, ''), callback);
 		} else {
-			ko.components.defaultLoader.loadTemplate(name, templateConfig, callback);
+			ko.components.loaders[1].loadTemplate(name, templateConfig, callback);
 		}
 	}
 }

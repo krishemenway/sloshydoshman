@@ -1,9 +1,10 @@
-export var Name : string = "ClickableNumberRange";
+import { Observable, Computed } from "knockout";
+import * as ko from "knockout";
 
 interface ClickableNumberRangeParams {
 	From: number;
 	To: number;
-	SelectedIndex: KnockoutObservable<number>;
+	SelectedIndex: Observable<number>;
 	OnNumberClicked: (numberClicked: number) => void;
 }
 
@@ -66,11 +67,11 @@ class ClickableNumberRangeViewModel {
 		return array;
 	}
 
-	public SelectedIndex: KnockoutObservable<number>;
+	public SelectedIndex: Observable<number>;
 
-	public BeginRange: KnockoutComputed<number[]>;
-	public MiddleRange: KnockoutComputed<number[]>;
-	public EndRange: KnockoutComputed<number[]>;
+	public BeginRange: Computed<number[]>;
+	public MiddleRange: Computed<number[]>;
+	public EndRange: Computed<number[]>;
 
 	public OnNumberClicked: (numberClicked: number) => void;
 
@@ -79,6 +80,7 @@ class ClickableNumberRangeViewModel {
 	private TotalRange: number;
 }
 
+export var Name : string = "ClickableNumberRange";
 ko.components.register(Name, {
 	viewModel: ClickableNumberRangeViewModel,
 	template: `

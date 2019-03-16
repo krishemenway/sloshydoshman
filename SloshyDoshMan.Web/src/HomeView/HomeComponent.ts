@@ -2,15 +2,15 @@ import * as ServerRecentWins from "HomeView/ServerRecentWinsComponent";
 import * as ServerRecentGames from "HomeView/ServerRecentGamesComponent";
 import * as ServerStatistics from "HomeView/ServerStatisticsComponent";
 import * as PlayerSearch from "HomeView/PlayerSearchComponent";
-
-export var ComponentName : string = "Home";
+import * as ko from "knockout";
 
 class HomeViewModel {
 	constructor(params?: any) {
 	}
 }
 
-ko.components.register(ComponentName, {
+export var Name : string = "Home";
+ko.components.register(Name, {
 	viewModel: HomeViewModel,
 	template: `
 		<div>

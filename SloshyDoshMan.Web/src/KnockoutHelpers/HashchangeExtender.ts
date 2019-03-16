@@ -1,6 +1,9 @@
 import {Dictionary} from 'CommonDataStructures/Dictionary';
 import * as ko from "knockout";
 
+const observablesByHashField: Dictionary<ko.Observable<string>> = {};
+const observableDefaultsByHashField: Dictionary<string> = {};
+
 function parseQueryString(queryString: string) : Dictionary<string> {
 	if(queryString[0] === "#") {
 		queryString = queryString.slice(1);
@@ -26,60 +29,40 @@ function createQueryString(queryStringParams: Dictionary<string>) : string {
 	return Object.keys(queryStringParams).map((key) => `${key}=${queryStringParams[key]}`).join('&');
 }
 
-function findValueForKey(key: string) : string {
-	let state = parseQueryString(window.location.hash);
-	return state[key];
-}
+export function SetState(newState: Dictionary<string>) : void {
+	let queryString = createQueryString(newState);
 
-function setValueForKey(key: string, value: string) : void {
-	let currentState = parseQueryString(window.location.hash);
-
-	if(!value) {
-		delete currentState[key];
-	} else {
-		currentState[key] = value;
-	}
-
-	SetState(currentState);
-}
-
-function setValueToTargetForKey(targetObservable : KnockoutObservable<any>, hashKey: string) {
-	let value : any = findValueForKey(hashKey);
-	let valueAsNumber = parseInt(value, 10);
-
-	if(!isNaN(valueAsNumber) && valueAsNumber.toString() === value) {
-		value = valueAsNumber;
-	}
-
-	if(value != targetObservable()) {
-		targetObservable(value);
+	if (window.location.hash !== queryString) {
+		window.location.hash = queryString;
 	}
 }
 
-function initialize(targetObservable : KnockoutObservable<string>, key: string) {
-	setValueToTargetForKey(targetObservable, key);
+export function GetState() : Dictionary<string> {
+	return parseQueryString(window.location.hash);
+}
 
-	targetObservable.subscribe((newValue) => {
-		let currentValue = findValueForKey(key);
+export function CreateObservable(parameterName: string, defaultValue: string) {
+	observableDefaultsByHashField[parameterName] = defaultValue;
+	let observable = ko.observable<string>(GetState()[parameterName] || defaultValue);
+	return observablesByHashField[parameterName] = observable;
+}
 
-		if(!!currentValue && currentValue == newValue) {
-			return;
+$(window).on('hashchange', () => {
+	let currentState = GetState();
+	console.log("Hash Changed", currentState);
+
+	Object.keys(observablesByHashField).forEach((key) => {
+		let observable = observablesByHashField[key];
+		let currentValue = currentState[key];
+
+		if (observable() !== currentValue) {
+			if (currentValue === "" || currentValue === null || currentValue === undefined) {
+				observable(observableDefaultsByHashField[key]);
+			} else {
+				observable(currentState[key])
+			}
 		}
 
-		setValueForKey(key, newValue);
+		console.log(observable(), currentValue);
 	});
-
-	$(window).on('hashchange', () => {
-		setValueToTargetForKey(targetObservable, key);
-	});
-}
-
-export function SetState(newState: Dictionary<string>) : void {
-	window.location.hash = createQueryString(newState);
-}
-
-export function CreateObservable<T>(parameterName: string, defaultValue: T) {
-	return ko.observable(defaultValue).extend({hashchange: parameterName});
-}
-
-(<any>ko.extenders).hashchange = initialize;
+});

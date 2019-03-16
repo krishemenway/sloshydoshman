@@ -1,18 +1,17 @@
 import {ResultOf} from "CommonDataStructures/ResultOf";
 import {PlayedGame, RecentGameResponse} from "Server";
 import {GoToView} from "App";
+import {Observable, ObservableArray, Subscription} from "knockout";
 import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import * as Pagination from "Pagination/PaginationComponent";
 import * as GameView from "GameView/PlayedGameComponent";
 import * as ko from "knockout";
 import * as $ from "jquery";
 
-export var Name : string = "ServerRecentGames"; 
-
 class RecentGamesViewModel {
 	constructor(params?: any) {
 		this.HasLoadedGames = ko.observable(false);
-		this.LoadedGames = ko.observableArray([]);
+		this.LoadedGames = ko.observableArray();
 		this.PageNumber = ko.observable(1);
 		this.TotalNumberOfGames = ko.observable(0);
 
@@ -25,7 +24,7 @@ class RecentGamesViewModel {
 	}
 
 	public SelectGame = (game: PlayedGame) : void => {
-		GoToView(GameView.ComponentName, {"PlayedGameId": game.PlayedGameId});
+		GoToView(GameView.Name, {"PlayedGameId": game.PlayedGameId});
 	}
 
 	private LoadPage(page: number) {
@@ -38,16 +37,17 @@ class RecentGamesViewModel {
 		this.LoadedGames(response.Data.RecentGames);
 	}
 
-	public TotalNumberOfGames: KnockoutObservable<number>;
-	public PageNumber: KnockoutObservable<number>;
+	public TotalNumberOfGames: Observable<number>;
+	public PageNumber: Observable<number>;
 	public PageSize: number = 10;
 
-	public HasLoadedGames: KnockoutObservable<boolean>;
-	public LoadedGames: KnockoutObservableArray<PlayedGame>;
+	public HasLoadedGames: Observable<boolean>;
+	public LoadedGames: ObservableArray<PlayedGame>;
 
-	private PageNumberSubscription: KnockoutSubscription;
+	private PageNumberSubscription: Subscription;
 }
 
+export var Name : string = "ServerRecentGames"; 
 ko.components.register(Name, {
 	viewModel: RecentGamesViewModel,
 	template: `

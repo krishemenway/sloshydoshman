@@ -1,9 +1,11 @@
-import * as moment from 'moment';
+import * as moment from "moment";
+import { Observable } from "knockout";
+import * as ko from "knockout"
 
 export var Name : string = "MomentFormatDate";
 
 interface MomentFormatDateParams {
-	Date: KnockoutObservable<string>|string;
+	Date: Observable<string>|string;
 	Format: string;
 }
 

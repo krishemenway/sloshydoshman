@@ -1,17 +1,16 @@
 import {ResultOf} from "CommonDataStructures/ResultOf";
 import {ScoreboardPlayer, GameViewModel} from "Server";
 import {GoToView} from "App";
+import {Observable} from "knockout";
 import * as HashChange from "KnockoutHelpers/HashchangeExtender";
 import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import * as PlayerView from "PlayerView/PlayerProfileComponent";
 import * as ko from "knockout";
 import * as $ from "jquery";
 
-export var ComponentName : string = "PlayedGame";
-
 class PlayedGameViewModel {
 	constructor() {
-		this.PlayedGameId = HashChange.CreateObservable("PlayedGameId", null);
+		this.PlayedGameId = HashChange.CreateObservable("PlayedGameId", "");
 		this.Game = ko.observable(null);
 		this.InitializeGame();
 	}
@@ -24,11 +23,12 @@ class PlayedGameViewModel {
 		$.get(`/webapi/games/profile?playedGameId=${this.PlayedGameId()}`).done((response: ResultOf<GameViewModel>) => this.Game(response.Data));
 	}
 
-	public Game: KnockoutObservable<GameViewModel|null>;
-	public PlayedGameId: KnockoutObservable<string|null>;
+	public Game: Observable<GameViewModel|null>;
+	public PlayedGameId: Observable<string>;
 }
 
-ko.components.register(ComponentName, {
+export var Name : string = "PlayedGame";
+ko.components.register(Name, {
 	viewModel: PlayedGameViewModel,
 	template: `
 		<div class="center-layout-1000" data-bind="with: Game">

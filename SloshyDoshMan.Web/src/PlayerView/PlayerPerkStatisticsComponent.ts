@@ -1,15 +1,16 @@
 import {PlayerViewModel} from "Server";
 import * as NumberWithCommas from "KnockoutHelpers/NumberWithCommasBindingHandler";
+import {Observable} from "knockout";
 import * as ko from "knockout";
 
 export var ComponentName = "PlayerPerkStatistics";
 
 class PlayerPerkStatisticsViewModel {
-	constructor(params: KnockoutObservable<PlayerViewModel>) {
+	constructor(params: Observable<PlayerViewModel>) {
 		this.PlayerViewModel = params;
 	}
 
-	public PlayerViewModel: KnockoutObservable<PlayerViewModel>;
+	public PlayerViewModel: Observable<PlayerViewModel>;
 }
 
 ko.components.register(ComponentName, {

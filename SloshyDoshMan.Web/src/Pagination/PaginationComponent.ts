@@ -1,11 +1,12 @@
 import * as ClickableNumberRange from "Pagination/ClickableNumberRangeComponent";
+import { Observable, Computed } from "knockout";
 import * as ko from "knockout";
 
 export var ComponentName : string = "Pagination";
 
 interface PaginationParams {
-	SelectedPage: KnockoutObservable<number>;
-	TotalItemCount: KnockoutComputed<number>;
+	SelectedPage: Observable<number>;
+	TotalItemCount: Computed<number>;
 	PageSize: number;
 }
 
@@ -34,11 +35,11 @@ export class PaginationViewModel {
 		this.SelectedPage(pageNumber);
 	}
 
-	public CanGoForward: KnockoutComputed<boolean>;
-	public CanGoBack: KnockoutComputed<boolean>;
+	public CanGoForward: Computed<boolean>;
+	public CanGoBack: Computed<boolean>;
 
-	public TotalPages: KnockoutComputed<number>;
-	public SelectedPage: KnockoutObservable<number>;
+	public TotalPages: Computed<number>;
+	public SelectedPage: Observable<number>;
 	public PageSize: number = 10;
 }
 

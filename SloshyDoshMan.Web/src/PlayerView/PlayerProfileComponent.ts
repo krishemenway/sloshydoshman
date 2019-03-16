@@ -1,6 +1,8 @@
 import {ResultOf} from "CommonDataStructures/ResultOf";
 import {PlayedGame,PlayerViewModel} from "Server";
 import {GoToView} from "App";
+import {Observable, Computed, Subscription} from "knockout";
+import * as HashChange from "../KnockoutHelpers/HashchangeExtender";
 import * as NumberWithCommas from "KnockoutHelpers/NumberWithCommasBindingHandler";
 import * as PlayerPerkStatistics from "PlayerView/PlayerPerkStatisticsComponent";
 import * as PlayerMapStatistics from "PlayerView/PlayerMapStatisticsComponent";
@@ -8,12 +10,10 @@ import * as Pagination from "Pagination/PaginationComponent";
 import * as GameView from "GameView/PlayedGameComponent";
 import * as ko from "knockout";
 
-export var Name : string = "Player";
-
 class PlayerProfileViewModel {
 	constructor() {
 		this.PlayerViewModel = ko.observable(null);
-		this.SteamId = ko.observable(null).extend({hashchange: 'SteamId'});
+		this.SteamId = HashChange.CreateObservable("SteamId", "");
 		this.PageNumber = ko.observable(1);
 		this.TotalGamesCount = ko.pureComputed(this.CalculateTotalGamesCount, this);
 		this.RecentGamesPage = ko.pureComputed(this.GetRecentGamesPage, this);
@@ -26,7 +26,7 @@ class PlayerProfileViewModel {
 	}
 
 	public SelectGame = (game: PlayedGame) => {
-		GoToView(GameView.ComponentName, {PlayedGameId: game.PlayedGameId});
+		GoToView(GameView.Name, {PlayedGameId: game.PlayedGameId});
 	}
 
 	public OnMapSelected = (map: string) => {
@@ -54,14 +54,15 @@ class PlayerProfileViewModel {
 	}
 
 	public RecentGamesPageSize: number = 8;
-	public PageNumber: KnockoutObservable<number>;
-	public RecentGamesPage: KnockoutComputed<PlayedGame[]>;
-	public TotalGamesCount: KnockoutComputed<number>;
-	public PlayerViewModel: KnockoutObservable<PlayerViewModel|null>;
-	public SteamId: KnockoutObservable<string|null>;
-	private SteamIdSubscription: KnockoutSubscription;
+	public PageNumber: Observable<number>;
+	public RecentGamesPage: Computed<PlayedGame[]>;
+	public TotalGamesCount: Computed<number>;
+	public PlayerViewModel: Observable<PlayerViewModel|null>;
+	public SteamId: Observable<string>;
+	private SteamIdSubscription: Subscription;
 }
 
+export var Name : string = "Player";
 ko.components.register(Name, {
 	viewModel: PlayerProfileViewModel,
 	template: `

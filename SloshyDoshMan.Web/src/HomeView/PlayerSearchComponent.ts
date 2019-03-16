@@ -1,11 +1,10 @@
 import {ResultOf} from "CommonDataStructures/ResultOf";
 import {GoToView} from "App";
+import {Observable, ObservableArray, Computed} from "knockout";
 import * as Pagination from "Pagination/PaginationComponent";
 import * as PlayerView from "PlayerView/PlayerProfileComponent";
 import * as ko from "knockout";
 import * as $ from "jquery";
-
-export var Name : string = "PlayerSearch";
 
 interface PlayerSearchResult {
 	UserName: string;
@@ -15,7 +14,7 @@ interface PlayerSearchResult {
 class PlayerSearchViewModel {
 	constructor(params?: any) {
 		this.SelectedPage = ko.observable(1);
-		this.SearchResults = ko.observableArray([]);
+		this.SearchResults = ko.observableArray();
 		this.TotalItemCount = ko.pureComputed(() => this.SearchResults().length, this);
 		this.Query = ko.observable("").extend({throttle: 500});
 		this.Query.subscribe(this.OnQueryChanged);
@@ -42,16 +41,17 @@ class PlayerSearchViewModel {
 		}
 	}
 
-	public SelectedPage: KnockoutObservable<number>;
-	public TotalItemCount: KnockoutComputed<number>;
+	public SelectedPage: Observable<number>;
+	public TotalItemCount: Computed<number>;
 
-	public SearchResults: KnockoutObservableArray<PlayerSearchResult>;
-	public SearchResultsPage: KnockoutComputed<PlayerSearchResult[]>;
+	public SearchResults: ObservableArray<PlayerSearchResult>;
+	public SearchResultsPage: Computed<PlayerSearchResult[]>;
 	public SearchResultsPageSize: number = 10;
 
-	public Query: KnockoutObservable<string>;
+	public Query: Observable<string>;
 }
 
+export var Name : string = "PlayerSearch";
 ko.components.register(Name, {
 	viewModel: PlayerSearchViewModel,
 	template: `

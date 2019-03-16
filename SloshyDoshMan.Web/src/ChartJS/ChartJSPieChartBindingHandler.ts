@@ -1,5 +1,7 @@
 import {PieChartData,PieChartComponentOptions, ChartJSOptions} from 'ChartJS/Chart';
+import {Computed,AllBindings,BindingContext} from "knockout";
 import * as $ from "jquery";
+import * as ko from "knockout";
 
 export var Name : string = "ChartJSPieChart";
 
@@ -45,7 +47,7 @@ function createChartData(data: PieChartData[], colorSet: ColorPair[]) {
 	};
 }
 
-function init(element: Element, valueAccessor: () => KnockoutComputed<PieChartData[]>, allBindingsAccessor?: KnockoutAllBindingsAccessor, viewModel?: any, bindingContext?: KnockoutBindingContext) : void {
+function init(element: Element, valueAccessor: () => Computed<PieChartData[]>, _: AllBindings, viewModel?: any, bindingContext?: BindingContext) : void {
 	let elementIsCanvas = element.nodeName.toLowerCase() === "canvas";
 	let canvasElement: HTMLCanvasElement = elementIsCanvas ? <HTMLCanvasElement>element : <HTMLCanvasElement>createCanvas(element);
 	let context = <CanvasRenderingContext2D>canvasElement.getContext("2d");
@@ -69,7 +71,7 @@ function init(element: Element, valueAccessor: () => KnockoutComputed<PieChartDa
 	});
 }
 
-function update(element: Element, valueAccessor: () => KnockoutComputed<PieChartData[]>, allBindingsAccessor?: KnockoutAllBindingsAccessor, viewModel?: any, bindingContext?: KnockoutBindingContext) : void {
+function update(element: Element, valueAccessor: () => Computed<PieChartData[]>, _: AllBindings, viewModel?: any, bindingContext?: BindingContext) : void {
 	let elementAsAny : any = element;
 	$.extend(elementAsAny.Chart.data.datasets[0], createChartData(ko.unwrap(valueAccessor()), DefaultColorSet));
 	elementAsAny.Chart.update();

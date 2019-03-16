@@ -1,12 +1,13 @@
 import {PlayerViewModel,PlayerMapStatistic} from 'Server';
 import * as NumberWithCommas from "KnockoutHelpers/NumberWithCommasBindingHandler";
+import { Observable, Computed } from 'knockout';
 import * as ko from 'knockout';
 
 export var ComponentName = "PlayerMapStatistics";
 
 interface PlayerMapStatisticsParams
 {
-	PlayerViewModel : KnockoutObservable<PlayerViewModel>;
+	PlayerViewModel : Observable<PlayerViewModel>;
 }
 
 class PlayerMapStatisticsViewModel {
@@ -30,9 +31,9 @@ class PlayerMapStatisticsViewModel {
 	}
 
 	public Difficulties: string[] = [ 'Hard', 'Suicidal', 'Hell on Earth' ];
-	public Difficulty: KnockoutObservable<string>;
-	public MapStatisticsForDifficulty: KnockoutComputed<PlayerMapStatistic[]>;
-	public PlayerViewModel: KnockoutObservable<PlayerViewModel>;
+	public Difficulty: Observable<string>;
+	public MapStatisticsForDifficulty: Computed<PlayerMapStatistic[]>;
+	public PlayerViewModel: Observable<PlayerViewModel>;
 }
 
 ko.components.register(ComponentName, {

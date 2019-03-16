@@ -2,16 +2,15 @@ import {Dictionary} from "CommonDataStructures/Dictionary";
 import {ResultOf} from "CommonDataStructures/ResultOf";
 import {GameViewModel,PlayedGame,RecentGameResponse,ScoreboardPlayer} from "Server";
 import {GoToView} from "App";
+import {Observable, ObservableArray, Computed} from "knockout";
 import * as PlayerView from "PlayerView/PlayerProfileComponent";
 import * as GameView from "GameView/PlayedGameComponent";
 import * as ko from "knockout";
 import * as $ from "jquery";
 
-export var Name : string = "ServerRecentWins";
-
 export class ServerRecentWinsViewModel {
 	constructor(params?: any) {
-		this.RecentWins = ko.observableArray([]);
+		this.RecentWins = ko.observableArray();
 		this.SelectedRecentWin = ko.observable(null);
 		this.GamesByPlayedGameId = {};
 		this.RecentWinPlayers = ko.pureComputed(this.FindRecentWinPlayers, this);
@@ -25,10 +24,10 @@ export class ServerRecentWinsViewModel {
 	}
 
 	public GoToGame = (game: PlayedGame) => {
-		GoToView(GameView.ComponentName, {"PlayedGameId": game.PlayedGameId});
+		GoToView(GameView.Name, {"PlayedGameId": game.PlayedGameId});
 	}
 
-	public FindOrCreatePlayerGameData = (game: PlayedGame) : KnockoutObservable<GameViewModel|null> => {
+	public FindOrCreatePlayerGameData = (game: PlayedGame) : Observable<GameViewModel|null> => {
 		if(!this.GamesByPlayedGameId[game.PlayedGameId]) {
 			this.GamesByPlayedGameId[game.PlayedGameId] = ko.observable(null);
 		}
@@ -124,14 +123,15 @@ export class ServerRecentWinsViewModel {
 		});
 	}
 
-	public RecentWins: KnockoutObservableArray<PlayedGame>;
-	public SelectedRecentWin: KnockoutObservable<PlayedGame|null>;
-	public RecentWinPlayers: KnockoutComputed<ScoreboardPlayer[]>;
+	public RecentWins: ObservableArray<PlayedGame>;
+	public SelectedRecentWin: Observable<PlayedGame|null>;
+	public RecentWinPlayers: Computed<ScoreboardPlayer[]>;
 
 	private RotateSelectedGameInterval: number;
-	private GamesByPlayedGameId: Dictionary<KnockoutObservable<GameViewModel|null>>;
+	private GamesByPlayedGameId: Dictionary<Observable<GameViewModel|null>>;
 }
 
+export var Name : string = "ServerRecentWins";
 ko.components.register(Name, {
 	viewModel: ServerRecentWinsViewModel,
 	template: `

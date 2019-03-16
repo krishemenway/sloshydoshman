@@ -1,10 +1,9 @@
 import {ResultOf} from "CommonDataStructures/ResultOf";
 import {PieChartData} from "ChartJS/Chart";
+import {Computed, Observable} from "knockout";
 import * as ChartJsPieChart from "ChartJS/ChartJSPieChartBindingHandler";
 import * as ko from "knockout";
 import * as $ from "jquery";
-
-export var Name : string = "ServerStatistics";
 
 interface PerkStatistics
 {
@@ -55,11 +54,12 @@ class ServerStatisticsViewModel {
 		});
 	}
 
-	public PerkTotalKillsData: KnockoutComputed<PieChartData[]>;
-	public PerkTotalWavesData: KnockoutComputed<PieChartData[]>;
-	public Stats: KnockoutObservable<ServerStatistics|null>;
+	public PerkTotalKillsData: Computed<PieChartData[]>;
+	public PerkTotalWavesData: Computed<PieChartData[]>;
+	public Stats: Observable<ServerStatistics|null>;
 }
 
+export var Name : string = "ServerStatistics";
 ko.components.register(Name, {
 	viewModel: ServerStatisticsViewModel,
 	template: `

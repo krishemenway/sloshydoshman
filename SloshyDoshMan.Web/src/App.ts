@@ -1,6 +1,7 @@
-import {Dictionary} from 'CommonDataStructures/Dictionary';
-import * as HashChange from 'KnockoutHelpers/HashchangeExtender';
-import * as ko from 'knockout';
+import {Dictionary} from "CommonDataStructures/Dictionary";
+import {Observable} from "knockout";
+import * as HashChange from "KnockoutHelpers/HashchangeExtender";
+import * as ko from "knockout";
 import * as HomeView from "HomeView/HomeComponent";
 import * as ComponentCleaner from "KnockoutHelpers/ComponentCleaner";
 
@@ -20,14 +21,10 @@ export function GoToView(view: string, data?: Dictionary<string>) {
 
 export class AppViewModel {
 	constructor(params?: any) {
-		this.CurrentView = HashChange.CreateObservable<string|null>("v", null);
-
-		if(!this.CurrentView()) {
-			GoToView(HomeView.ComponentName);
-		}
+		this.CurrentView = HashChange.CreateObservable("v", HomeView.Name);
 	}
 
-	public CurrentView: KnockoutObservable<string|null>;
+	public CurrentView: Observable<string>;
 }
 
 ko.components.register(ComponentName, {

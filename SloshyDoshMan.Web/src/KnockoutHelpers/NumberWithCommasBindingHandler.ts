@@ -1,3 +1,6 @@
+import { Observable } from "knockout";
+import * as ko from "knockout";
+
 export var Name : string = "NumberWithCommas";
 
 function convertNumberToStringWithCommas(number: number) : string {
@@ -13,11 +16,11 @@ function convertNumberToStringWithCommas(number: number) : string {
 	}
 }
 
-function init(element: Element, valueAccessor: () => KnockoutObservable<number>) : void {
+function init(element: Element, valueAccessor: () => Observable<number>) : void {
 	ko.utils.setTextContent(element, convertNumberToStringWithCommas(ko.unwrap(valueAccessor())));
 }
 
-function update(element: Element, valueAccessor: () => KnockoutObservable<number>) : void {
+function update(element: Element, valueAccessor: () => Observable<number>) : void {
 	ko.utils.setTextContent(element, convertNumberToStringWithCommas(ko.unwrap(valueAccessor())));
 }
 

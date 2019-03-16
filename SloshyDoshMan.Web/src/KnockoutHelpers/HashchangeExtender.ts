@@ -49,7 +49,6 @@ export function CreateObservable(parameterName: string, defaultValue: string) {
 
 $(window).on('hashchange', () => {
 	let currentState = GetState();
-	console.log("Hash Changed", currentState);
 
 	Object.keys(observablesByHashField).forEach((key) => {
 		let observable = observablesByHashField[key];
@@ -63,6 +62,5 @@ $(window).on('hashchange', () => {
 			}
 		}
 
-		console.log(observable(), currentValue);
 	});
 });

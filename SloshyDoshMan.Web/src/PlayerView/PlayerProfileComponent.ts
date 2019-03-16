@@ -110,14 +110,14 @@ ko.components.register(Name, {
 				<div class="text-white text-center  margin-bottom">
 					<div class="text-center width-50 inline-block padding-right-half">
 						<div class="red-handle-container">
-							<div class="font-56 font-light" data-bind="${NumberWithCommas.Name}: TotalKills" />
+							<div class="font-48 font-light" data-bind="${NumberWithCommas.Name}: TotalKills" />
 							<div class="font-14 text-gray">Total Kills</div>
 						</div>
 					</div>
 
 					<div class="text-center width-50 inline-block padding-left-half">
 						<div class="red-handle-container">
-							<div class="font-56 font-light" data-bind="${NumberWithCommas.Name}: TotalGames" />
+							<div class="font-48 font-light" data-bind="${NumberWithCommas.Name}: TotalGames" />
 							<div class="font-14 text-gray">Total Games</div>
 						</div>
 					</div>

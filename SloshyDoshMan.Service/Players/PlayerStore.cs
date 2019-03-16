@@ -8,7 +8,7 @@ namespace SloshyDoshMan.Service.Players
 	public interface IPlayerStore
 	{
 		void FixSteamId(long oldSteamId, PlayerGameState playerGameState);
-		Player FindPlayer(long steamId);
+		bool TryFindPlayer(long steamId, out Player player);
 		List<Player> FindPlayersByName(List<string> names);
 
 		void SaveAllPlayers(IReadOnlyList<PlayerGameState> players);
@@ -111,7 +111,7 @@ namespace SloshyDoshMan.Service.Players
 			}
 		}
 
-		public Player FindPlayer(long steamId)
+		public bool TryFindPlayer(long steamId, out Player player)
 		{
 			const string sql = @"
 				SELECT
@@ -123,7 +123,8 @@ namespace SloshyDoshMan.Service.Players
 
 			using (var connection = Database.CreateConnection())
 			{
-				return connection.Query<Player>(sql, new { steamId }).SingleOrDefault();
+				player = connection.QuerySingleOrDefault<Player>(sql, new { steamId });
+				return player != null;
 			}
 		}
 

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
 
@@ -6,7 +7,7 @@ namespace SloshyDoshMan.Service.Notifications
 {
 	public interface IPushNotificationSender
 	{
-		void NotifyAll(PushNotificationDetails pushNotificationDetails);
+		void NotifyAll(string typeName, string title, string content);
 	}
 
 	public class PushNotificationDetails
@@ -24,11 +25,20 @@ namespace SloshyDoshMan.Service.Notifications
 			_httpClient = httpClient ?? new HttpClient();
 		}
 
-		public void NotifyAll(PushNotificationDetails details)
+		public void NotifyAll(string typeName, string title, string content)
 		{
-			var content = new StringContent(JsonConvert.SerializeObject(details), Encoding.UTF8, "application/json");
-			var response = _httpClient.PostAsync("http://localhost:8105/internal/api/notifications/send", content).Result;
+			var details = new PushNotificationDetails
+				{
+					TypeName = typeName,
+					Title = title,
+					Content = content,
+				};
+
+			var requestContent = new StringContent(JsonConvert.SerializeObject(details), Encoding.UTF8, "application/json");
+			_httpClient.PostAsync($"http://{PushServiceHost}/internal/api/notifications/send", requestContent).Wait();
 		}
+
+		private string PushServiceHost => Program.Configuration.GetValue<string>("PushServiceHost");
 
 		private readonly HttpClient _httpClient;
 	}

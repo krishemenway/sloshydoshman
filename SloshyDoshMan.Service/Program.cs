@@ -41,8 +41,8 @@ namespace SloshyDoshMan.Service
 		private static void SetupLogging()
 		{
 			Log.Logger = new LoggerConfiguration()
-				.MinimumLevel.Debug()
-				.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+				.MinimumLevel.Information()
+				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
 				.Enrich.FromLogContext()
 				.WriteTo.Console()
 				.WriteTo.RollingFile("app-{Date}.log")

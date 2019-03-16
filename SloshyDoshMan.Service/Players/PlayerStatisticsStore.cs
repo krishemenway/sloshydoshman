@@ -1,4 +1,7 @@
 ﻿using Dapper;
+using SloshyDoshMan.Service.Maps;
+using SloshyDoshMan.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,30 +15,25 @@ namespace SloshyDoshMan.Service.Players
 
 	public class PlayerStatisticsStore : IPlayerStatisticsStore
 	{
+		public PlayerStatisticsStore(IMapStore mapStore = null)
+		{
+			_mapStore = mapStore ?? new MapStore();
+		}
+
 		public IReadOnlyList<PlayerMapStatistic> FindMapStatistics(long steamId)
 		{
 			const string sql = @"
 				SELECT
-					allmaps.map,
-					allmaps.isworkshop,
-					allmaps.difficulty,
-					userstats.steamid,
+					userstats.map,
+					userstats.difficulty,
 					userstats.gamesplayed,
 					userstats.totalkills,
 					userstats.farthestwave,
 					gamestats.gameswon
 				FROM (
 					SELECT
-						m.map,
-						m.is_workshop as isworkshop,
-						d.difficulty
-					FROM server_map m
-					CROSS JOIN server_difficulties d
-				) as allmaps
-				LEFT JOIN (
-					SELECT
 						pg.map,
-						pg.game_difficulty,
+						pg.game_difficulty as difficulty,
 						COUNT(*) as gameswon
 					FROM player_played_wave ppw
 					INNER JOIN played_game pg
@@ -45,7 +43,7 @@ namespace SloshyDoshMan.Service.Players
 					WHERE 
 						steam_id = @SteamId
 					GROUP BY pg.map, pg.game_difficulty
-				) AS gamestats ON lower(allmaps.difficulty) = lower(gamestats.game_difficulty) AND lower(allmaps.map) = lower(gamestats.map)
+				) AS gamestats
 				LEFT JOIN (
 					SELECT
 						ppg.steam_id as steamid,
@@ -64,16 +62,19 @@ namespace SloshyDoshMan.Service.Players
 					WHERE
 						ppg.steam_id = @SteamId
 					GROUP BY ppg.steam_id, pg.map, pg.game_difficulty
-				) AS userstats ON allmaps.difficulty = userstats.difficulty AND lower(allmaps.map) = lower(userstats.map)";
+				) AS userstats ON gamestats.difficulty = userstats.difficulty AND lower(gamestats.map) = lower(userstats.map)
+				WHERE 
+					userstats.difficulty != 'Normal'";
 
 			using (var connection = Database.CreateConnection())
 			{
 				return connection
 					.Query<PlayerMapStatistic>(sql, new { steamId })
-					.Where(x => !x.IsWorkshop || x.GamesPlayed > 0)
+					.ToDictionary(mapDifficultyStats => (MapName: mapDifficultyStats.Map, Difficulty: DifficultyHelpers.Convert(mapDifficultyStats.Difficulty)), mapDifficultyStats => mapDifficultyStats)
+					.SetDefaultValuesForKeys(_mapStore.FindCoreMapDifficulties(), (mapDifficulty) => CreatePlayerMapStatistics(mapDifficulty.MapName, mapDifficulty.Difficulty))
+					.Select(keyValuePair => keyValuePair.Value)
 					.OrderBy(x => x.Map).ThenBy(x => x.GameDifficulty)
-					.ToList()
-					.AsReadOnly();
+					.ToList();
 			}
 		}
 
@@ -92,8 +93,23 @@ namespace SloshyDoshMan.Service.Players
 			
 			using (var connection = Database.CreateConnection())
 			{
-				return connection.Query<PlayerPerkStatistic>(sql, new { steamId }).ToList().AsReadOnly();
+				return connection.Query<PlayerPerkStatistic>(sql, new { steamId }).ToList();
 			}
 		}
+
+		private PlayerMapStatistic CreatePlayerMapStatistics(string mapName, Difficulty difficulty)
+		{
+			return new PlayerMapStatistic
+				{
+					Map = mapName,
+					Difficulty = difficulty.ToString(),
+					FarthestWave = 0,
+					GamesPlayed = 0,
+					GamesWon = 0,
+					TotalKills = 0,
+				};
+		}
+
+		private readonly IMapStore _mapStore;
 	}
 }

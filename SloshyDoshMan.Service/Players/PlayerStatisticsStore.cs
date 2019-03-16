@@ -102,7 +102,7 @@ namespace SloshyDoshMan.Service.Players
 			return new PlayerMapStatistic
 				{
 					Map = mapName,
-					Difficulty = difficulty.ToString(),
+					Difficulty = DifficultyHelpers.Convert(difficulty),
 					FarthestWave = 0,
 					GamesPlayed = 0,
 					GamesWon = 0,

@@ -54,8 +54,11 @@ namespace SloshyDoshMan.Service.PlayedGames
 					time_finished as TimeFinished,
 					players_won as PlayersWon
 				FROM played_game
-				WHERE server_id = @ServerId
-				ORDER BY time_started DESC
+				WHERE 
+					server_id = @ServerId
+					AND time_finished IS NULL
+				ORDER BY
+					time_started DESC
 				LIMIT 1";
 
 			using (var connection = Database.CreateConnection())
@@ -65,7 +68,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 					.Select(CreateGame)
 					.SingleOrDefault();
 
-				return playedGame != null && !playedGame.TimeFinished.HasValue;
+				return playedGame != null;
 			}
 		}
 
@@ -162,8 +165,12 @@ namespace SloshyDoshMan.Service.PlayedGames
 		{
 			const string sql = @"
 				UPDATE played_game
-				SET time_finished = now(), players_won = @PlayersWon
-				WHERE played_game_id = @PlayedGameId";
+				SET 
+					time_finished = now(),
+					players_won = @PlayersWon
+				WHERE
+					played_game_id = @PlayedGameId
+					AND time_finished IS NULL";
 
 			using (var connection = Database.CreateConnection())
 			{

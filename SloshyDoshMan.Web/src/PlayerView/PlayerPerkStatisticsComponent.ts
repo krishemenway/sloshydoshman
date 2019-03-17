@@ -25,7 +25,7 @@ ko.components.register(ComponentName, {
 						<span class="vert-middle margin-left font-16 small-caps" data-bind="text: Perk" />
 					</div>
 
-					<div class="flex-row" style="margin-left: 42px">
+					<div class="flex-row" style="margin-left: 42px; margin-right: 8px;">
 						<div class="flex-even-distribution text-center">
 							<div class="font-24 gray-e8 font-light" data-bind="${NumberWithCommas.Name}: TotalKills"></div>
 							<div class="font-12 text-gray">Kills</div>

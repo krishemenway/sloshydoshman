@@ -3,6 +3,7 @@ import {ResultOf} from "CommonDataStructures/ResultOf";
 import {GameViewModel,PlayedGame,RecentGameResponse,ScoreboardPlayer} from "Server";
 import {GoToView} from "App";
 import {Observable, ObservableArray, Computed} from "knockout";
+import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import * as PlayerView from "PlayerView/PlayerProfileComponent";
 import * as GameView from "GameView/PlayedGameComponent";
 import * as ko from "knockout";
@@ -141,7 +142,7 @@ ko.components.register(Name, {
 				<div class="flex-even-distribution recent-win-game" data-bind="click: $component.GoToGame, event: {mouseover: $component.OnHover}, css: {selected: $component.SelectedRecentWin() === $data}">
 					<div class="map-cover margin-bottom" data-bind="css: Map" />
 					<div class="text-white font-14 text-center margin-bottom-half" data-bind="text: Map" />
-					<div class="text-gray font-14 text-center margin-bottom" data-bind="momentFormatDate: {Format: 'MMM Do YYYY', Date: TimeFinished}" />
+					<div class="text-gray font-14 text-center margin-bottom" data-bind="${MomentFormatDate.DataBind("TimeFinished", "MMM Do YYYY")}" />
 				</div>
 			</div>
 

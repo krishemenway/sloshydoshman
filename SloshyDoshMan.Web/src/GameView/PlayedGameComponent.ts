@@ -16,7 +16,7 @@ class PlayedGameViewModel {
 	}
 
 	public SelectPlayer(player: ScoreboardPlayer) {
-		GoToView(PlayerView.Name, {SteamId: player.SteamId})
+		GoToView(PlayerView.Name, {SteamId: player.SteamId});
 	}
 
 	private InitializeGame = () => {
@@ -45,12 +45,12 @@ ko.components.register(Name, {
 
 					<div class="margin-bottom">Difficulty: <!-- ko text: PlayedGame.Difficulty --><!-- /ko --></div>
 
-					<div class="margin-bottom-half" data-bind="${MomentFormatDate.Name}: {Date: PlayedGame.TimeStarted, Format: 'dddd MMMM Do, YYYY'}" />
+					<div class="margin-bottom-half" data-bind="${MomentFormatDate.DataBind("PlayedGame.TimeStarted", "dddd MMMM Do, YYYY")}" />
 
 					<div class="margin-bottom">
-						<!-- ko ${MomentFormatDate.Name}: {Date: PlayedGame.TimeStarted, Format: 'hh:mm:ss A'} --><!-- /ko -->
+						<!-- ko ${MomentFormatDate.DataBind("PlayedGame.TimeStarted", "hh:mm:ss A")} --><!-- /ko -->
 						&nbsp;&ndash;&nbsp;
-						<!-- ko if: PlayedGame.TimeFinished --><!-- ko ${MomentFormatDate.Name}: {Date: PlayedGame.TimeFinished, Format: 'hh:mm:ss A'} --><!-- /ko --><!-- /ko -->
+						<!-- ko if: PlayedGame.TimeFinished --><!-- ko ${MomentFormatDate.DataBind("PlayedGame.TimeFinished", "hh:mm:ss A")} --><!-- /ko --><!-- /ko -->
 						<!-- ko ifnot: PlayedGame.TimeFinished -->Maybe soon?<!-- /ko -->
 					</div>
 				</div>

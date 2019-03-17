@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Serilog;
+using System;
 using System.Net.Http;
 using System.Text;
 
@@ -27,15 +29,24 @@ namespace SloshyDoshMan.Service.Notifications
 
 		public void NotifyAll(string typeName, string title, string content)
 		{
-			var details = new PushNotificationDetails
-				{
-					TypeName = typeName,
-					Title = title,
-					Content = content,
-				};
+			var uri = new Uri($"http://{PushServiceHost}/internal/api/notifications/send");
 
-			var requestContent = new StringContent(JsonConvert.SerializeObject(details), Encoding.UTF8, "application/json");
-			_httpClient.PostAsync($"http://{PushServiceHost}/internal/api/notifications/send", requestContent).Wait();
+			try
+			{
+				var details = new PushNotificationDetails
+					{
+						TypeName = typeName,
+						Title = title,
+						Content = content,
+					};
+
+				var requestContent = new StringContent(JsonConvert.SerializeObject(details), Encoding.UTF8, "application/json");
+				_httpClient.PostAsync(uri, requestContent).Wait();
+			}
+			catch (Exception exception)
+			{
+				Log.Error($"Failed making request to {uri}", exception);
+			}
 		}
 
 		private string PushServiceHost => Program.Configuration.GetValue<string>("PushServiceHost");

@@ -42,38 +42,47 @@ namespace SloshyDoshMan.Service.PlayedGameState
 		{
 			FixMapName(newGameState);
 			RemoveOrFixInvalidPlayers(newGameState);
+			SaveAllPlayers(newGameState);
 
 			Log.Information("Refreshing with Game State: {GameState}", JsonConvert.SerializeObject(newGameState));
 
-			_playerStore.SaveAllPlayers(newGameState.Players);
-
-			if (!_playedGameStore.TryFindCurrentGame(newGameState.ServerId, out var currentGame) && newGameState.CurrentWave == 1)
+			if (!_playedGameStore.TryFindCurrentGame(newGameState.ServerId, out var currentGame))
 			{
-				currentGame = StartNewGame(newGameState);
+				if (newGameState.CurrentWave == 1)
+				{
+					currentGame = StartNewGame(newGameState);
+					UpdatePlayerRecords(newGameState, currentGame);
+				}
+				else
+				{
+					Log.Information("No game is running - Ignoring message");
+					return Json(Result.Successful);
+				}
 			}
-
-			if (MapHasChanged(newGameState, currentGame))
+			else if (MapHasChanged(newGameState, currentGame))
 			{
-				var playersWon = PlayersWonGame(newGameState, currentGame);
-				_playedGameStore.EndGame(currentGame, playersWon);
-				Log.Information("Game Finished - {Map} {Difficulty} - {ReachedWave} / {TotalWaves} Won: {PlayersWin}", currentGame.Map, currentGame.Difficulty, currentGame.ReachedWave, currentGame.TotalWaves, playersWon);
-				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Remove(newGameState.ServerId);
+				FinishGame(newGameState, currentGame);
 			}
 			else
 			{
 				_playedGameStore.UpdateGame(currentGame, newGameState);
-				UpdatePlayerRecords(currentGame, newGameState);
-			}
+				UpdatePlayerRecords(newGameState, currentGame);
 
-			if (newGameState.CurrentWave > newGameState.TotalWaves)
-			{
-				var currentPlayerLivingStatus = newGameState.Players.ToDictionary(x => x.SteamId, x => x.Health > 0);
-				var newPlayerLivingStatus = FindPlayersWithLivingStatusForServer(newGameState.ServerId).Merge(currentPlayerLivingStatus);
+				if (newGameState.CurrentWave > newGameState.TotalWaves)
+				{
+					var currentPlayerLivingStatus = newGameState.Players.ToDictionary(x => x.SteamId, x => x.Health > 0);
+					var newPlayerLivingStatus = FindPlayersWithLivingStatusForServer(newGameState.ServerId).Merge(currentPlayerLivingStatus);
 
-				SteamIdsAliveInFinalWaveByServerIdMemoryCache.Set(newGameState.ServerId, newPlayerLivingStatus);
+					SteamIdsAliveInFinalWaveByServerIdMemoryCache.Set(newGameState.ServerId, newPlayerLivingStatus);
+				}
 			}
 
 			return Json(Result.Successful);
+		}
+
+		private void SaveAllPlayers(GameState newGameState)
+		{
+			_playerStore.SaveAllPlayers(newGameState.Players);
 		}
 
 		private bool PlayersWonGame(GameState newGameState, IPlayedGame currentGame)
@@ -102,7 +111,21 @@ namespace SloshyDoshMan.Service.PlayedGameState
 			return newGame;
 		}
 
-		private void UpdatePlayerRecords(IPlayedGame currentGame, GameState newGameState)
+		private void FinishGame(GameState newGameState, IPlayedGame currentGame)
+		{
+			var playersWon = PlayersWonGame(newGameState, currentGame);
+			_playedGameStore.EndGame(currentGame, playersWon);
+			Log.Information("Game Finished - {Map} {Difficulty} - {ReachedWave} / {TotalWaves} Won: {PlayersWin}", currentGame.Map, currentGame.Difficulty, currentGame.ReachedWave, currentGame.TotalWaves, playersWon);
+
+			if (playersWon)
+			{
+				_pushNotificationSender.NotifyAll("SloshyDoshManIncServerUpdate", $"SloshyDoshMan Inc", $"Players won on {newGameState.Map} ({newGameState.Difficulty}) with {newGameState.Players.Count} players!");
+			}
+
+			SteamIdsAliveInFinalWaveByServerIdMemoryCache.Remove(newGameState.ServerId);
+		}
+
+		private void UpdatePlayerRecords(GameState newGameState, IPlayedGame currentGame)
 		{
 			foreach (var player in newGameState.Players.Where(state => !string.IsNullOrEmpty(state.Perk)))
 			{

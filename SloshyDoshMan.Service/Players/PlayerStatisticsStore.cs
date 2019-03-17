@@ -32,20 +32,6 @@ namespace SloshyDoshMan.Service.Players
 					gamestats.gameswon
 				FROM (
 					SELECT
-						pg.map,
-						pg.game_difficulty as difficulty,
-						COUNT(*) as gameswon
-					FROM player_played_wave ppw
-					INNER JOIN played_game pg
-						ON ppw.played_game_id = pg.played_game_id
-						AND ppw.wave > pg.total_waves
-						AND pg.players_won = true
-					WHERE 
-						steam_id = @SteamId
-					GROUP BY pg.map, pg.game_difficulty
-				) AS gamestats
-				LEFT JOIN (
-					SELECT
 						ppg.steam_id as steamid,
 						pg.map,
 						pg.game_difficulty as difficulty,
@@ -62,7 +48,21 @@ namespace SloshyDoshMan.Service.Players
 					WHERE
 						ppg.steam_id = @SteamId
 					GROUP BY ppg.steam_id, pg.map, pg.game_difficulty
-				) AS userstats ON gamestats.difficulty = userstats.difficulty AND lower(gamestats.map) = lower(userstats.map)
+				) AS userstats
+				LEFT JOIN (
+					SELECT
+						pg.map,
+						pg.game_difficulty as difficulty,
+						COUNT(*) as gameswon
+					FROM player_played_wave ppw
+					INNER JOIN played_game pg
+						ON ppw.played_game_id = pg.played_game_id
+						AND ppw.wave > pg.total_waves
+						AND pg.players_won = true
+					WHERE 
+						steam_id = @SteamId
+					GROUP BY pg.map, pg.game_difficulty
+				) AS gamestats ON gamestats.difficulty = userstats.difficulty AND lower(gamestats.map) = lower(userstats.map)
 				WHERE 
 					userstats.difficulty != 'Normal'";
 

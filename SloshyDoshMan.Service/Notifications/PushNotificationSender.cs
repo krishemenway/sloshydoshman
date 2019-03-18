@@ -46,7 +46,7 @@ namespace SloshyDoshMan.Service.Notifications
 		}
 
 		private string SendPushNotificationUri => $"http://{PushServiceHost}/internal/api/notifications/send";
-		private string PushServiceHost => _configuration.GetValue<string>("PushServiceHost");
+		private string PushServiceHost => _configuration.GetValue<string>("SloshyDoshManPushServiceHost");
 
 		private readonly HttpClient _httpClient;
 		private readonly IConfiguration _configuration;

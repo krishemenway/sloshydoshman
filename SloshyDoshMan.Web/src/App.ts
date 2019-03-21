@@ -1,5 +1,6 @@
 import {Dictionary} from "CommonDataStructures/Dictionary";
 import {Observable} from "knockout";
+import { text, margin, textColor, layout } from "AppStyles";
 import * as HashChange from "KnockoutHelpers/HashchangeExtender";
 import * as ko from "knockout";
 import * as HomeView from "HomeView/HomeComponent";
@@ -30,15 +31,15 @@ export class AppViewModel {
 ko.components.register(ComponentName, {
 	viewModel: AppViewModel,
 	template: `
-		<div class="app center-layout-1000">
-			<div class="margin font-14 red-handle-container text-white">
+		<div class="center-layout-1000">
+			<div class="${margin.all} ${text.font14} ${layout.redHandleContainer} ${textColor.white}">
 				This KF2 stats system is a work in progress. It is based on the limited data that is available through the web admin interface. If you wish to contact me about this project, find me on steam: linkstate or email: thelinkstate@gmail.com.
 			</div>
 			<!-- ko if: CurrentView -->
 			<div data-bind="component: {name: CurrentView}" />
 			<!-- /ko -->
 			<!-- ko ifnot: CurrentView -->
-			<div class="loading red-handle-container text-center">loading</div>
+			<div class="${layout.redHandleContainer} ${text.center}">loading</div>
 			<!-- /ko -->
 		</div>`
 });

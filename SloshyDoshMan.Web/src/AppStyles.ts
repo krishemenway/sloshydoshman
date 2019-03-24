@@ -14,7 +14,7 @@ export function createStyles<Name extends string>(styles: StyleRules<Name>): jss
 
 export const background = createStyles({
 	bgAlternateDarken: {
-		"& li:nth-child(even), & tr:cnth-hild(even)": {
+		"& li:nth-child(even), & tr:nth-child(even)": {
 			backgroundColor: "rgba(50,50,50,0.15)",
 		},
 	},

@@ -3,6 +3,7 @@ import { Observable, Computed } from 'knockout';
 import * as PlayedGameList from "PlayerView/PlayedGameListComponent";
 import * as NumberWithCommas from "KnockoutHelpers/NumberWithCommasBindingHandler";
 import * as ko from 'knockout';
+import { padding, text, layout, events, margin } from 'AppStyles';
 
 export var ComponentName = "PlayerMapStatistics";
 
@@ -54,28 +55,30 @@ class PlayerMapStatisticsViewModel {
 ko.components.register(ComponentName, {
 	viewModel: PlayerMapStatisticsViewModel,
 	template: `
-		<div class="player-map-statistics">
-			<div class="flex-row tabs margin-bottom" data-bind="foreach: Difficulties">
-				<div class="flex-even-distribution clickable text-center tab" data-bind="css: {selected: $data === $component.Difficulty()}, text: $data, click: $component.SelectDifficulty" />
+		<div>
+			<div class="${layout.flexRow} tabs ${margin.bottom}" data-bind="foreach: Difficulties">
+				<div class="${layout.flexEvenDistribution} ${events.clickable} ${text.center} tab" data-bind="css: {selected: $data === $component.Difficulty()}, text: $data, click: $component.SelectDifficulty" />
 			</div>
 
-			<table class="width-100" data-bind="visible: !Map()">
+			<table class="${layout.width100}" data-bind="visible: !Map()">
 				<thead>
 					<tr>
-						<td></td>
-						<td class="padding-half text-center font-12 bold small-caps"><span class="margin-left inline-block">Games<br/>Won</span></td>
-						<td class="padding-half text-right font-12 bold small-caps">Total<br/>Kills</td>
+						<td />
+						<td class="${padding.half} ${text.center} ${text.font12} ${text.bold} ${text.smallCaps}">
+							<span class="${margin.left} ${layout.inlineBlock}">Games<br/>Won</span>
+						</td>
+						<td class="${padding.half} ${text.right} ${text.font12} ${text.bold} ${text.smallCaps}">Total<br/>Kills</td>
 					</tr>
 				</thead>
 				<tbody data-bind="foreach: MapStatisticsForDifficulty">
-					<tr data-bind="click: $component.OnMapSelected, css: {clickable: GamesPlayed > 0}">
-						<td style="width: 50%" class="padding-half text-left small-caps" data-bind="text: Map" />
-						<td style="width: 15%" class="padding-half text-right">
-							<div class="width-40 inline-block text-right padding-right-half" data-bind="text: GamesWon" />
-							<div class="width-10 inline-block text-center">/</div>
-							<div class="width-40 inline-block text-left padding-left-half" data-bind="text: GamesPlayed" />
+					<tr data-bind="click: $component.OnMapSelected, css: { ${events.clickable}: GamesPlayed > 0 }">
+						<td class="${layout.width50} ${padding.half} ${text.left} ${text.smallCaps}" data-bind="text: Map" />
+						<td class="${layout.width15} ${padding.half} ${text.right}">
+							<div class="${layout.width40} ${layout.inlineBlock} ${text.right} ${padding.rightHalf}" data-bind="text: GamesWon" />
+							<div class="${layout.width10} ${layout.inlineBlock} ${text.center}">/</div>
+							<div class="${layout.width40} ${layout.inlineBlock} ${text.left} ${padding.leftHalf}" data-bind="text: GamesPlayed" />
 						</td>
-						<td style="width: 15%" class="padding-half text-right" data-bind="${NumberWithCommas.Name}: TotalKills" />
+						<td class="${layout.width15} ${padding.half} ${text.right}" data-bind="${NumberWithCommas.Name}: TotalKills" />
 					</tr>
 				</tbody>
 			</table>

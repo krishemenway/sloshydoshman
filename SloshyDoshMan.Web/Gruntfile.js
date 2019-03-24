@@ -1,18 +1,17 @@
-'use strict';
-var path = require('path');
-var sass = require('node-sass');
+"use strict";
+var path = require("path");
 
 module.exports = function(grunt) {
 	grunt.initConfig({
 		project: {
-			out: './dist',
-			build: './build',
-			src: './src'
+			out: "./dist",
+			build: "./build",
+			src: "./src"
 		},
 		ts: {
 			options: {
-				target: 'es6',
-				module: 'commonjs',
+				target: "es6",
+				module: "commonjs",
 				inlineSourceMap: true,
 				declation: false,
 				alwaysStrict: true,
@@ -24,12 +23,12 @@ module.exports = function(grunt) {
 				noImplicitThis: true,
 				noUnusedLocals: true,
 				pretty: false,
-				fast: 'never',
-				baseUrl: '<%= project.src %>'
+				fast: "never",
+				baseUrl: "<%= project.src %>"
 			},
 			default : {
-				src: ['<%= project.src %>/**/*.ts'],
-				outDir: '<%= project.build %>'
+				src: ["<%= project.src %>/**/*.ts"],
+				outDir: "<%= project.build %>"
 			}
 		},
 		webpack: {
@@ -37,90 +36,69 @@ module.exports = function(grunt) {
 				progress: false
 			},
 			prod: {
-				entry: './<%=project.build %>/App.js',
+				entry: "./<%=project.build %>/App.js",
 				output: {
-					path: path.resolve('<%=project.out %>'),
-					filename: 'manifest.js'
+					path: path.resolve("<%=project.out %>"),
+					filename: "manifest.js"
 				},
 				resolve: {
-					modules: [path.resolve('<%= project.build %>'), "node_modules"]
+					modules: [path.resolve("<%= project.build %>"), "node_modules"]
 				},
 				externals: {
-					'jquery': 'jQuery',
-					'moment': 'moment',
-					'knockout': 'ko'
-				}
-			}
-		},
-		sass: {
-			options: {
-				style: 'expanded',
-				implementation: sass,
-				includePaths: [
-					"<%=project.src%>"
-				]
-			},
-			build: {
-				files: {
-					'<%=project.out%>/manifest.css': '<%=project.src%>/manifest.scss'
+					"jquery": "jQuery",
+					"moment": "moment",
+					"knockout": "ko",
+					"jss": "jss",
 				}
 			}
 		},
 		copy: {
 			serverImages: {
-				cwd: 'src/ServerImages',
-				src: ['./*'],
-				dest: '<%=project.out%>/CommonImages/server-images',
+				cwd: "src/ServerImages",
+				src: ["./*"],
+				dest: "<%=project.out%>/CommonImages/server-images",
 				expand: true
 			},
 			html: {
-				cwd: 'src/',
-				src: ['./*.html'],
-				dest: '<%=project.out%>/',
+				cwd: "src/",
+				src: ["./*.html"],
+				dest: "<%=project.out%>/",
 				expand: true
 			},
 			images: {
-				cwd: 'src/',
-				src: ['./favicon.ico', './robots.txt', './CommonImages/**/*.{jpg,png}', './Perks/**/*.{jpg,png}', './Maps/**/*.{jpg,png}'],
-				dest: '<%=project.out%>/',
+				cwd: "src/",
+				src: ["./favicon.ico", "./robots.txt", "./CommonImages/**/*.{jpg,png}", "./Perks/**/*.{jpg,png}", "./Maps/**/*.{jpg,png}"],
+				dest: "<%=project.out%>/",
 				expand: true
 			}
 		},
 		clean: {
-			out: ['<%= project.out %>'],
-			build: ['<%= project.build %>']
+			out: ["<%= project.out %>"],
+			build: ["<%= project.build %>"]
 		},
 		watch: {
-			styles: {
-				files: ['src/**/*.scss'],
-				tasks: ['sass'],
-				options: {
-					spawn: false
-				}
-			},
 			webscripts: {
-				files: ['src/**/*.ts'],
-				tasks: ['ts', 'webpack:prod']
+				files: ["src/**/*.ts"],
+				tasks: ["ts", "webpack:prod"]
 			},
 			images: {
-				files: ['src/**/*.jpg', 'src/**/*.png'],
-				tasks: ['copy:images']
+				files: ["src/**/*.jpg", "src/**/*.png"],
+				tasks: ["copy:images"]
 			},
 			html: {
-				files: ['src/**/*.html'],
-				tasks: ['copy:html']
+				files: ["src/**/*.html"],
+				tasks: ["copy:html"]
 			}
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-sass');
-	grunt.loadNpmTasks('grunt-browserify');
-	grunt.loadNpmTasks('grunt-ts');
-	grunt.loadNpmTasks('grunt-webpack');
+	grunt.loadNpmTasks("grunt-contrib-copy");
+	grunt.loadNpmTasks("grunt-contrib-clean");
+	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-browserify");
+	grunt.loadNpmTasks("grunt-ts");
+	grunt.loadNpmTasks("grunt-webpack");
 
-	grunt.registerTask('build', ['clean:build','ts','clean:out','sass','copy','webpack:prod']);
-	grunt.registerTask('default', ['build']);
+	grunt.registerTask("build", ["clean:build","ts","clean:out","copy","webpack:prod"]);
+	grunt.registerTask("default", ["build"]);
 };

@@ -5,6 +5,7 @@ import * as Pagination from "Pagination/PaginationComponent";
 import * as PlayedGameComponent from "GameView/PlayedGameComponent";
 import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import * as ko from "knockout";
+import { layout, text, padding, background, events, margin, textColor } from "AppStyles";
 
 interface PlayedGameListModel {
 	Games: PlayedGame[];
@@ -44,28 +45,34 @@ ko.components.register(ComponentName, {
 	viewModel: PlayedGameListModel,
 	template: `
 		<div>
-			<div class="margin-bottom-half">
-				<div class="inline-block" style="width: 70%"></div>
-				<div class="inline-block" style="width: 15%"></div>
-				<div class="inline-block text-center" style="width: 15%">Waves</div>
+			<div class="${margin.bottomHalf}">
+				<div class="${layout.inlineBlock} ${layout.width70}"></div>
+				<div class="${layout.inlineBlock} ${layout.width15}"></div>
+				<div class="${layout.inlineBlock} ${text.center} ${layout.width15}">Waves</div>
 			</div>
 
-			<ul class="bg-alternating-colors">
+			<ul class="${background.bgAlternateDarken}">
 				<!-- ko foreach: $component.GamesPage() -->
-				<li class="padding-vertical clickable" data-bind="click: $component.OnGameSelect">
-					<div class="inline-block font-12 text-left" style="width: 70%">
-						<!-- ko text: Map --><!-- /ko -->&nbsp;<span class="text-gray margin-left" data-bind="${MomentFormatDate.DataBind("TimeStarted", "MMMM Do, YYYY")}"></span>
+				<li class="${padding.vertical} ${events.clickable}" data-bind="click: $component.OnGameSelect">
+					<div class="${layout.inlineBlock} ${text.font12} ${text.left} ${layout.width70}">
+						<!-- ko text: Map --><!-- /ko -->
+						&nbsp;
+						<span class="${textColor.gray} ${margin.left}" data-bind="${MomentFormatDate.DataBind("TimeStarted", "MMMM Do, YYYY")}"></span>
 					</div>
-					<div class="inline-block font-10 text-center" style="width: 15%" data-bind="text: Difficulty"></div>
-					<div class="inline-block font-14 text-center" style="width: 15%"><!-- ko text: ReachedWave --><!-- /ko -->&nbsp;/&nbsp;<!-- ko text: TotalWaves --><!-- /ko --></div>
+
+					<div class="${layout.inlineBlock} ${text.font10} ${text.center} ${layout.width15}" data-bind="text: Difficulty"></div>
+
+					<div class="${layout.inlineBlock} ${text.font14} ${text.center} ${layout.width15}">
+						<!-- ko text: ReachedWave --><!-- /ko -->&nbsp;/&nbsp;<!-- ko text: TotalWaves --><!-- /ko -->
+					</div>
 				</li>
 				<!-- /ko -->
 
 				<!-- ko foreach: new Array($component.GamesPageSize - $component.GamesPage().length) -->
-				<li class="padding-vertical">
-					<div style="width: 70%" class="inline-block font-12 text-left">&nbsp;</div>
-					<div style="width: 15%" class="inline-block font-10">&nbsp;</div>
-					<div style="width: 15%" class="inline-block font-14">&nbsp;</div>
+				<li class="${padding.vertical}">
+					<div class="${layout.inlineBlock} ${text.font12} ${text.left} ${layout.width70}">&nbsp;</div>
+					<div class="${layout.inlineBlock} ${text.font10} ${layout.width15}">&nbsp;</div>
+					<div class="${layout.inlineBlock} ${text.font14} ${layout.width15}">&nbsp;</div>
 				</li>
 				<!-- /ko -->
 			</ul>

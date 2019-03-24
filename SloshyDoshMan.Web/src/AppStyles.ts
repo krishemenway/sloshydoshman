@@ -1,118 +1,211 @@
 import * as jss from "jss";
+import * as CSS from 'csstype';
 
-export const layout = jss.default.createStyleSheet({
-	redHandleContainer: {
-		"background-color": "rgba(32, 32, 32, .4)",
-		"border-style": "solid",
-		"border-width": "10px",
-		"border-image": "url('/CommonImages/handle-corners-red.png') 10 10 10 10 repeat",
-		"padding": "10px",
+export interface CSSProperties extends CSS.Properties<number | string> {
+	// Allow pseudo selectors and media queries
+	[k: string]: CSS.Properties<number | string>[keyof CSS.Properties] | CSSProperties;
+}
+
+export type StyleRules<ClassKey extends string = string> = Record<ClassKey, CSSProperties>;
+
+export function createStyles<Name extends string>(styles: StyleRules<Name>): jss.StyleSheet<Name> {
+	return jss.default.createStyleSheet<Name>(styles as any);
+}
+
+export const background = createStyles({
+	bgAlternateDarken: {
+		"& li:nth-child(even), & tr:cnth-hild(even)": {
+			backgroundColor: "rgba(50,50,50,0.15)",
+		},
+	},
+}).attach().classes;
+
+export const events = createStyles({
+	clickable: {
+		cursor: "pointer",
+
+		"&:hover": {
+			background: "rgba(50,50,50,.3) !important",
+		},
+	},
+}).attach().classes;
+
+export const redHandleContainer = createStyles({
+	container: {
+		backgroundColor: "rgba(32, 32, 32, .4)",
+		borderStyle: "solid",
+		borderWidth: "10px",
+		borderImage: "url('/CommonImages/handle-corners-red.png') 10 10 10 10 repeat",
+		padding: "10px",
 	},
 	header: {
-		"font-size": "48px",
-		"line-height": "40px",
-		"margin-left": "5px",
-		"font-weight": "bold",
-		"color": "#9f9f9f",
-		"font-variant": "small-caps",
-		"text-transform": "lowercase",
-		"letter-spacing": "5px",
+		fontSize: "48px",
+		lineHeight: "40px",
+		marginLeft: "5px",
+		fontWeight: "bold",
+		color: "#9f9f9f",
+		fontVariant: "small-caps",
+		textTransform: "lowercase",
+		letterSpacing: "5px",
 		"-webkit-text-stroke-width": "1px",
 		"-webkit-text-stroke-color": "#151515",
 	},
+}).attach().classes;
+
+export const layout = createStyles({
+	centerLayout1000: {
+		maxWidth: "1000px",
+		margin: "0 auto"
+	},
+	vertMiddle: {
+		verticalAlign: "middle",
+	},
+	horzRule: {
+		height: "1px",
+		width: "90%",
+		borderBottom: "1px solid rgba(255,255,255,.2)",
+		borderTop: "1px solid rgba(255,255,255,.4)",
+	},
 	flexRow: {
-		"display": "flex",
-		"flex-direction": "row",
-		"flex-wrap": "nowrap",
+		display: "flex",
+		flexDirection: "row",
+		flexWrap: "nowrap",
 	},
 	flexEvenDistribution: {
-		"flex-grow": 1,
-		"flex-basis": 0,
+		flexGrow: 1,
+		flexBasis: 0,
 	},
+	flexFillRemaining: {
+		flexGrow: 1
+	},
+	flexWrapContent: {
+		flexGrow: 0,
+		flexBasis: 0,
+	},
+	blockCenter: { 
+		marginLeft: "auto",
+		marginRight: "auto",
+	},
+	inlineBlock: {
+		display: "inline-block",
+	},
+	width100: { width: "100%" },
+	width70: { width: "70%" },
+	width50: { width: "50%" },
+	width40: { width: "40%" },
+	width25: { width: "25%" },
+	width15: { width: "15%" },
+	width10: { width: "10%" },
 }).attach().classes;
 
-export const textColor = jss.default.createStyleSheet({
+export const textColor = createStyles({
 	white: { color: "#E8E8E8" },
 	gray: { color: "#555555" },
+	gray9f: { color: "#9F9F9F" },
+	graye8: { color: "#E8E8E8" },
 }).attach().classes;
 
-export const margin = jss.default.createStyleSheet({
-	all: { "margin": "10px", },
-	half: { "margin": "5px", },
+export const margin = createStyles({
+	all: { margin: "10px", },
+	half: { margin: "5px", },
 
-	vertical: { "margin-top": "10px", "margin-bottom": "10px", },
-	verticalHalf: { "margin-top": "5px", "margin-bottom": "5px", },
+	vertical: { marginTop: "10px", marginBottom: "10px", },
+	verticalHalf: { marginTop: "5px", marginBottom: "5px", },
 
-	horizontal: { "margin-left": "10px", "margin-right": "10px", },
-	horizontalHalf: { "margin-left": "5px", "margin-right": "5px", },
+	horizontal: { marginLeft: "10px", marginRight: "10px", },
+	horizontalHalf: { marginLeft: "5px", marginRight: "5px", },
 
-	right: { "margin-right": "10px", },
-	rightHalf: { "margin-right": "5px", },
-	rightDouble: { "margin-right": "20px", },
+	right: { marginRight: "10px", },
+	rightHalf: { marginRight: "5px", },
+	rightDouble: { marginRight: "20px", },
 
-	left : { "margin-left": "10px", },
-	leftHalf: { "margin-left": "5px", },
-	leftDouble: { "margin-left": "20px", },
+	left : { marginLeft: "10px", },
+	leftHalf: { marginLeft: "5px", },
+	leftDouble: { marginLeft: "20px", },
 
-	top: { "margin-top": "10px", },
-	topHalf: { "margin-top": "5px", },
-	topDouble: { "margin-top": "20px", },
+	top: { marginTop: "10px", },
+	topHalf: { marginTop: "5px", },
+	topDouble: { marginTop: "20px", },
 
-	bottom : { "margin-bottom": "10px", },
-	bottomHalf: { "margin-bottom": "5px", },
-	bottomDouble: { "margin-bottom": "20px", },
+	bottom : { marginBottom: "10px", },
+	bottomHalf: { marginBottom: "5px", },
+	bottomDouble: { marginBottom: "20px", },
 }).attach().classes;
 
-export const padding = jss.default.createStyleSheet({
-	all: { "padding": "10px", },
-	half: { "padding": "5px", },
+export const padding = createStyles({
+	all: { padding: "10px", },
+	half: { padding: "5px", },
 
-	vertical: { "padding-top": "10px", "padding-bottom": "10px", },
-	verticalHalf: { "padding-top": "5px", "padding-bottom": "5px", },
+	vertical: { paddingTop: "10px", paddingBottom: "10px", },
+	verticalHalf: { paddingTop: "5px", paddingBottom: "5px", },
 
-	horizontal: { "padding-left": "10px", "padding-right": "10px", },
-	horizontalHalf: { "padding-left": "5px", "padding-right": "5px", },
+	horizontal: { paddingLeft: "10px", paddingRight: "10px", },
+	horizontalHalf: { paddingLeft: "5px", paddingRight: "5px", },
 
-	right: { "padding-right": "10px", },
-	rightHalf: { "padding-right": "5px", },
-	rightDouble: { "padding-right": "20px", },
+	right: { paddingRight: "10px", },
+	rightHalf: { paddingRight: "5px", },
+	rightDouble: { paddingRight: "20px", },
 
-	left : { "padding-left": "10px", },
-	leftHalf: { "padding-left": "5px", },
-	leftDouble: { "padding-left": "20px", },
+	left : { paddingLeft: "10px", },
+	leftHalf: { paddingLeft: "5px", },
+	leftDouble: { paddingLeft: "20px", },
 
-	top: { "padding-top": "10px", },
-	topHalf: { "padding-top": "5px", },
-	topDouble: { "padding-top": "20px", },
+	top: { paddingTop: "10px", },
+	topHalf: { paddingTop: "5px", },
+	topDouble: { paddingTop: "20px", },
 
-	bottom : { "padding-bottom": "10px", },
-	bottomHalf: { "padding-bottom": "5px", },
-	bottomDouble: { "padding-bottom": "20px", },
+	bottom : { paddingBottom: "10px", },
+	bottomHalf: { paddingBottom: "5px", },
+	bottomDouble: { paddingBottom: "20px", },
 }).attach().classes;
 
-export const text = jss.default.createStyleSheet({
-	light: { "font-weight": 100 },
-	bold: { "font-weight": "bold" },
+export const text = createStyles({
+	light: { fontWeight: 100 },
+	bold: { fontWeight: "bold" },
 
-	font10: { "font-size": "10px" },
-	font12: { "font-size": "12px" },
-	font14: { "font-size": "14px" },
-	font16: { "font-size": "16px" },
-	font20: { "font-size": "20px" },
-	font22: { "font-size": "22px" },
-	font24: { "font-size": "24px" },
-	font26: { "font-size": "26px" },
-	font28: { "font-size": "28px" },
-	font30: { "font-size": "30px" },
-	font32: { "font-size": "32px" },
-	font34: { "font-size": "34px" },
-	font36: { "font-size": "36px" },
-	font48: { "font-size": "48px" },
-	font56: { "font-size": "56px" },
+	font10: { fontSize: "10px" },
+	font12: { fontSize: "12px" },
+	font14: { fontSize: "14px" },
+	font16: { fontSize: "16px" },
+	font20: { fontSize: "20px" },
+	font22: { fontSize: "22px" },
+	font24: { fontSize: "24px" },
+	font26: { fontSize: "26px" },
+	font28: { fontSize: "28px" },
+	font30: { fontSize: "30px" },
+	font32: { fontSize: "32px" },
+	font34: { fontSize: "34px" },
+	font36: { fontSize: "36px" },
+	font48: { fontSize: "48px" },
+	font56: { fontSize: "56px" },
 
-	left: { "text-align": "left" },
-	center: { "text-align": "center" },
-	right: { "text-align": "right" },
+	left: { textAlign: "left" },
+	center: { textAlign: "center" },
+	right: { textAlign: "right" },
 
-	smallCaps: { "font-variant": "small-caps" },
+	smallCaps: { fontVariant: "small-caps" },
+	inset: {
+		letterSpacing: "5px",
+		"-webkit-text-stroke-width": "1px",
+		"-webkit-text-stroke-color": "#151515",
+	},
+
+	noSelect: {
+		"-webkit-touch-callout": "none",
+		"-webkit-user-select": "none",
+		"-khtml-user-select": "none",
+		"-moz-user-select": "none",
+		"-ms-user-select": "none",
+		userSelect: "none",
+	},
+
+	toLower: { 
+		fontVariant: "small-caps",
+		textTransform: "lowercase",
+		letterSpacing: "5px",
+	},
+	toUpper: {
+		textTransform: "uppercase",
+		letterSpacing: "5px",
+	},
 }).attach().classes;

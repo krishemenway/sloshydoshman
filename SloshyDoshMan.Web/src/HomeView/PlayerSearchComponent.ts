@@ -5,6 +5,7 @@ import * as Pagination from "Pagination/PaginationComponent";
 import * as PlayerView from "PlayerView/PlayerProfileComponent";
 import * as ko from "knockout";
 import * as $ from "jquery";
+import { layout, text, textColor, padding, events, createStyles, redHandleContainer } from "AppStyles";
 
 interface PlayerSearchResult {
 	UserName: string;
@@ -51,30 +52,56 @@ class PlayerSearchViewModel {
 	public Query: Observable<string>;
 }
 
+const styles = createStyles({
+	playerSearch: {
+		transition: "all 400ms cubic-bezier(0.120, 0.460, 0.215, 0.750)",
+	},
+	search: {
+		padding: "10px",
+		background: "#181818",
+		border: "0",
+		color: "#e8e8e8",
+	},
+	searchTextWrapper: {
+		borderBottom: "1px solid #e8e8e8",
+		paddingBottom: "10px",
+		marginBottom: "10px",
+	},
+	searchResult: { 
+		display: "block",
+		"&:nth-child(odd)": {
+			backgroundColor: "transparent",
+		},
+		"&:nth-child(even)": {
+			backgroundColor: "rgba(50,50,50,0.15)",
+		},
+	},
+}).attach().classes;
+
 export var Name : string = "PlayerSearch";
 ko.components.register(Name, {
 	viewModel: PlayerSearchViewModel,
 	template: `
-		<div class="player-search red-handle-container">
-			<div class="font-24 text-white small-caps">Search for player</div>
+		<div class="${styles.playerSearch} ${redHandleContainer.container}">
+			<div class="${text.font24} ${textColor.white} ${text.smallCaps}">Search for player</div>
 
-			<div class="search-text-wrapper">
-				<input class="search font-24 width-100" type="search" ref="searchBox" data-bind="textInput: Query" />
+			<div class="${styles.searchTextWrapper}">
+				<input class="${styles.search} ${text.font24} ${layout.width100}" type="search" ref="searchBox" data-bind="textInput: Query" />
 			</div>
 
 			<!-- ko if: SearchResultsPage().length > 0 -->
-			<ul class="search-results text-white">
+			<ul class="${textColor.white}">
 				<!-- ko foreach: SearchResultsPage() -->
-				<li class="padding-horizontal padding-vertical width-100 search-result clickable" data-bind="click: $component.GoToPlayer, html: UserName"></li>
+				<li class="${padding.all} ${layout.width100} ${styles.searchResult} ${events.clickable}" data-bind="click: $component.GoToPlayer, html: UserName"></li>
 				<!-- /ko -->
 				<!-- ko foreach: new Array(SearchResultsPageSize - SearchResultsPage().length) -->
-				<li class="padding-horizontal padding-vertical width-100 search-result">&nbsp;</li>
+				<li class="${padding.all} ${layout.width100} ${styles.searchResult}">&nbsp;</li>
 				<!-- /ko -->
 			</ul>
 			<!-- /ko -->
 
 			<!-- ko if: SearchResults().length > 0 -->
-			<div class="text-white" data-bind="component: {name: '${Pagination.ComponentName}', params: {SelectedPage: SelectedPage, PageSize: SearchResultsPageSize, TotalItemCount: TotalItemCount}}" />
+			<div class="${textColor.white}" data-bind="component: {name: '${Pagination.ComponentName}', params: {SelectedPage: SelectedPage, PageSize: SearchResultsPageSize, TotalItemCount: TotalItemCount}}" />
 			<!-- /ko -->
 		</div>`,
 });

@@ -8,9 +8,9 @@ let componentLoader : components.Loader = {
 		}
 
 		if(typeof templateConfig === "string") {
-			ko.components.loaders[1].loadTemplate(name, templateConfig.replace(/[\t\n]/g, ''), callback);
+			(ko.components.defaultLoader as any).loadTemplate(name, templateConfig.replace(/[\t\n]/g, ''), callback);
 		} else {
-			ko.components.loaders[1].loadTemplate(name, templateConfig, callback);
+			(ko.components.defaultLoader as any).loadTemplate(name, templateConfig, callback);
 		}
 	}
 }

@@ -1,13 +1,16 @@
-import {Dictionary} from "CommonDataStructures/Dictionary";
-import {ResultOf} from "CommonDataStructures/ResultOf";
-import {GameViewModel,PlayedGame,RecentGameResponse,ScoreboardPlayer} from "Server";
-import {GoToView} from "App";
-import {Observable, ObservableArray, Computed} from "knockout";
+import * as ko from "knockout";
+import * as $ from "jquery";
+import { Observable, ObservableArray, Computed } from "knockout";
+import { layout, text, textColor, margin, padding, events, createStyles, redHandleContainer } from "AppStyles";
+import { map } from "Maps/MapStyles";
+import { perk } from "Perks/PerkStyles";
+import { Dictionary } from "CommonDataStructures/Dictionary";
+import { ResultOf } from "CommonDataStructures/ResultOf";
+import { GameViewModel ,PlayedGame,RecentGameResponse,ScoreboardPlayer } from "Server";
+import { GoToView } from "App";
 import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import * as PlayerView from "PlayerView/PlayerProfileComponent";
 import * as GameView from "GameView/PlayedGameComponent";
-import * as ko from "knockout";
-import * as $ from "jquery";
 
 export class ServerRecentWinsViewModel {
 	constructor(params?: any) {
@@ -132,25 +135,43 @@ export class ServerRecentWinsViewModel {
 	private GamesByPlayedGameId: Dictionary<Observable<GameViewModel|null>>;
 }
 
+const styles = createStyles({
+	recentWinPlayer: {
+		border: "1px solid #282828",
+		borderTopWidth: "5px",
+		backgroundColor: "rgba(0,0,0,.5)",
+	},
+
+	recentWinGame: {
+		border: "1px solid transparent",
+		cursor: "pointer",
+
+		"&.selected": {
+			borderColor: "#282828",
+			backgroundColor: "rgba(0,0,0,.5)",
+		},
+	},
+}).attach().classes;
+
 export var Name : string = "ServerRecentWins";
 ko.components.register(Name, {
 	viewModel: ServerRecentWinsViewModel,
 	template: `
-		<div class="red-handle-container">
-			<div class="font-24 text-white small-caps">Recent Wins</div>
-			<div class="flex-row padding-bottom" data-bind="foreach: RecentWins">
-				<div class="flex-even-distribution recent-win-game" data-bind="click: $component.GoToGame, event: {mouseover: $component.OnHover}, css: {selected: $component.SelectedRecentWin() === $data}">
-					<div class="map-cover margin-bottom" data-bind="css: Map" />
-					<div class="text-white font-14 text-center margin-bottom-half" data-bind="text: Map" />
-					<div class="text-gray font-14 text-center margin-bottom" data-bind="${MomentFormatDate.DataBind("TimeFinished", "MMM Do YYYY")}" />
+		<div class="${redHandleContainer.container}">
+			<div class="${text.font24} ${textColor.white} ${text.smallCaps}">Recent Wins</div>
+			<div class="${padding.bottom}" data-bind="foreach: RecentWins">
+				<div class="${layout.width25} ${layout.inlineBlock} ${styles.recentWinGame}" data-bind="click: $component.GoToGame, event: {mouseover: $component.OnHover}, css: {selected: $component.SelectedRecentWin() === $data}">
+					<div class="${map.mapCover} ${margin.bottom}" style="min-height: 119px" data-bind="css: Map" />
+					<div class="${textColor.white} ${text.font14} ${text.center} ${margin.bottomHalf}" data-bind="text: Map" />
+					<div class="${textColor.gray} ${text.font14} ${text.center} ${margin.bottom}" data-bind="${MomentFormatDate.DataBind("TimeFinished", "MMM Do YYYY")}" />
 				</div>
 			</div>
 
-			<div class="flex-row">
+			<div class="${layout.flexRow}">
 				<!-- ko foreach: RecentWinPlayers -->
-				<div class="flex-even-distribution text-white text-center recent-win-player padding clickable" data-bind="click: $component.GoToPlayer">
-					<div class="perk-icon width-32" data-bind="css: $component.FindPerkForRecentWin($data)" />
-					<div class="font-12 text-center" data-bind="html: UserName" />
+				<div class="${layout.flexEvenDistribution} ${textColor.white} ${text.center} ${styles.recentWinPlayer} ${padding.all} ${events.clickable}" data-bind="click: $component.GoToPlayer">
+					<div class="${perk.perkIcon} ${perk.width32}" data-bind="css: $component.FindPerkForRecentWin($data)" />
+					<div class="${text.font12} ${text.center}" data-bind="html: UserName" />
 				</div>
 				<!-- /ko -->
 			</div>

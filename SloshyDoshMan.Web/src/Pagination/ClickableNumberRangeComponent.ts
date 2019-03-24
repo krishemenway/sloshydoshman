@@ -1,5 +1,28 @@
 import { Observable, Computed } from "knockout";
 import * as ko from "knockout";
+import { text, createStyles } from "AppStyles";
+
+const styles = createStyles({
+	selectNumberButton: {
+		width: "30px",
+		height: "40px",
+
+		border: "1px solid transparent",
+
+		lineHeight: "40px",
+
+		"&:hover": {
+			borderStyle: "dashed",
+			borderColor: "rgba(255,255,255,.25)",
+		},
+
+		"&.selected": {
+			borderColor: "rgba(255,255,255,.25)",
+			borderStyle: "solid",
+			cursor: "default",
+		},
+	},
+}).attach().classes;
 
 interface ClickableNumberRangeParams {
 	From: number;
@@ -84,16 +107,16 @@ export var Name : string = "ClickableNumberRange";
 ko.components.register(Name, {
 	viewModel: ClickableNumberRangeViewModel,
 	template: `
-		<div class="clickable-number-range text-center">
+		<div class="${text.center}">
 			<!-- ko foreach: BeginRange() -->
-			<button class="select-number-button text-center" data-bind="click: $component.OnNumberClicked, text: $data, css: {selected: $data===$component.SelectedIndex()}"></button>&nbsp;
+			<button class="${styles.selectNumberButton} ${text.center}" data-bind="click: $component.OnNumberClicked, text: $data, css: {selected: $data===$component.SelectedIndex()}"></button>&nbsp;
 			<!-- /ko -->
 
 			<!-- ko if: MiddleRange().length -->
 				&hellip;&nbsp;
 
 				<!-- ko foreach: MiddleRange() -->
-				<button class="select-number-button text-center" data-bind="click: $component.OnNumberClicked, text: $data, css: {selected: $data===$component.SelectedIndex()}"></button>&nbsp;
+				<button class="${styles.selectNumberButton} ${text.center}" data-bind="click: $component.OnNumberClicked, text: $data, css: {selected: $data===$component.SelectedIndex()}"></button>&nbsp;
 				<!-- /ko -->
 
 				&hellip;&nbsp;
@@ -104,7 +127,7 @@ ko.components.register(Name, {
 			<!-- /ko -->
 
 			<!-- ko foreach: EndRange() -->
-			<button class="select-number-button text-center" data-bind="click: $component.OnNumberClicked, text: $data, css: {selected: $data===$component.SelectedIndex()}"></button>&nbsp;
+			<button class="${styles.selectNumberButton} ${text.center}" data-bind="click: $component.OnNumberClicked, text: $data, css: {selected: $data===$component.SelectedIndex()}"></button>&nbsp;
 			<!-- /ko -->
 		</div>`,
 });

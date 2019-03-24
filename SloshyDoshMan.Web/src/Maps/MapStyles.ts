@@ -7,6 +7,7 @@ export const map = createStyles({
 		position: "relative",
 		overflow: "hidden",
 
+		"&.KF-Farmhouse": { backgroundImage: "url('/Maps/KF-Farmhouse-480x240.jpg');" },
 		"&.KF-BlackForest": { backgroundImage: "url('/Maps/KF-BlackForest-480x240.jpg');" },
 		"&.KF-Outpost": { backgroundImage: "url('/Maps/KF-Outpost-480x240.jpg');" },
 		"&.KF-Prison": { backgroundImage: "url('/Maps/KF-Prison-480x240.jpg');" },
@@ -26,7 +27,6 @@ export const map = createStyles({
 		"&.KF-KrampusLair": { backgroundImage: "url('/Maps/KF-KrampusLair-480x240.jpg');" },
 		"&.KF-Lockdown": { backgroundImage: "url('/Maps/KF-Lockdown-480x240.jpg');" },
 		"&.KF-MonsterBall": { backgroundImage: "url('/Maps/KF-MonsterBall-480x240.jpg');" },
-		"&.KF-PowerCore": { backgroundImage: "url('/Maps/KF-PowerCore-480x240.jpg');" },
 		"&.KF-PowerCore_Holdout": { backgroundImage: "url('/Maps/KF-PowerCore-480x240.jpg');" },
 		"&.KF-Airship": { backgroundImage: "url('/Maps/KF-Airship-480x240.jpg');" },
 		"&.KF-ShoppingSpree": { backgroundImage: "url('/Maps/KF-ShoppingSpree-480x240.jpg');" },

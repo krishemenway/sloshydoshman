@@ -13,6 +13,17 @@ interface MomentFormatDateParams {
 	Format: string;
 }
 
+const existingMoments: Dictionary<moment.Moment> = {};
+function findOrCreateMoment(date: string): moment.Moment {
+	let existingMoment = existingMoments[date];
+
+	if (existingMoment === undefined) {
+		existingMoments[date] = moment(date);
+	}
+
+	return existingMoments[date];
+}
+
 function validateParams(params: MomentFormatDateParams) {
 	if (!params.Format) {
 		throw `Missing Format parameter in momentFormatDate: ${params}`;
@@ -23,10 +34,10 @@ function validateParams(params: MomentFormatDateParams) {
 
 function setText(element: Element, params: MomentFormatDateParams) {
 	if (typeof params.Date === "string") {
-		ko.utils.setTextContent(element, moment(params.Date).format(params.Format));
+		ko.utils.setTextContent(element, findOrCreateMoment(params.Date).format(params.Format));
 	}
 	else if (typeof params.Date === "function") {
-		ko.utils.setTextContent(element, moment(params.Date()).format(params.Format));
+		ko.utils.setTextContent(element, findOrCreateMoment(params.Date()).format(params.Format));
 	}
 }
 

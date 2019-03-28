@@ -6,6 +6,11 @@ import {PieChartData} from "ChartJS/Chart";
 import {Computed, Observable} from "knockout";
 import * as ChartJsPieChart from "ChartJS/ChartJSPieChartBindingHandler";
 
+var Name : string = "ServerStatistics";
+export function ServerStatisticsComponent() {
+	return `component: {name: '${Name}'}`;
+}
+
 interface PerkStatistics
 {
 	PerkName: string;
@@ -60,7 +65,6 @@ class ServerStatisticsViewModel {
 	public Stats: Observable<ServerStatistics|null>;
 }
 
-export var Name : string = "ServerStatistics";
 ko.components.register(Name, {
 	viewModel: ServerStatisticsViewModel,
 	template: `

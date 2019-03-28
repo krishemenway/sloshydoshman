@@ -1,9 +1,8 @@
-import {Dictionary} from "CommonDataStructures/Dictionary";
-import {Observable} from "knockout";
-import { text, margin, textColor, layout, redHandleContainer } from "AppStyles";
-import * as HashChange from "KnockoutHelpers/HashchangeExtender";
 import * as ko from "knockout";
-import * as HomeView from "HomeView/HomeComponent";
+import { text, margin, textColor, layout, redHandleContainer } from "AppStyles";
+import { Dictionary } from "CommonDataStructures/Dictionary";
+import { CreateHashChangeObservable, SetState } from "KnockoutHelpers/HashchangeExtender";
+import { HomeComponentName } from "HomeView/HomeComponent";
 import * as ComponentCleaner from "KnockoutHelpers/ComponentCleaner";
 
 export var ComponentName : string = "App";
@@ -17,15 +16,15 @@ export function GoToView(view: string, data?: Dictionary<string>) {
 		});
 	}
 
-	HashChange.SetState(state);
+	SetState(state);
 }
 
 export class AppViewModel {
 	constructor(params?: any) {
-		this.CurrentView = HashChange.CreateObservable("v", HomeView.Name);
+		this.CurrentView = CreateHashChangeObservable("v", HomeComponentName);
 	}
 
-	public CurrentView: Observable<string>;
+	public CurrentView: ko.Observable<string>;
 }
 
 ko.components.register(ComponentName, {

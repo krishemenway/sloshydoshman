@@ -1,9 +1,10 @@
 import * as moment from "moment";
 import { Observable } from "knockout";
 import * as ko from "knockout"
+import { Dictionary } from "CommonDataStructures/Dictionary";
 
 var Name : string = "MomentFormatDate";
-export function DataBind(dateParameterName: string, format: string) {
+export function MomentFormat(dateParameterName: string, format: string) {
 	return `${Name}: {Format: '${format}', Date: ${dateParameterName}}`;
 }
 

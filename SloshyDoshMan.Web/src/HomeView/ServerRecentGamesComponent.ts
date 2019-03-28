@@ -1,15 +1,18 @@
-import {ResultOf} from "CommonDataStructures/ResultOf";
-import {PlayedGame, RecentGameResponse} from "Server";
-import {GoToView} from "App";
-import {Observable, ObservableArray, Subscription} from "knockout";
-import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
-import * as Pagination from "Pagination/PaginationComponent";
-import * as GameView from "GameView/PlayedGameComponent";
 import * as ko from "knockout";
 import * as $ from "jquery";
 import { padding, text, textColor, margin, layout, events, background, redHandleContainer } from "AppStyles";
+import {ResultOf} from "CommonDataStructures/ResultOf";
+import {PlayedGame, RecentGameResponse} from "Server";
+import {GoToView} from "App";
+import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
+import { PaginationComponent } from "Pagination/PaginationComponent";
+import { PlayedGameName } from "GameView/PlayedGameComponent";
 
-class RecentGamesViewModel {
+export var Name : string = "ServerRecentGames"; 
+export function ServerRecentGamesComponent() {
+	return `component: {name: '${Name}'}`;
+}
+class ServerRecentGamesModel {
 	constructor(params?: any) {
 		this.HasLoadedGames = ko.observable(false);
 		this.LoadedGames = ko.observableArray();
@@ -25,7 +28,7 @@ class RecentGamesViewModel {
 	}
 
 	public SelectGame = (game: PlayedGame) : void => {
-		GoToView(GameView.Name, {"PlayedGameId": game.PlayedGameId});
+		GoToView(PlayedGameName, {"PlayedGameId": game.PlayedGameId});
 	}
 
 	private LoadPage(page: number) {
@@ -38,19 +41,18 @@ class RecentGamesViewModel {
 		this.LoadedGames(response.Data.RecentGames);
 	}
 
-	public TotalNumberOfGames: Observable<number>;
-	public PageNumber: Observable<number>;
+	public TotalNumberOfGames: ko.Observable<number>;
+	public PageNumber: ko.Observable<number>;
 	public PageSize: number = 10;
 
-	public HasLoadedGames: Observable<boolean>;
-	public LoadedGames: ObservableArray<PlayedGame>;
+	public HasLoadedGames: ko.Observable<boolean>;
+	public LoadedGames: ko.ObservableArray<PlayedGame>;
 
-	private PageNumberSubscription: Subscription;
+	private PageNumberSubscription: ko.Subscription;
 }
 
-export var Name : string = "ServerRecentGames"; 
 ko.components.register(Name, {
-	viewModel: RecentGamesViewModel,
+	viewModel: ServerRecentGamesModel,
 	template: `
 		<div>
 			<div class="${text.font36} ${textColor.white} ${text.smallCaps} ${text.center} ${margin.topHalf}">all games</div>
@@ -62,7 +64,7 @@ ko.components.register(Name, {
 						<tr class="${events.clickable}" style="line-height: 26px" data-bind="click: $component.SelectGame">
 							<td class="${padding.half} ${text.left}" style="width: 69%">
 								<!-- ko text: Map --><!-- /ko -->&nbsp;
-								<span class="${textColor.gray} ${margin.left}" data-bind="${MomentFormatDate.DataBind("TimeStarted", "MMMM Do, YYYY")}" />
+								<span class="${textColor.gray} ${margin.left}" data-bind="${MomentFormat("TimeStarted", "MMMM Do, YYYY")}" />
 							</td>
 							<td class="${padding.half} ${text.center}" style="width: 11%; min-width: 106px" data-bind="text: Difficulty"></td>
 							<td class="${padding.half} ${text.center} ${layout.width10}" data-bind="text: Length"></td>
@@ -71,12 +73,12 @@ ko.components.register(Name, {
 						<!-- /ko -->
 
 						<!-- ko foreach: new Array(PageSize - LoadedGames().length) -->
-						<tr><td class="${padding.vertical}" colspan="4">&nbsp;</td></tr>
+						<tr style="line-height: 26px"><td class="${padding.half}" colspan="4">&nbsp;</td></tr>
 						<!-- /ko -->
 					</tbody>
 				</table>
 
-				${Pagination.PaginationComponent("PageNumber", "TotalNumberOfGames", "PageSize")}
+				<div data-bind="${PaginationComponent("PageNumber", "TotalNumberOfGames", "PageSize")}" />
 			</div>
 		</div>`,
 });

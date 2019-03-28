@@ -1,16 +1,19 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
-import { Observable, ObservableArray, Computed } from "knockout";
 import { layout, text, textColor, margin, padding, events, createStyles, redHandleContainer } from "AppStyles";
 import { map } from "Maps/MapStyles";
 import { perk } from "Perks/PerkStyles";
 import { Dictionary } from "CommonDataStructures/Dictionary";
 import { ResultOf } from "CommonDataStructures/ResultOf";
 import { GameViewModel ,PlayedGame,RecentGameResponse,ScoreboardPlayer } from "Server";
-import { GoToView } from "App";
-import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
-import * as PlayerView from "PlayerView/PlayerProfileComponent";
-import * as GameView from "GameView/PlayedGameComponent";
+import { GoToPlayedGame } from "GameView/PlayedGameComponent";
+import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
+import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
+
+var Name : string = "ServerRecentWins";
+export function ServerRecentWinsComponent() {
+	return `component: {name: '${Name}'}`;
+}
 
 export class ServerRecentWinsViewModel {
 	constructor(params?: any) {
@@ -28,10 +31,10 @@ export class ServerRecentWinsViewModel {
 	}
 
 	public GoToGame = (game: PlayedGame) => {
-		GoToView(GameView.Name, {"PlayedGameId": game.PlayedGameId});
+		GoToPlayedGame(game.PlayedGameId);
 	}
 
-	public FindOrCreatePlayerGameData = (game: PlayedGame) : Observable<GameViewModel|null> => {
+	public FindOrCreatePlayerGameData = (game: PlayedGame) : ko.Observable<GameViewModel|null> => {
 		if(!this.GamesByPlayedGameId[game.PlayedGameId]) {
 			this.GamesByPlayedGameId[game.PlayedGameId] = ko.observable(null);
 		}
@@ -61,7 +64,7 @@ export class ServerRecentWinsViewModel {
 	}
 
 	public GoToPlayer = (player: ScoreboardPlayer) : void => {
-		GoToView(PlayerView.Name, {SteamId: player.SteamId});
+		GoToPlayerProfile(player.SteamId);
 	}
 
 	private SelectNextGame = () : void => {
@@ -127,12 +130,12 @@ export class ServerRecentWinsViewModel {
 		});
 	}
 
-	public RecentWins: ObservableArray<PlayedGame>;
-	public SelectedRecentWin: Observable<PlayedGame|null>;
-	public RecentWinPlayers: Computed<ScoreboardPlayer[]>;
+	public RecentWins: ko.ObservableArray<PlayedGame>;
+	public SelectedRecentWin: ko.Observable<PlayedGame|null>;
+	public RecentWinPlayers: ko.Computed<ScoreboardPlayer[]>;
 
 	private RotateSelectedGameInterval: number;
-	private GamesByPlayedGameId: Dictionary<Observable<GameViewModel|null>>;
+	private GamesByPlayedGameId: Dictionary<ko.Observable<GameViewModel|null>>;
 }
 
 const styles = createStyles({
@@ -153,7 +156,6 @@ const styles = createStyles({
 	},
 }).attach().classes;
 
-export var Name : string = "ServerRecentWins";
 ko.components.register(Name, {
 	viewModel: ServerRecentWinsViewModel,
 	template: `
@@ -163,7 +165,7 @@ ko.components.register(Name, {
 				<div class="${layout.width25} ${layout.inlineBlock} ${styles.recentWinGame}" data-bind="click: $component.GoToGame, event: {mouseover: $component.OnHover}, css: {selected: $component.SelectedRecentWin() === $data}">
 					<div class="${map.mapCover} ${margin.bottom}" style="min-height: 119px" data-bind="css: Map" />
 					<div class="${textColor.white} ${text.font14} ${text.center} ${margin.bottomHalf}" data-bind="text: Map" />
-					<div class="${textColor.gray} ${text.font14} ${text.center} ${margin.bottom}" data-bind="${MomentFormatDate.DataBind("TimeFinished", "MMM Do YYYY")}" />
+					<div class="${textColor.gray} ${text.font14} ${text.center} ${margin.bottom}" data-bind="${MomentFormat("TimeFinished", "MMM Do YYYY")}" />
 				</div>
 			</div>
 

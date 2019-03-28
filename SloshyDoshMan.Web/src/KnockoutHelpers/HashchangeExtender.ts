@@ -1,5 +1,5 @@
-import {Dictionary} from 'CommonDataStructures/Dictionary';
 import * as ko from "knockout";
+import { Dictionary } from 'CommonDataStructures/Dictionary';
 
 const observablesByHashField: Dictionary<ko.Observable<string>> = {};
 const observableDefaultsByHashField: Dictionary<string> = {};
@@ -41,7 +41,7 @@ export function GetState() : Dictionary<string> {
 	return parseQueryString(window.location.hash);
 }
 
-export function CreateObservable(parameterName: string, defaultValue: string) {
+export function CreateHashChangeObservable(parameterName: string, defaultValue: string) {
 	observableDefaultsByHashField[parameterName] = defaultValue;
 	let observable = ko.observable<string>(GetState()[parameterName] || defaultValue);
 	return observablesByHashField[parameterName] = observable;

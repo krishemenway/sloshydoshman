@@ -1,7 +1,9 @@
-import { Observable } from "knockout";
 import * as ko from "knockout";
 
-export var Name : string = "NumberWithCommas";
+var Name : string = "NumberWithCommas";
+export function NumberWithCommas(numberField: string) {
+	return `${Name}: ${numberField}`;
+}
 
 function convertNumberToStringWithCommas(number: number) : string {
 	let flooredNumber = Math.floor(number);
@@ -16,11 +18,11 @@ function convertNumberToStringWithCommas(number: number) : string {
 	}
 }
 
-function init(element: Element, valueAccessor: () => Observable<number>) : void {
+function init(element: Element, valueAccessor: () => ko.Observable<number>) : void {
 	ko.utils.setTextContent(element, convertNumberToStringWithCommas(ko.unwrap(valueAccessor())));
 }
 
-function update(element: Element, valueAccessor: () => Observable<number>) : void {
+function update(element: Element, valueAccessor: () => ko.Observable<number>) : void {
 	ko.utils.setTextContent(element, convertNumberToStringWithCommas(ko.unwrap(valueAccessor())));
 }
 

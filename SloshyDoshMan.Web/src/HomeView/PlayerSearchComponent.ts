@@ -1,11 +1,14 @@
-import {ResultOf} from "CommonDataStructures/ResultOf";
-import {GoToView} from "App";
-import {Observable, ObservableArray, Computed} from "knockout";
-import * as Pagination from "Pagination/PaginationComponent";
-import * as PlayerView from "PlayerView/PlayerProfileComponent";
 import * as ko from "knockout";
 import * as $ from "jquery";
 import { layout, text, textColor, padding, events, createStyles, redHandleContainer } from "AppStyles";
+import { ResultOf } from "CommonDataStructures/ResultOf";
+import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
+import { PaginationComponent } from "Pagination/PaginationComponent";
+
+var Name : string = "PlayerSearch";
+export function PlayerSearchComponent() {
+	return `component: {name: '${Name}'}`;
+}
 
 interface PlayerSearchResult {
 	UserName: string;
@@ -23,7 +26,7 @@ class PlayerSearchViewModel {
 	}
 
 	public GoToPlayer = (result: PlayerSearchResult) => {
-		GoToView(PlayerView.Name, {SteamId: result.SteamId});
+		GoToPlayerProfile(result.SteamId);
 	}
 
 	private GetSearchResultsPage = () => {
@@ -42,14 +45,14 @@ class PlayerSearchViewModel {
 		}
 	}
 
-	public SelectedPage: Observable<number>;
-	public TotalItemCount: Computed<number>;
+	public SelectedPage: ko.Observable<number>;
+	public TotalItemCount: ko.Computed<number>;
 
-	public SearchResults: ObservableArray<PlayerSearchResult>;
-	public SearchResultsPage: Computed<PlayerSearchResult[]>;
+	public SearchResults: ko.ObservableArray<PlayerSearchResult>;
+	public SearchResultsPage: ko.Computed<PlayerSearchResult[]>;
 	public SearchResultsPageSize: number = 10;
 
-	public Query: Observable<string>;
+	public Query: ko.Observable<string>;
 }
 
 const styles = createStyles({
@@ -78,7 +81,6 @@ const styles = createStyles({
 	},
 }).attach().classes;
 
-export var Name : string = "PlayerSearch";
 ko.components.register(Name, {
 	viewModel: PlayerSearchViewModel,
 	template: `
@@ -101,7 +103,7 @@ ko.components.register(Name, {
 			<!-- /ko -->
 
 			<!-- ko if: SearchResults().length > 0 -->
-			<div class="${textColor.white}" data-bind="component: {name: '${Pagination.ComponentName}', params: {SelectedPage: SelectedPage, PageSize: SearchResultsPageSize, TotalItemCount: TotalItemCount}}" />
+			<div class="${textColor.white}" data-bind="${PaginationComponent("SelectedPage", "TotalItemCount", "SearchResultsPageSize")}" />
 			<!-- /ko -->
 		</div>`,
 });

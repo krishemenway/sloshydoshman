@@ -5,9 +5,7 @@ import { text, createStyles } from "AppStyles";
 
 export var ComponentName : string = "Pagination";
 export function PaginationComponent(selectedPageObservable: string, totalItemCountSubscribable: string, pageSize: number|string) {
-	return `
-		<div data-bind="component: {name: '${ComponentName}', params: {SelectedPage: ${selectedPageObservable}, PageSize: ${pageSize}, TotalItemCount: ${totalItemCountSubscribable}}}" />
-	`;
+	return `component: {name: '${ComponentName}', params: {SelectedPage: ${selectedPageObservable}, PageSize: ${pageSize}, TotalItemCount: ${totalItemCountSubscribable}}}`;
 }
 
 interface PaginationParams {

@@ -1,15 +1,17 @@
-import { PlayerViewModel,PlayerMapStatistic, PlayedGame } from 'Server';
-import { Observable, Computed } from 'knockout';
-import * as PlayedGameList from "PlayerView/PlayedGameListComponent";
-import * as NumberWithCommas from "KnockoutHelpers/NumberWithCommasBindingHandler";
 import * as ko from 'knockout';
-import { padding, text, layout, events, margin } from 'AppStyles';
+import { padding, text, layout, events, margin, createStyles } from 'AppStyles';
+import { PlayerViewModel,PlayerMapStatistic, PlayedGame } from 'Server';
+import { NumberWithCommas } from "KnockoutHelpers/NumberWithCommasBindingHandler";
+import { PlayedGameListComponent } from 'PlayerView/PlayedGameListComponent';
 
-export var ComponentName = "PlayerMapStatistics";
+var ComponentName = "PlayerMapStatistics";
+export function PlayerMapStatisticsComponent(playerViewModelParameter: string) {
+	return `component: {name: '${ComponentName}', params: {PlayerViewModel: ${playerViewModelParameter}}}`;
+}
 
 interface PlayerMapStatisticsParams
 {
-	PlayerViewModel : Observable<PlayerViewModel>;
+	PlayerViewModel : ko.Observable<PlayerViewModel>;
 }
 
 class PlayerMapStatisticsViewModel {
@@ -43,21 +45,34 @@ class PlayerMapStatisticsViewModel {
 		return this.PlayerViewModel().MapStatistics.filter(stats => stats.Difficulty === difficulty);
 	}
 
-	public Difficulty: Observable<string>;
-	public Map: Observable<string>;
+	public Difficulty: ko.Observable<string>;
+	public Map: ko.Observable<string>;
 
 	public Difficulties: string[] = [ 'Hard', 'Suicidal', 'Hell on Earth' ];
-	public MapStatisticsForDifficulty: Computed<PlayerMapStatistic[]>;
-	public GamesForMapDifficulty: Computed<PlayedGame[]>;
-	public PlayerViewModel: Observable<PlayerViewModel>;
+	public MapStatisticsForDifficulty: ko.Computed<PlayerMapStatistic[]>;
+	public GamesForMapDifficulty: ko.Computed<PlayedGame[]>;
+	public PlayerViewModel: ko.Observable<PlayerViewModel>;
 }
+
+const styles = createStyles({
+	tab: {
+		border: "1px solid #383838",
+		borderTopRightRadius: "2px",
+		borderTopLeftRadius: "2px",
+		padding: "10px 2px 10px 2px",
+
+		"&.selected": {
+			borderBottomColor: "transparent",
+		},
+	},
+}).attach().classes;
 
 ko.components.register(ComponentName, {
 	viewModel: PlayerMapStatisticsViewModel,
 	template: `
 		<div>
-			<div class="${layout.flexRow} tabs ${margin.bottom}" data-bind="foreach: Difficulties">
-				<div class="${layout.flexEvenDistribution} ${events.clickable} ${text.center} tab" data-bind="css: {selected: $data === $component.Difficulty()}, text: $data, click: $component.SelectDifficulty" />
+			<div class="${layout.flexRow} ${margin.bottom}" data-bind="foreach: Difficulties">
+				<div class="${layout.flexEvenDistribution} ${events.clickable} ${text.center} ${styles.tab}" data-bind="css: {selected: $data === $component.Difficulty()}, text: $data, click: $component.SelectDifficulty" />
 			</div>
 
 			<table class="${layout.width100}" data-bind="visible: !Map()">
@@ -78,13 +93,13 @@ ko.components.register(ComponentName, {
 							<div class="${layout.width10} ${layout.inlineBlock} ${text.center}">/</div>
 							<div class="${layout.width40} ${layout.inlineBlock} ${text.left} ${padding.leftHalf}" data-bind="text: GamesPlayed" />
 						</td>
-						<td class="${layout.width15} ${padding.half} ${text.right}" data-bind="${NumberWithCommas.Name}: TotalKills" />
+						<td class="${layout.width15} ${padding.half} ${text.right}" data-bind="${NumberWithCommas("TotalKills")}" />
 					</tr>
 				</tbody>
 			</table>
 
 			<div data-bind="visible: !!Map()">
-				<div data-bind="component: {name: '${PlayedGameList.ComponentName}', params: {Games: GamesForMapDifficulty(), PageSize: 20}}"></div>
+				<div data-bind="${PlayedGameListComponent("GamesForMapDifficulty()", 20)}" />
 			</div>
 		</div>`,
 });

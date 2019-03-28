@@ -1,18 +1,20 @@
-import {PlayerViewModel} from "Server";
-import * as NumberWithCommas from "KnockoutHelpers/NumberWithCommasBindingHandler";
-import {Observable} from "knockout";
 import * as ko from "knockout";
 import { textColor, margin, layout, text } from "AppStyles";
 import { perk } from "Perks/PerkStyles";
+import { PlayerViewModel } from "Server";
+import { NumberWithCommas } from "KnockoutHelpers/NumberWithCommasBindingHandler";
 
 export var ComponentName = "PlayerPerkStatistics";
+export function PlayerPerkStatisticsComponent(playerViewModelParameter: string) {
+	return `component: {name: '${ComponentName}', params: ${playerViewModelParameter}}`;
+}
 
 class PlayerPerkStatisticsViewModel {
-	constructor(params: Observable<PlayerViewModel>) {
-		this.PlayerViewModel = params;
+	constructor(playerViewModel: ko.Observable<PlayerViewModel>) {
+		this.PlayerViewModel = playerViewModel;
 	}
 
-	public PlayerViewModel: Observable<PlayerViewModel>;
+	public PlayerViewModel: ko.Observable<PlayerViewModel>;
 }
 
 ko.components.register(ComponentName, {
@@ -29,12 +31,12 @@ ko.components.register(ComponentName, {
 
 					<div class="${layout.flexRow}" style="margin-left: 42px; margin-right: 8px;">
 						<div class="${layout.flexEvenDistribution} ${text.center}">
-							<div class="${text.font24} ${textColor.graye8} ${text.light}" data-bind="${NumberWithCommas.Name}: TotalKills"></div>
+							<div class="${text.font24} ${textColor.graye8} ${text.light}" data-bind="${NumberWithCommas("TotalKills")}"></div>
 							<div class="${text.font12} ${textColor.gray}">Kills</div>
 						</div>
 
 						<div class="${layout.flexEvenDistribution} ${text.center}">
-							<div class="${text.font24} ${textColor.graye8} ${text.light} ${text.right}" data-bind="${NumberWithCommas.Name}: TotalWavesPlayed"></div>
+							<div class="${text.font24} ${textColor.graye8} ${text.light} ${text.right}" data-bind="${NumberWithCommas("TotalWavesPlayed")}"></div>
 							<div class="${text.font12} ${textColor.gray} ${text.right}">Waves Played</div>
 						</div>
 					</div>

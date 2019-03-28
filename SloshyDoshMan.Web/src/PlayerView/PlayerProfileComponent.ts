@@ -63,8 +63,8 @@ ko.components.register(Name, {
 
 					<div class="${text.center} ${layout.width50} ${layout.inlineBlock} ${padding.leftHalf}">
 						<div class="${redHandleContainer.container}">
-							<div class="${text.font48} ${text.light}" data-bind="${NumberWithCommas.Name}: TotalGames" />
-							<div class="${text.font14} ${textColor.gray}">Total Games</div>
+							<div class="${text.font48} ${text.light} ${text.right}" data-bind="${NumberWithCommas.Name}: TotalGames" />
+							<div class="${text.font14} ${textColor.gray} ${text.right}">Total Games</div>
 						</div>
 					</div>
 				</div>

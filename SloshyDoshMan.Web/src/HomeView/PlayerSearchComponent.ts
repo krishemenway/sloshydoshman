@@ -96,9 +96,13 @@ ko.components.register(Name, {
 				<!-- ko foreach: SearchResultsPage() -->
 				<li class="${padding.all} ${layout.width100} ${styles.searchResult} ${events.clickable}" data-bind="click: $component.GoToPlayer, html: UserName"></li>
 				<!-- /ko -->
-				<!-- ko foreach: new Array(SearchResultsPageSize - SearchResultsPage().length) -->
-				<li class="${padding.all} ${layout.width100} ${styles.searchResult}">&nbsp;</li>
+
+				<!-- ko if: TotalItemCount() > SearchResultsPageSize -->
+					<!-- ko foreach: new Array(SearchResultsPageSize - SearchResultsPage().length) -->
+						<li class="${padding.all} ${layout.width100} ${styles.searchResult}">&nbsp;</li>
+					<!-- /ko -->
 				<!-- /ko -->
+
 			</ul>
 			<!-- /ko -->
 

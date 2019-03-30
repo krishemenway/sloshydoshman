@@ -7,10 +7,10 @@ import { ResultOf } from "CommonDataStructures/ResultOf";
 import { ScoreboardPlayer, GameViewModel } from "Server";
 import { GoToView } from "App";
 import { CreateHashChangeObservable } from "KnockoutHelpers/HashchangeExtender";
-import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
+import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
 
-export var PlayedGameName : string = "PlayedGame";
+var PlayedGameName : string = "PlayedGame";
 export function PlayedGameComponent() {
 	return `component: {name: '${PlayedGameName}'}`;
 }
@@ -105,12 +105,12 @@ ko.components.register(PlayedGameName, {
 
 					<div class="${margin.bottom}">Difficulty: <!-- ko text: PlayedGame.Difficulty --><!-- /ko --></div>
 
-					<div class="${margin.bottomHalf}" data-bind="${MomentFormatDate.MomentFormat("PlayedGame.TimeStarted", "dddd MMMM Do, YYYY")}" />
+					<div class="${margin.bottomHalf}" data-bind="${MomentFormat("PlayedGame.TimeStarted", "dddd MMMM Do, YYYY")}" />
 
 					<div class="${margin.bottom}">
-						<!-- ko ${MomentFormatDate.MomentFormat("PlayedGame.TimeStarted", "hh:mm:ss A")} --><!-- /ko -->
+						<!-- ko ${MomentFormat("PlayedGame.TimeStarted", "hh:mm:ss A")} --><!-- /ko -->
 						&nbsp;&ndash;&nbsp;
-						<!-- ko if: PlayedGame.TimeFinished --><!-- ko ${MomentFormatDate.MomentFormat("PlayedGame.TimeFinished", "hh:mm:ss A")} --><!-- /ko --><!-- /ko -->
+						<!-- ko if: PlayedGame.TimeFinished --><!-- ko ${MomentFormat("PlayedGame.TimeFinished", "hh:mm:ss A")} --><!-- /ko --><!-- /ko -->
 						<!-- ko ifnot: PlayedGame.TimeFinished -->Maybe soon?<!-- /ko -->
 					</div>
 				</div>

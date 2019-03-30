@@ -1,17 +1,17 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
 import { padding, text, textColor, margin, layout, events, background, redHandleContainer } from "AppStyles";
-import {ResultOf} from "CommonDataStructures/ResultOf";
-import {PlayedGame, RecentGameResponse} from "Server";
-import {GoToView} from "App";
+import { ResultOf } from "CommonDataStructures/ResultOf";
+import { PlayedGame, RecentGameResponse } from "Server";
 import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import { PaginationComponent } from "Pagination/PaginationComponent";
-import { PlayedGameName } from "GameView/PlayedGameComponent";
+import { GoToPlayedGame } from "GameView/PlayedGameComponent";
 
 export var Name : string = "ServerRecentGames"; 
 export function ServerRecentGamesComponent() {
 	return `component: {name: '${Name}'}`;
 }
+
 class ServerRecentGamesModel {
 	constructor(params?: any) {
 		this.HasLoadedGames = ko.observable(false);
@@ -23,20 +23,20 @@ class ServerRecentGamesModel {
 		this.PageNumberSubscription = this.PageNumber.subscribe((newPage: number) => this.LoadPage(newPage));
 	}
 
-	public dispose() {
+	public dispose() : void {
 		this.PageNumberSubscription.dispose();
 	}
 
 	public SelectGame = (game: PlayedGame) : void => {
-		GoToView(PlayedGameName, {"PlayedGameId": game.PlayedGameId});
+		GoToPlayedGame(game.PlayedGameId);
 	}
 
-	private LoadPage(page: number) {
-		let startingAt = this.PageSize*(page-1);
+	private LoadPage(page: number) : void {
+		let startingAt = this.PageSize * (page - 1);
 		$.get(`/webapi/games/recent?count=${this.PageSize}&startingAt=${startingAt}`).done(this.HandleGamesResponse);
 	}
 
-	private HandleGamesResponse = (response: ResultOf<RecentGameResponse>) => {
+	private HandleGamesResponse = (response: ResultOf<RecentGameResponse>) : void => {
 		this.TotalNumberOfGames(response.Data.TotalGames); 
 		this.LoadedGames(response.Data.RecentGames);
 	}

@@ -61,6 +61,5 @@ $(window).on('hashchange', () => {
 				observable(currentState[key])
 			}
 		}
-
 	});
 });

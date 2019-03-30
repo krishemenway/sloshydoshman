@@ -1,33 +1,15 @@
-import { Observable, Computed } from "knockout";
 import * as ko from "knockout";
 import { text, createStyles } from "AppStyles";
 
-const styles = createStyles({
-	selectNumberButton: {
-		width: "30px",
-		height: "40px",
-
-		border: "1px solid transparent",
-
-		lineHeight: "40px",
-
-		"&:hover": {
-			borderStyle: "dashed",
-			borderColor: "rgba(255,255,255,.25)",
-		},
-
-		"&.selected": {
-			borderColor: "rgba(255,255,255,.25)",
-			borderStyle: "solid",
-			cursor: "default",
-		},
-	},
-}).attach().classes;
+var Name : string = "ClickableNumberRange";
+export function ClickableNumberRangeComponent(from: string|number, to: string|number, selectedIndex: string|number, onNumberClicked: string) {
+	return `component: {name: '${Name}', params: {From: ${from}, To: ${to}, SelectedIndex: ${selectedIndex}, OnNumberClicked: ${onNumberClicked}}}`;
+}
 
 interface ClickableNumberRangeParams {
 	From: number;
 	To: number;
-	SelectedIndex: Observable<number>;
+	SelectedIndex: ko.Observable<number>;
 	OnNumberClicked: (numberClicked: number) => void;
 }
 
@@ -90,11 +72,11 @@ class ClickableNumberRangeViewModel {
 		return array;
 	}
 
-	public SelectedIndex: Observable<number>;
+	public SelectedIndex: ko.Observable<number>;
 
-	public BeginRange: Computed<number[]>;
-	public MiddleRange: Computed<number[]>;
-	public EndRange: Computed<number[]>;
+	public BeginRange: ko.Computed<number[]>;
+	public MiddleRange: ko.Computed<number[]>;
+	public EndRange: ko.Computed<number[]>;
 
 	public OnNumberClicked: (numberClicked: number) => void;
 
@@ -103,7 +85,28 @@ class ClickableNumberRangeViewModel {
 	private TotalRange: number;
 }
 
-export var Name : string = "ClickableNumberRange";
+const styles = createStyles({
+	selectNumberButton: {
+		width: "30px",
+		height: "40px",
+
+		border: "1px solid transparent",
+
+		lineHeight: "40px",
+
+		"&:hover": {
+			borderStyle: "dashed",
+			borderColor: "rgba(255,255,255,.25)",
+		},
+
+		"&.selected": {
+			borderColor: "rgba(255,255,255,.25)",
+			borderStyle: "solid",
+			cursor: "default",
+		},
+	},
+}).attach().classes;
+
 ko.components.register(Name, {
 	viewModel: ClickableNumberRangeViewModel,
 	template: `

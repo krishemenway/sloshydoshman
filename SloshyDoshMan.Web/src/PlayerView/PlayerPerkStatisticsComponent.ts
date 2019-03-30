@@ -37,7 +37,7 @@ ko.components.register(ComponentName, {
 
 						<div class="${layout.flexEvenDistribution} ${text.center}">
 							<div class="${text.font24} ${textColor.graye8} ${text.light} ${text.right}" data-bind="${NumberWithCommas("TotalWavesPlayed")}"></div>
-							<div class="${text.font12} ${textColor.gray} ${text.right}">Waves Played</div>
+							<div class="${text.font12} ${textColor.gray} ${text.right}">Waves</div>
 						</div>
 					</div>
 

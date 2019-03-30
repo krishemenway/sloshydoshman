@@ -1,18 +1,15 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
 import { text, textColor, margin, layout, redHandleContainer } from "AppStyles";
-import {ResultOf} from "CommonDataStructures/ResultOf";
-import {PieChartData} from "ChartJS/Chart";
-import {Computed, Observable} from "knockout";
-import * as ChartJsPieChart from "ChartJS/ChartJSPieChartBindingHandler";
+import { ResultOf } from "CommonDataStructures/ResultOf";
+import { PieChartData, ChartJSPieChart } from "ChartJS/ChartJSPieChartBindingHandler";
 
 var Name : string = "ServerStatistics";
 export function ServerStatisticsComponent() {
 	return `component: {name: '${Name}'}`;
 }
 
-interface PerkStatistics
-{
+interface PerkStatistics {
 	PerkName: string;
 	TotalWavesPlayed: number;
 	TotalKills: number;
@@ -60,9 +57,9 @@ class ServerStatisticsViewModel {
 		});
 	}
 
-	public PerkTotalKillsData: Computed<PieChartData[]>;
-	public PerkTotalWavesData: Computed<PieChartData[]>;
-	public Stats: Observable<ServerStatistics|null>;
+	public PerkTotalKillsData: ko.Computed<PieChartData[]>;
+	public PerkTotalWavesData: ko.Computed<PieChartData[]>;
+	public Stats: ko.Observable<ServerStatistics|null>;
 }
 
 ko.components.register(Name, {
@@ -72,12 +69,12 @@ ko.components.register(Name, {
 		<div class="${layout.flexRow}" data-bind="with: Stats">
 			<div class="${redHandleContainer.container} ${layout.width50} ${margin.rightHalf}">
 				<div class="${text.font28} ${text.inset} ${textColor.gray9f} ${text.bold} ${text.toUpper} ${text.center} ${margin.bottom}">Perks Played</div>
-				<canvas data-bind="${ChartJsPieChart.Name}: $component.PerkTotalWavesData" />
+				<canvas data-bind="${ChartJSPieChart("$component.PerkTotalWavesData")}" />
 			</div>
 
 			<div class="${redHandleContainer.container} ${layout.width50} ${margin.leftHalf}">
 				<div class="${text.font28} ${text.inset} ${textColor.gray9f} ${text.bold} ${text.toUpper} ${text.center} ${margin.bottom}">Kills Per Perk</div>
-				<canvas data-bind="${ChartJsPieChart.Name}: $component.PerkTotalKillsData" />
+				<canvas data-bind="${ChartJSPieChart("$component.PerkTotalKillsData")}" />
 			</div>
 		</div>`,
 });

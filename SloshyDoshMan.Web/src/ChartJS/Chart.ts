@@ -1,9 +1,3 @@
-
-export interface PieChartData {
-	Value: number;
-	Label: string;
-}
-
 export interface PieChartComponentOptions extends BaseChartJSComponentOptions {
 	cutoutPercentage?: number; // The percentage of the chart that is cut out of the middle.
 	rotation?: number; // Starting angle to draw arcs from

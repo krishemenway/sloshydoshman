@@ -17,7 +17,7 @@ interface PlayerMapStatisticsParams
 class PlayerMapStatisticsViewModel {
 	constructor(params: PlayerMapStatisticsParams) {
 		this.PlayerViewModel = params.PlayerViewModel;
-		this.Difficulty = ko.observable(this.Difficulties[this.Difficulties.length-1]);
+		this.Difficulty = ko.observable(this.HighestDifficultyPlayerHasWon());
 		this.Map = ko.observable("");
 		this.MapStatisticsForDifficulty = ko.pureComputed(this.FindMapStatisticsForDifficulty, this);
 		this.GamesForMapDifficulty = ko.pureComputed(this.FindGamesForMapDifficulty, this);
@@ -44,6 +44,28 @@ class PlayerMapStatisticsViewModel {
 		let difficulty = this.Difficulty();
 		return this.PlayerViewModel().MapStatistics.filter(stats => stats.Difficulty === difficulty);
 	}
+
+	private HighestDifficultyPlayerHasWon() {
+		let highestDifficulty = 0;
+
+		for(let i = 0; i < this.PlayerViewModel().AllGames.length; i++) {
+			let game = this.PlayerViewModel().AllGames[i];
+
+			if (game.PlayersWon && this.DifficultiesInOrder.indexOf(game.Difficulty) > highestDifficulty) {
+				highestDifficulty = this.DifficultiesInOrder.indexOf(game.Difficulty);
+			}
+
+			if (highestDifficulty === this.DifficultiesInOrder.length - 1) {
+				return this.DifficultiesInOrder[highestDifficulty];
+			}
+		}
+
+		return this.DifficultiesInOrder[highestDifficulty];
+	}
+
+	private DifficultiesInOrder = [
+		'Hard','Suicidal','Hell on Earth'
+	]
 
 	public Difficulty: ko.Observable<string>;
 	public Map: ko.Observable<string>;

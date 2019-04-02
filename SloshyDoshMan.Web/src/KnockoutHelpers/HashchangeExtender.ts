@@ -43,6 +43,11 @@ export function GetState() : Dictionary<string> {
 
 export function CreateHashChangeObservable(parameterName: string, defaultValue: string) {
 	observableDefaultsByHashField[parameterName] = defaultValue;
+
+	if (!!observablesByHashField[parameterName]) {
+		return observablesByHashField[parameterName];
+	}
+
 	let observable = ko.observable<string>(GetState()[parameterName] || defaultValue);
 	return observablesByHashField[parameterName] = observable;
 }

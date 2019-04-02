@@ -33,6 +33,7 @@
     "knockout": "3.5.0",
     "jit-grunt": "0.10.0",
     "moment": "2.24.0",
+    "request": "2.88.0",
     "typescript": "3.2.1",
     "webpack": "4.26.1",
     "webpack-cli": "^3.2.3"

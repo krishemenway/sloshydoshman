@@ -1,6 +1,6 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
-import { layout, text, textColor, padding, events, createStyles, redHandleContainer } from "AppStyles";
+import { layout, text, textColor, padding, events, createStyles, redHandleContainer, margin } from "AppStyles";
 import { ResultOf } from "CommonDataStructures/ResultOf";
 import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
 import { PaginationComponent } from "Pagination/PaginationComponent";
@@ -20,9 +20,15 @@ class PlayerSearchViewModel {
 		this.SelectedPage = ko.observable(1);
 		this.SearchResults = ko.observableArray();
 		this.TotalItemCount = ko.pureComputed(() => this.SearchResults().length, this);
-		this.Query = ko.observable("").extend({throttle: 500});
-		this.Query.subscribe(this.OnQueryChanged);
+		this.Query = ko.observable("").extend({throttle: 300});
+		this.SearchResultsFailureMessage = ko.observable("");
 		this.SearchResultsPage = ko.pureComputed(this.GetSearchResultsPage, this);
+
+		this.OnQueryChangedSubscription = this.Query.subscribe(this.OnQueryChanged);
+	}
+
+	public dispose() {
+		this.OnQueryChangedSubscription.dispose();
 	}
 
 	public GoToPlayer = (result: PlayerSearchResult) => {
@@ -38,11 +44,36 @@ class PlayerSearchViewModel {
 
 	private OnQueryChanged = (newQuery: string) => {
 		if(newQuery.length <= 2) {
-			this.SearchResults([]);
-			this.SelectedPage(1);
+			this.ClearResults();
 		} else {
-			$.get(`/webapi/players/search?query=${newQuery}`).done((response: ResultOf<PlayerSearchResult[]>) => { this.SearchResults(response.Data); this.SelectedPage(1); });
+			this.MakeSearchRequest();
 		}
+	}
+
+	private MakeSearchRequest = () : void => {
+		this.ClearResults();
+
+		$.get(`/webapi/players/search?query=${this.Query()}`)
+		 .done(this.HandleSearchResponse)
+		 .fail(() => this.HandlSearchFailure("Something went wrong with querying the server. Please try again later."));
+	}
+
+	private HandleSearchResponse = (response: ResultOf<PlayerSearchResult[]>) : void => {
+		if (response.Success) {
+			this.SearchResults(response.Data);
+		} else {
+			this.HandlSearchFailure(response.ErrorMessage);
+		}
+	}
+
+	private HandlSearchFailure = (failureMessage: string) => {
+		this.SearchResultsFailureMessage(failureMessage);
+	}
+
+	private ClearResults = () : void => {
+		this.SearchResults([]);
+		this.SelectedPage(1);
+		this.SearchResultsFailureMessage("");
 	}
 
 	public SelectedPage: ko.Observable<number>;
@@ -51,8 +82,11 @@ class PlayerSearchViewModel {
 	public SearchResults: ko.ObservableArray<PlayerSearchResult>;
 	public SearchResultsPage: ko.Computed<PlayerSearchResult[]>;
 	public SearchResultsPageSize: number = 10;
+	public SearchResultsFailureMessage: ko.Observable<string>;
 
 	public Query: ko.Observable<string>;
+
+	private OnQueryChangedSubscription: ko.Subscription;
 }
 
 const styles = createStyles({
@@ -84,12 +118,16 @@ const styles = createStyles({
 ko.components.register(Name, {
 	viewModel: PlayerSearchViewModel,
 	template: `
-		<div class="${styles.playerSearch} ${redHandleContainer.container}">
-			<div class="${text.font24} ${textColor.white} ${text.smallCaps}">Search for player</div>
+		<div class="${styles.playerSearch} ${redHandleContainer.container} ${textColor.white}">
+			<div class="${text.font24} ${text.smallCaps}">Search for player</div>
 
 			<div class="${styles.searchTextWrapper}">
 				<input class="${styles.search} ${text.font24} ${layout.width100}" type="search" ref="searchBox" data-bind="textInput: Query" />
 			</div>
+
+			<!-- ko if: SearchResultsFailureMessage() -->
+			<div class="${text.center} ${margin.vertical}" data-bind="text: SearchResultsFailureMessage"></div>
+			<!-- /ko -->
 
 			<!-- ko if: SearchResultsPage().length > 0 -->
 			<ul class="${textColor.white}">

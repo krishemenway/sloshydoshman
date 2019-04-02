@@ -161,7 +161,7 @@ ko.components.register(Name, {
 	template: `
 		<div class="${redHandleContainer.container}">
 			<div class="${text.font24} ${textColor.white} ${text.smallCaps}">Recent Wins</div>
-			<div class="${padding.bottom}" data-bind="foreach: RecentWins">
+			<div data-bind="foreach: RecentWins">
 				<div class="${layout.width25} ${layout.inlineBlock} ${styles.recentWinGame}" data-bind="click: $component.GoToGame, event: {mouseover: $component.OnHover}, css: {selected: $component.SelectedRecentWin() === $data}">
 					<div class="${map.mapCover} ${margin.bottom}" style="min-height: 119px" data-bind="css: Map" />
 					<div class="${textColor.white} ${text.font14} ${text.center} ${margin.bottomHalf}" data-bind="text: Map" />

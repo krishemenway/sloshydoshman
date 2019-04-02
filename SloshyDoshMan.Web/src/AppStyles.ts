@@ -53,6 +53,10 @@ export const redHandleContainer = createStyles({
 }).attach().classes;
 
 export const layout = createStyles({
+	invisible: {
+		opacity: 0,
+		cursor: "default",
+	},
 	centerLayout1000: {
 		maxWidth: "1000px",
 		margin: "0 auto"

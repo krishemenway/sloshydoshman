@@ -27,30 +27,33 @@ function findOrCreateMoment(date: string): moment.Moment {
 function validateParams(params: MomentFormatDateParams) {
 	if (!params.Format) {
 		throw `Missing Format parameter in momentFormatDate: ${params}`;
-	} else if (!params.Date) {
+	}
+
+	if (!params.Date) {
 		throw `Missing Date parameter in momentFormatDate: ${params}`;
 	}
 }
 
-function setText(element: Element, params: MomentFormatDateParams) {
-	if (typeof params.Date === "string") {
-		ko.utils.setTextContent(element, findOrCreateMoment(params.Date).format(params.Format));
-	}
-	else if (typeof params.Date === "function") {
-		ko.utils.setTextContent(element, findOrCreateMoment(params.Date()).format(params.Format));
+function getDateAsString(params: MomentFormatDateParams) {
+	switch(typeof params.Date) {
+		case "string":
+			return params.Date;
+		case "function":
+			return params.Date();
+		default:
+			throw `Unknown type for moment parameter ${typeof params.Date}`;
 	}
 }
 
-function init(element: Element, valueAccessor: () => MomentFormatDateParams) {
-	let params = valueAccessor();
-	validateParams(params);
-	setText(element, params);
+function init(_: Element, valueAccessor: () => MomentFormatDateParams) {
+	validateParams(valueAccessor());
+	return ko.bindingHandlers.text.init();
 }
 
 function update(element: Element, valueAccessor: () => MomentFormatDateParams) {
 	let params = valueAccessor();
 	validateParams(params);
-	setText(element, params);
+	return ko.bindingHandlers.text.update(element, () => findOrCreateMoment(getDateAsString(params)).format(params.Format));
 }
 
 ko.bindingHandlers[Name] = { init: init, update: update };

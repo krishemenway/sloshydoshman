@@ -1,5 +1,5 @@
 import * as ko from "knockout";
-import { layout, margin, text, textColor, padding, redHandleContainer } from "AppStyles";
+import { layout, margin, text, textColor, padding, redHandleContainer, events } from "AppStyles";
 import { ResultOf } from "CommonDataStructures/ResultOf";
 import { PlayerViewModel } from "Server";
 import { CreateHashChangeObservable } from "KnockoutHelpers/HashchangeExtender";
@@ -18,27 +18,61 @@ class PlayerProfileViewModel {
 	constructor() {
 		this.PlayerViewModel = ko.observable(null);
 		this.SteamId = CreateHashChangeObservable("SteamId", "");
-		this.SteamIdSubscription = this.SteamId.subscribe(() => this.InitializePlayer());
-		this.InitializePlayer();
+
+		this.LoadingPlayerInformation = ko.observable(false);
+		this.LoadPlayerInformationFailureMessage = ko.observable("");
+
+		this.SteamIdSubscription = this.SteamId.subscribe(() => this.LoadPlayerInformation());
+		this.LoadPlayerInformation();
 	}
 
 	public dispose() {
 		this.SteamIdSubscription.dispose();
 	}
 
-	private InitializePlayer = () => {
-		$.get(`/webapi/players/profile?steamId=${this.SteamId()}`).done((response: ResultOf<PlayerViewModel>) => this.PlayerViewModel(response.Data));
+	public LoadPlayerInformation = () => {
+		this.HandlePlayerLoadedFailure("");
+		this.LoadingPlayerInformation(true);
+
+		$.get(`/webapi/players/profile?steamId=${this.SteamId()}`)
+		 .done(this.HandlePlayerLoadedResponse)
+		 .fail(() => this.HandlePlayerLoadedFailure("Something went wrong loading the player information. Please try again later."))
+		 .always(() => this.LoadingPlayerInformation(false));
+	}
+
+	private HandlePlayerLoadedResponse = (response: ResultOf<PlayerViewModel>) => {
+		if (response.Success) {
+			this.PlayerViewModel(response.Data);
+		} else {
+			this.HandlePlayerLoadedFailure(response.ErrorMessage);
+		}
+	}
+
+	private HandlePlayerLoadedFailure = (failureMessage: string) => {
+		this.LoadPlayerInformationFailureMessage(failureMessage);
 	}
 
 	public PlayerViewModel: ko.Observable<PlayerViewModel|null>;
 	public SteamId: ko.Observable<string>;
+
+	public LoadingPlayerInformation: ko.Observable<boolean>;
+	public LoadPlayerInformationFailureMessage: ko.Observable<string>;
+
 	private SteamIdSubscription: ko.Subscription;
 }
 
 ko.components.register(Name, {
 	viewModel: PlayerProfileViewModel,
 	template: `
-		<div class="${layout.flexRow}" data-bind="with: PlayerViewModel">
+		<div class="${layout.flexRow}">
+			<!-- ko if: !!LoadPlayerInformationFailureMessage() -->
+			<div class="${redHandleContainer.container} ${layout.width100} ${text.center} ${textColor.white}">
+				<span data-bind="text: LoadPlayerInformationFailureMessage" />
+				<button class="${events.clickable} ${margin.left} ${padding.half}" data-bind="click: LoadPlayerInformation">Try Again?</button>
+			</div>
+			<!-- /ko -->
+
+			<!-- ko with: PlayerViewModel -->
 			<div class="${layout.flexEvenDistribution} ${margin.rightHalf}" style="max-width: 55%">
 				<div class="${redHandleContainer.container} ${margin.bottom}">
 					<div class="${text.font48} ${textColor.white} ${text.bold}" data-bind="html: UserName" />
@@ -76,5 +110,6 @@ ko.components.register(Name, {
 				<div class="${redHandleContainer.header} ${text.center} ${margin.bottomDouble}">maps</div>
 				<div data-bind="${PlayerMapStatisticsComponent("$component.PlayerViewModel")}" />
 			</div>
+			<!-- /ko -->
 		</div>`,
 });

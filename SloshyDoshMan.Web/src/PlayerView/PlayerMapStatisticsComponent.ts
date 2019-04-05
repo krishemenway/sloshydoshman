@@ -17,8 +17,10 @@ interface PlayerMapStatisticsParams
 class PlayerMapStatisticsViewModel {
 	constructor(params: PlayerMapStatisticsParams) {
 		this.PlayerViewModel = params.PlayerViewModel;
+
 		this.Difficulty = ko.observable(this.HighestDifficultyPlayerHasWon());
 		this.Map = ko.observable("");
+
 		this.MapStatisticsForDifficulty = ko.pureComputed(this.FindMapStatisticsForDifficulty, this);
 		this.GamesForMapDifficulty = ko.pureComputed(this.FindGamesForMapDifficulty, this);
 	}

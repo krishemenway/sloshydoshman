@@ -1,33 +1,41 @@
-import {ResultOf} from "CommonDataStructures/ResultOf";
-import {ScoreboardPlayer, GameViewModel} from "Server";
-import {GoToView} from "App";
-import {Observable} from "knockout";
-import * as HashChange from "KnockoutHelpers/HashchangeExtender";
-import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
-import * as PlayerView from "PlayerView/PlayerProfileComponent";
 import * as ko from "knockout";
 import * as $ from "jquery";
 import { layout, margin, textColor, text, padding, events, createStyles, redHandleContainer } from "AppStyles";
 import { perk } from "Perks/PerkStyles";
 import { map } from "Maps/MapStyles";
+import { ResultOf } from "CommonDataStructures/ResultOf";
+import { ScoreboardPlayer, GameViewModel } from "Server";
+import { GoToView } from "App";
+import { CreateHashChangeObservable } from "KnockoutHelpers/HashchangeExtender";
+import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
+import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
+
+var PlayedGameName : string = "PlayedGame";
+export function PlayedGameComponent() {
+	return `component: {name: '${PlayedGameName}'}`;
+}
+
+export function GoToPlayedGame(playedGameId: string) {
+	GoToView(PlayedGameName, { "PlayedGameId": playedGameId });
+}
 
 class PlayedGameViewModel {
 	constructor() {
-		this.PlayedGameId = HashChange.CreateObservable("PlayedGameId", "");
+		this.PlayedGameId = CreateHashChangeObservable("PlayedGameId", "");
 		this.Game = ko.observable(null);
 		this.InitializeGame();
 	}
 
 	public SelectPlayer(player: ScoreboardPlayer) {
-		GoToView(PlayerView.Name, {SteamId: player.SteamId});
+		GoToPlayerProfile(player.SteamId);
 	}
 
 	private InitializeGame = () => {
 		$.get(`/webapi/games/profile?playedGameId=${this.PlayedGameId()}`).done((response: ResultOf<GameViewModel>) => this.Game(response.Data));
 	}
 
-	public Game: Observable<GameViewModel|null>;
-	public PlayedGameId: Observable<string>;
+	public Game: ko.Observable<GameViewModel|null>;
+	public PlayedGameId: ko.Observable<string>;
 }
 
 const styles = createStyles({
@@ -80,8 +88,7 @@ const styles = createStyles({
 	},
 }).attach().classes;
 
-export var Name : string = "PlayedGame";
-ko.components.register(Name, {
+ko.components.register(PlayedGameName, {
 	viewModel: PlayedGameViewModel,
 	template: `
 		<div class="${layout.centerLayout1000}" data-bind="with: Game">
@@ -98,12 +105,12 @@ ko.components.register(Name, {
 
 					<div class="${margin.bottom}">Difficulty: <!-- ko text: PlayedGame.Difficulty --><!-- /ko --></div>
 
-					<div class="${margin.bottomHalf}" data-bind="${MomentFormatDate.DataBind("PlayedGame.TimeStarted", "dddd MMMM Do, YYYY")}" />
+					<div class="${margin.bottomHalf}" data-bind="${MomentFormat("PlayedGame.TimeStarted", "dddd MMMM Do, YYYY")}" />
 
 					<div class="${margin.bottom}">
-						<!-- ko ${MomentFormatDate.DataBind("PlayedGame.TimeStarted", "hh:mm:ss A")} --><!-- /ko -->
+						<!-- ko ${MomentFormat("PlayedGame.TimeStarted", "hh:mm:ss A")} --><!-- /ko -->
 						&nbsp;&ndash;&nbsp;
-						<!-- ko if: PlayedGame.TimeFinished --><!-- ko ${MomentFormatDate.DataBind("PlayedGame.TimeFinished", "hh:mm:ss A")} --><!-- /ko --><!-- /ko -->
+						<!-- ko if: PlayedGame.TimeFinished --><!-- ko ${MomentFormat("PlayedGame.TimeFinished", "hh:mm:ss A")} --><!-- /ko --><!-- /ko -->
 						<!-- ko ifnot: PlayedGame.TimeFinished -->Maybe soon?<!-- /ko -->
 					</div>
 				</div>

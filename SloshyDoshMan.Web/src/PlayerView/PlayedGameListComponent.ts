@@ -1,11 +1,14 @@
-import {PlayedGame} from "Server";
-import {GoToView} from "App";
-import {Observable, Computed} from "knockout";
-import * as Pagination from "Pagination/PaginationComponent";
-import * as PlayedGameComponent from "GameView/PlayedGameComponent";
-import * as MomentFormatDate from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import * as ko from "knockout";
 import { layout, text, padding, background, events, margin, textColor } from "AppStyles";
+import { PlayedGame } from "Server";
+import { GoToPlayedGame } from "GameView/PlayedGameComponent";
+import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
+import { PaginationComponent } from "Pagination/PaginationComponent";
+
+var ComponentName : string = "PlayerGameList";
+export function PlayedGameListComponent(gamesParameter: string, pageSizeParameter?: string|number) {
+	return `component: {name: '${ComponentName}', params: {Games: ${gamesParameter}, PageSize: ${pageSizeParameter}}}`;
+}
 
 interface PlayedGameListModel {
 	Games: PlayedGame[];
@@ -22,7 +25,7 @@ class PlayedGameListModel {
 	}
 
 	public OnGameSelect = (game: PlayedGame) => {
-		GoToView(PlayedGameComponent.Name, {PlayedGameId: game.PlayedGameId});
+		GoToPlayedGame(game.PlayedGameId);
 	}
 
 	private GetGamesPage = () => {
@@ -35,12 +38,11 @@ class PlayedGameListModel {
 	public Games: PlayedGame[];
 
 	public GamesPageSize: number = 8;
-	public PageNumber: Observable<number>;
-	public GamesPage: Computed<PlayedGame[]>;
-	public TotalGamesCount: Computed<number>;
+	public PageNumber: ko.Observable<number>;
+	public GamesPage: ko.Computed<PlayedGame[]>;
+	public TotalGamesCount: ko.Computed<number>;
 }
 
-export var ComponentName : string = "PlayerGameList";
 ko.components.register(ComponentName, {
 	viewModel: PlayedGameListModel,
 	template: `
@@ -57,10 +59,10 @@ ko.components.register(ComponentName, {
 					<div class="${layout.inlineBlock} ${text.font12} ${text.left} ${layout.width70}">
 						<!-- ko text: Map --><!-- /ko -->
 						&nbsp;
-						<span class="${textColor.gray} ${margin.left}" data-bind="${MomentFormatDate.DataBind("TimeStarted", "MMMM Do, YYYY")}"></span>
+						<span class="${textColor.gray} ${margin.left}" data-bind="${MomentFormat("TimeStarted", "MMMM Do, YYYY")}" />
 					</div>
 
-					<div class="${layout.inlineBlock} ${text.font10} ${text.center} ${layout.width15}" data-bind="text: Difficulty"></div>
+					<div class="${layout.inlineBlock} ${text.font10} ${text.center} ${layout.width15}" data-bind="text: Difficulty" />
 
 					<div class="${layout.inlineBlock} ${text.font14} ${text.center} ${layout.width15}">
 						<!-- ko text: ReachedWave --><!-- /ko -->&nbsp;/&nbsp;<!-- ko text: TotalWaves --><!-- /ko -->
@@ -77,6 +79,6 @@ ko.components.register(ComponentName, {
 				<!-- /ko -->
 			</ul>
 
-			<div data-bind="component: {name: '${Pagination.ComponentName}', params: {SelectedPage: $component.PageNumber, PageSize: $component.GamesPageSize, TotalItemCount: $component.TotalGamesCount}}" />
+			<div data-bind="${PaginationComponent("$component.PageNumber", "$component.TotalGamesCount", "$component.GamesPageSize")}" />
 		</div>`,
 });

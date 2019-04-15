@@ -5,47 +5,40 @@ export interface RecentGameResponse {
 	RecentGames: PlayedGame[];
 }
 
-export interface GameViewModel
-{
+export interface GameViewModel {
 	Scoreboard: Scoreboard;
 	PlayedGame: PlayedGame
 }
 
-export interface Scoreboard
-{
+export interface Scoreboard {
 	Players: ScoreboardPlayer[];
 	TotalKills: number;
 }
 
-export interface ScoreboardPlayer
-{
+export interface ScoreboardPlayer {
 	PlayerWaveInfo: Dictionary<PlayerWaveInfo>;
 	SteamId: string;
 	UserName: string;
 }
 
-export interface PlayerWaveInfo
-{
+export interface PlayerWaveInfo {
 	Wave: number;
 	Perk: string;
 	Kills: number;
 }
 
-export interface Player
-{
+export interface Player {
 	Name : string;
 	SteamId : number;
 }
 
-export interface PlayerPerkStatistic
-{
+export interface PlayerPerkStatistic {
 	Perk: string;
 	TotalWavesPlayed: number;
 	TotalKills: number;
 }
 
-export interface PlayerMapStatistic
-{
+export interface PlayerMapStatistic {
 	Map: string;
 	Difficulty: string;
 	GamesPlayed: number;
@@ -54,8 +47,7 @@ export interface PlayerMapStatistic
 	FarthestWave: number;
 }
 
-export interface PlayerViewModel
-{
+export interface PlayerViewModel {
 	Player: Player;
 	TotalKills: number;
 	TotalGames: number;

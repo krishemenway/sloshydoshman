@@ -1,9 +1,10 @@
 import * as moment from "moment";
 import { Observable } from "knockout";
 import * as ko from "knockout"
+import { Dictionary } from "CommonDataStructures/Dictionary";
 
 var Name : string = "MomentFormatDate";
-export function DataBind(dateParameterName: string, format: string) {
+export function MomentFormat(dateParameterName: string, format: string) {
 	return `${Name}: {Format: '${format}', Date: ${dateParameterName}}`;
 }
 
@@ -12,33 +13,47 @@ interface MomentFormatDateParams {
 	Format: string;
 }
 
+const existingMoments: Dictionary<moment.Moment> = {};
+function findOrCreateMoment(date: string): moment.Moment {
+	let existingMoment = existingMoments[date];
+
+	if (existingMoment === undefined) {
+		existingMoments[date] = moment(date);
+	}
+
+	return existingMoments[date];
+}
+
 function validateParams(params: MomentFormatDateParams) {
 	if (!params.Format) {
 		throw `Missing Format parameter in momentFormatDate: ${params}`;
-	} else if (!params.Date) {
+	}
+
+	if (!params.Date) {
 		throw `Missing Date parameter in momentFormatDate: ${params}`;
 	}
 }
 
-function setText(element: Element, params: MomentFormatDateParams) {
-	if (typeof params.Date === "string") {
-		ko.utils.setTextContent(element, moment(params.Date).format(params.Format));
-	}
-	else if (typeof params.Date === "function") {
-		ko.utils.setTextContent(element, moment(params.Date()).format(params.Format));
+function getDateAsString(params: MomentFormatDateParams) {
+	switch(typeof params.Date) {
+		case "string":
+			return params.Date;
+		case "function":
+			return params.Date();
+		default:
+			throw `Unknown type for moment parameter ${typeof params.Date}`;
 	}
 }
 
-function init(element: Element, valueAccessor: () => MomentFormatDateParams) {
-	let params = valueAccessor();
-	validateParams(params);
-	setText(element, params);
+function init(_: Element, valueAccessor: () => MomentFormatDateParams) {
+	validateParams(valueAccessor());
+	return ko.bindingHandlers.text.init();
 }
 
 function update(element: Element, valueAccessor: () => MomentFormatDateParams) {
 	let params = valueAccessor();
 	validateParams(params);
-	setText(element, params);
+	return ko.bindingHandlers.text.update(element, () => findOrCreateMoment(getDateAsString(params)).format(params.Format));
 }
 
 ko.bindingHandlers[Name] = { init: init, update: update };

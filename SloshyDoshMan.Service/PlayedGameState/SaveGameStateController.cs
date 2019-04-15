@@ -104,10 +104,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 		private IPlayedGame StartNewGame(GameState newGameState)
 		{
 			var newGame = _playedGameStore.StartNewGame(newGameState);
-
 			Log.Information("New Game On Server {ServerId} {Map} {Difficulty} {PlayerCount}", newGameState.ServerId, newGameState.Map, newGameState.Difficulty, newGameState.Players.Count);
-			_pushNotificationSender.NotifyAll("SloshyDoshManIncServerUpdate", $"SloshyDoshMan Inc", $"New game has started on map {newGameState.Map} with {newGameState.Players.Count} players!");
-
 			return newGame;
 		}
 
@@ -119,7 +116,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 
 			if (playersWon)
 			{
-				_pushNotificationSender.NotifyAll("SloshyDoshManIncServerUpdate", $"SloshyDoshMan Inc", $"Players won on {newGameState.Map} ({newGameState.Difficulty}) with {newGameState.Players.Count} players!");
+				_pushNotificationSender.NotifyAll("SloshyDoshManIncServerUpdate", $"SloshyDoshMan Inc", $"Players won {newGameState.Difficulty} - {newGameState.Map}!");
 			}
 
 			SteamIdsAliveInFinalWaveByServerIdMemoryCache.Remove(newGameState.ServerId);

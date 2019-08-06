@@ -1,14 +1,13 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
-import { layout, margin, textColor, text, padding, events, createStyles, redHandleContainer } from "AppStyles";
-import { perk } from "Perks/PerkStyles";
+import { layout, margin, textColor, text, createStyles, redHandleContainer } from "AppStyles";
 import { map } from "Maps/MapStyles";
 import { ResultOf } from "CommonDataStructures/ResultOf";
-import { ScoreboardPlayer, GameViewModel } from "Server";
+import { GameViewModel } from "Server";
 import { GoToView } from "App";
 import { CreateHashChangeObservable } from "KnockoutHelpers/HashchangeExtender";
 import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
-import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
+import { GameScoreboardComponent } from "./GameScoreboardComponent";
 
 var PlayedGameName : string = "PlayedGame";
 export function PlayedGameComponent() {
@@ -24,10 +23,6 @@ class PlayedGameViewModel {
 		this.PlayedGameId = CreateHashChangeObservable("PlayedGameId", "");
 		this.Game = ko.observable(null);
 		this.InitializeGame();
-	}
-
-	public SelectPlayer(player: ScoreboardPlayer) {
-		GoToPlayerProfile(player.SteamId);
 	}
 
 	private InitializeGame = () => {
@@ -57,35 +52,6 @@ const styles = createStyles({
 
 		textShadow: "1px 1px 2px black",
 	},
-
-	gameScoreboard: {
-		"& table": {
-			borderCollapse: "collapse",
-			width: "initial",
-		},
-	
-		"& th, & td": {
-			width: "69px",
-		},
-	
-		"& th": {
-			"& > div": {
-				transform: "translate(50px, -3px) rotate(315deg)",
-			},
-	
-			"& > div > span": {
-				borderBottom: "1px solid #383838",
-			},
-		},
-	
-		"& td": {
-			border: "1px solid #383838",
-	
-			"&:first-child": {
-				width: "150px",
-			},
-		},
-	},
 }).attach().classes;
 
 ko.components.register(PlayedGameName, {
@@ -97,13 +63,15 @@ ko.components.register(PlayedGameName, {
 					<div class="${textColor.gray9f} ${text.font30} ${text.bold} ${margin.bottom}" data-bind="text: PlayedGame.Map" />
 
 					<div class="${margin.bottomHalf}">
+						<!-- ko text: PlayedGame.Difficulty --><!-- /ko -->
+						&nbsp;&mdash;&nbsp;
 						<!-- ko if: PlayedGame.PlayersWon -->Boss Defeated!<!-- /ko -->
-						<!-- ko ifnot: PlayedGame.PlayersWon -->Wave <!-- ko text: PlayedGame.ReachedWave --><!-- /ko --><!-- /ko -->
+						<!-- ko ifnot: PlayedGame.PlayersWon -->Reached Wave <!-- ko text: PlayedGame.ReachedWave --><!-- /ko --><!-- /ko -->
 					</div>
 
 					<div class="${margin.bottom}"><!-- ko text: Scoreboard.TotalKills --><!-- /ko --> Total Kills</div>
 
-					<div class="${margin.bottom}">Difficulty: <!-- ko text: PlayedGame.Difficulty --><!-- /ko --></div>
+					<div class="${margin.bottom}"></div>
 
 					<div class="${margin.bottomHalf}" data-bind="${MomentFormat("PlayedGame.TimeStarted", "dddd MMMM Do, YYYY")}" />
 
@@ -122,34 +90,6 @@ ko.components.register(PlayedGameName, {
 				</div>
 			</div>
 
-			<div class="${styles.gameScoreboard} ${redHandleContainer.container} ${margin.bottom} ${textColor.white}">
-				<table class="${text.font12} ${layout.blockCenter}">
-					<thead>
-						<tr>
-							<th class="${text.inset} ${textColor.gray9f} ${text.toLower} ${text.font48} ${text.bold}">Kills</th>
-							<!-- ko foreach: new Array(PlayedGame.TotalWaves+1) -->
-								<!-- ko if: $index()+1 <= $parent.PlayedGame.TotalWaves -->
-									<th><div><span class="${padding.verticalHalf} ${padding.horizontal}">Wave <!-- ko text: $index()+1 --><!-- /ko --></span></div></th>
-								<!-- /ko -->
-								<!-- ko if: $index()+1 > $parent.PlayedGame.TotalWaves -->
-									<th><div><span class="${padding.verticalHalf} ${padding.horizontal}">Boss</span></div></th>
-								<!-- /ko -->
-							<!-- /ko -->
-						</tr>
-					</thead>
-					<tbody data-bind="foreach: {data: Scoreboard.Players, as: 'player'}">
-						<tr>
-							<td class="${events.clickable} ${padding.half} ${text.left}" data-bind="click: $component.SelectPlayer, html: UserName"></td>
-
-							<!-- ko foreach: new Array($component.Game().PlayedGame.TotalWaves+1) -->
-							<td class="${padding.half} ${text.center}" data-bind="with: player.PlayerWaveInfo[$index()+1]">
-								<div class="${perk.perkIcon} ${perk.width32} ${layout.blockCenter}" data-bind="css: Perk, attr: {title: Perk}" />
-								<div class="${text.center}" data-bind="text: Kills" />
-							</td>
-							<!-- /ko -->
-						</tr>
-					</tbody>
-				</table>
-			</div>
+			<div data-bind="${GameScoreboardComponent("Scoreboard", "PlayedGame.TotalWaves")}" />
 		</div>`,
 });

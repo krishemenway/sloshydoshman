@@ -25,6 +25,11 @@ namespace SloshyDoshMan.Service.Notifications
 
 		public Result NotifyAll(string typeName, string title, string content)
 		{
+			if (!PushNotificationEnabled)
+			{
+				return Result.Successful;
+			}
+
 			try
 			{
 				var details = new PushNotificationDetails
@@ -47,6 +52,7 @@ namespace SloshyDoshMan.Service.Notifications
 
 		private string SendPushNotificationUri => $"http://{PushServiceHost}/internal/api/notifications/send";
 		private string PushServiceHost => _configuration.GetValue<string>("SloshyDoshManPushServiceHost");
+		private bool PushNotificationEnabled => _configuration.GetValue<bool>("EnablePushNotification");
 
 		private readonly HttpClient _httpClient;
 		private readonly IConfiguration _configuration;

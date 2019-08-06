@@ -10,9 +10,10 @@ namespace SloshyDoshMan.Service
 {
 	public class Startup
 	{
-		public Startup(IConfiguration configuration)
+		public Startup(IConfiguration configuration, IHostingEnvironment environment)
 		{
 			Configuration = configuration;
+			ContentPathRoot = environment.ContentRootPath;
 		}
 
 		// This method gets called by the runtime. Use this method to add services to the container.
@@ -36,5 +37,6 @@ namespace SloshyDoshMan.Service
 		}
 
 		public IConfiguration Configuration { get; }
+		public static string ContentPathRoot { get; set; }
 	}
 }

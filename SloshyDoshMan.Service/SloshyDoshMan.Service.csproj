@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Maps\Maps.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
@@ -26,15 +22,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Maps\Maps.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SloshyDoshMan.Shared\SloshyDoshMan.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="maps.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="perks.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

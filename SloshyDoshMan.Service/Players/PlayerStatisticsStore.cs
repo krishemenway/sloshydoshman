@@ -1,7 +1,8 @@
 ﻿using Dapper;
+using SloshyDoshMan.Service.Extensions;
 using SloshyDoshMan.Service.Maps;
+using SloshyDoshMan.Service.Perks;
 using SloshyDoshMan.Shared;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,9 +16,12 @@ namespace SloshyDoshMan.Service.Players
 
 	public class PlayerStatisticsStore : IPlayerStatisticsStore
 	{
-		public PlayerStatisticsStore(IMapStore mapStore = null)
+		public PlayerStatisticsStore(
+			IMapStore mapStore = null,
+			IPerkStore perkStore = null)
 		{
 			_mapStore = mapStore ?? new MapStore();
+			_perkStore = perkStore ?? new PerkStore();
 		}
 
 		public IReadOnlyList<PlayerMapStatistic> FindMapStatistics(long steamId)
@@ -82,19 +86,25 @@ namespace SloshyDoshMan.Service.Players
 		{
 			const string sql = @"
 				SELECT 
-					sp.name as perk,
+					ppw.perk,
 					COUNT(CASE WHEN ppw.wave IS NOT NULL THEN 1 ELSE NULL END) as totalwavesplayed,
-					SUM(CASE WHEN kills IS NULL THEN 0 ELSE kills END) as totalkills
-				FROM server_perk sp
-				LEFT OUTER JOIN player_played_wave ppw
-					ON sp.name = ppw.perk
-					AND (ppw.steam_id = @SteamId OR ppw.steam_id IS NULL)
-				GROUP BY sp.name
+					SUM(CASE WHEN ppw.kills IS NULL THEN 0 ELSE ppw.kills END) as totalkills
+				FROM player_played_wave ppw
+				WHERE ppw.steam_id = @SteamId
+				GROUP BY ppw.perk
 				ORDER BY totalwavesplayed DESC";
 			
 			using (var connection = Database.CreateConnection())
 			{
-				return connection.Query<PlayerPerkStatistic>(sql, new { steamId }).ToList();
+				var allPerks = _perkStore.FindAllPerks();
+
+				return connection
+					.Query<PlayerPerkStatistic>(sql, new { steamId })
+					.GroupBy(playerPerkStatistic => playerPerkStatistic.Perk, playerPerkStatistic => playerPerkStatistic)
+					.ToDictionary(playerPerkStatistic => playerPerkStatistic.Key, playerPerkStatistics => playerPerkStatistics.Single())
+					.SetDefaultValuesForKeys(allPerks.Select(x => x.Name), name => new PlayerPerkStatistic { Perk = name })
+					.Select(x => x.Value)
+					.ToList();
 			}
 		}
 
@@ -112,5 +122,6 @@ namespace SloshyDoshMan.Service.Players
 		}
 
 		private readonly IMapStore _mapStore;
+		private readonly IPerkStore _perkStore;
 	}
 }

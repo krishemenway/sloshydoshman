@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SloshyDoshMan.Service
+namespace SloshyDoshMan.Service.Extensions
 {
 	public static class DictionaryExtensions
 	{
@@ -16,7 +16,7 @@ namespace SloshyDoshMan.Service
 		/// <returns></returns>
 		public static IDictionary<TKey, TValue> SetDefaultValuesForKeys<TKey, TValue>(this IDictionary<TKey, TValue> valuesDictionary, IEnumerable<TKey> keys, Func<TKey, TValue> getDefaultValueForKey)
 		{
-			foreach(var key in keys)
+			foreach (var key in keys)
 			{
 				if (!valuesDictionary.ContainsKey(key))
 				{

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
+using SloshyDoshMan.Service.Extensions;
 using SloshyDoshMan.Service.Maps;
 using SloshyDoshMan.Service.Notifications;
 using SloshyDoshMan.Service.PlayedGames;
@@ -23,8 +23,7 @@ namespace SloshyDoshMan.Service.PlayedGameState
 			IPlayerPlayedWaveStore playerPlayedWaveStore = null,
 			IPlayerPlayedGameStore playerPlayedGameStore = null,
 			IPushNotificationSender pushNotificationSender = null,
-			IMapStore mapStore = null,
-			ILogger<SaveGameStateController> logger = null)
+			IMapStore mapStore = null)
 		{
 			_playedGameStore = playedGameStore ?? new PlayedGameStore();
 			_playerStore = playerStore ?? new PlayerStore();

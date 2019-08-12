@@ -1,10 +1,13 @@
-﻿using SloshyDoshMan.Shared;
+﻿using Microsoft.AspNetCore.Mvc;
+using SloshyDoshMan.Shared;
 
 namespace SloshyDoshMan.Service.PlayedGames
 {
-	public class PlayedGameProfileRequestHandler
+	[ApiController]
+	[Route("webapi/games")]
+	public class PlayedGameProfileController : ControllerBase
 	{
-		public PlayedGameProfileRequestHandler(
+		public PlayedGameProfileController(
 			IPlayedGameStore playedGameStore = null,
 			IScoreboardStore scoreboardStore = null)
 		{
@@ -12,7 +15,9 @@ namespace SloshyDoshMan.Service.PlayedGames
 			_scoreboardStore = scoreboardStore ?? new ScoreboardStore();
 		}
 
-		public Result<PlayedGameProfile> HandleRequest(PlayedGameProfileRequest request)
+		[HttpGet(nameof(Profile))]
+		[ProducesResponseType(200, Type = typeof(Result<PlayedGameProfile>))]
+		public ActionResult<Result<PlayedGameProfile>> Profile([FromQuery] PlayedGameProfileRequest request)
 		{
 			var playedGame = _playedGameStore.FindPlayedGame(request.PlayedGameId);
 

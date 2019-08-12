@@ -23,7 +23,7 @@ export class ServerRecentWinsViewModel {
 		this.RecentWinPlayers = ko.pureComputed(this.FindRecentWinPlayers, this);
 		this.RotateSelectedGameInterval = window.setInterval(this.SelectNextGame, 10000);
 
-		this.LoadServerStats(150);
+		this.LoadServerStats(100, 0);
 	}
 
 	public dipose() {
@@ -90,13 +90,21 @@ export class ServerRecentWinsViewModel {
 		}
 	}
 
-	private LoadServerStats = (gamesToSearch: number) : void => {
-		$.get(`/webapi/games/recent?count=${gamesToSearch}&startingAt=0`).done((response: ResultOf<RecentGameResponse>) => {
-			this.RecentWins(response.Data.RecentGames.filter((playedGame) => playedGame.PlayersWon).slice(0, 4));
+	private LoadServerStats = (gamesToSearch: number, startingAt: number) : void => {
+		$.get(`/webapi/games/recent?count=${gamesToSearch}&startingAt=${startingAt}`)
+		 .done((response: ResultOf<RecentGameResponse>) => {
+			let hasSearchedAllGames = startingAt + gamesToSearch >= response.Data.TotalGames;
 
-			if(this.RecentWins().length < 4) {
-				this.LoadServerStats(gamesToSearch+100);
-			} else {
+			response.Data.RecentGames
+				.filter((playedGame) => playedGame.PlayersWon)
+				.slice(0, this.DesiredRecentWins - this.RecentWins().length)
+				.forEach((recentWin) => {
+					this.RecentWins.push(recentWin);
+				});
+
+			if(this.RecentWins().length < this.DesiredRecentWins && !hasSearchedAllGames) {
+				this.LoadServerStats(gamesToSearch, startingAt + gamesToSearch);
+			} else if (this.RecentWins().length > 0) {
 				this.SelectedRecentWin(this.RecentWins()[0]);
 				this.LoadPlayerDataForRecentWins();
 			}
@@ -134,6 +142,7 @@ export class ServerRecentWinsViewModel {
 	public SelectedRecentWin: ko.Observable<PlayedGame|null>;
 	public RecentWinPlayers: ko.Computed<ScoreboardPlayer[]>;
 
+	private DesiredRecentWins: number = 4;
 	private RotateSelectedGameInterval: number;
 	private GamesByPlayedGameId: Dictionary<ko.Observable<GameViewModel|null>>;
 }

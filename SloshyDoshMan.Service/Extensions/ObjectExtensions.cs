@@ -16,20 +16,5 @@ namespace SloshyDoshMan
 
 			return true;
 		}
-
-		internal static int GetHashCode(params object[] hashCodeProperties)
-		{
-			unchecked
-			{
-				int hash = (int)2166136261;
-
-				foreach (var hashCodeProperty in hashCodeProperties)
-				{
-					hash = (hash * 16777619) ^ hashCodeProperty.GetHashCode();
-				}
-
-				return hash;
-			}
-		}
 	}
 }

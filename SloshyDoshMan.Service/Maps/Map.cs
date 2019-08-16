@@ -1,4 +1,6 @@
-﻿namespace SloshyDoshMan.Service.Maps
+﻿using System;
+
+namespace SloshyDoshMan.Service.Maps
 {
 	public interface IMap
 	{
@@ -13,12 +15,12 @@
 
 		public override bool Equals(object obj)
 		{
-			return obj is Map objAsMap && Name.Equals(objAsMap.Name);
+			return this.Equals(obj as Map, (o) => o.Name);
 		}
 
 		public override int GetHashCode()
 		{
-			return Name.GetHashCode();
+			return HashCode.Combine(Name);
 		}
 	}
 }

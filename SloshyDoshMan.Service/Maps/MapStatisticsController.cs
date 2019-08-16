@@ -1,10 +1,13 @@
-﻿using SloshyDoshMan.Shared;
+﻿using Microsoft.AspNetCore.Mvc;
+using SloshyDoshMan.Shared;
 
 namespace SloshyDoshMan.Service.Maps
 {
-	public class MapStatisticsRequestHandler
+	[ApiController]
+	[Route("webapi/maps")]
+	public class MapStatisticsController : ControllerBase
 	{
-		public MapStatisticsRequestHandler(
+		public MapStatisticsController(
 			IMapStore mapStore = null,
 			IMapStatisticsStore mapStatisticsStore = null)
 		{
@@ -12,7 +15,9 @@ namespace SloshyDoshMan.Service.Maps
 			_mapStatisticsStore = mapStatisticsStore ?? new MapStatisticsStore();
 		}
 
-		public Result<MapStatisticsRepsonse> HandleRequest(MapStatisticsRequest request)
+		[HttpGet(nameof(MapStatistics))]
+		[ProducesResponseType(200, Type = typeof(Result<MapStatisticsRepsonse>))]
+		public ActionResult<Result<MapStatisticsRepsonse>> MapStatistics([FromQuery] MapStatisticsRequest request)
 		{
 			if (!_mapStore.FindMap(request.MapName, out var map))
 			{
@@ -21,7 +26,7 @@ namespace SloshyDoshMan.Service.Maps
 
 			var response = new MapStatisticsRepsonse
 				{
-					PlayerMapScores = _mapStatisticsStore.FindTopPlayersForMap(map.Name)
+					PlayerMapScores = _mapStatisticsStore.FindTopPlayersForMap(map.Name),
 				};
 
 			return Result<MapStatisticsRepsonse>.Successful(response);

@@ -75,7 +75,7 @@ namespace SloshyDoshMan.Service.Players
 				return connection
 					.Query<PlayerMapStatistic>(sql, new { steamId })
 					.ToDictionary(mapDifficultyStats => (MapName: mapDifficultyStats.Map, Difficulty: DifficultyHelpers.Convert(mapDifficultyStats.Difficulty)), mapDifficultyStats => mapDifficultyStats)
-					.SetDefaultValuesForKeys(_mapStore.FindCoreMapDifficulties(), (mapDifficulty) => CreatePlayerMapStatistics(mapDifficulty.MapName, mapDifficulty.Difficulty))
+					.SetDefaultValuesForKeys(_mapStore.FindCoreMapDifficulties(), (mapDifficulty) => CreateEmptyPlayerMapStatistics(mapDifficulty.MapName, mapDifficulty.Difficulty))
 					.Select(keyValuePair => keyValuePair.Value)
 					.OrderBy(x => x.Map).ThenBy(x => x.GameDifficulty)
 					.ToList();
@@ -108,7 +108,7 @@ namespace SloshyDoshMan.Service.Players
 			}
 		}
 
-		private PlayerMapStatistic CreatePlayerMapStatistics(string mapName, Difficulty difficulty)
+		private PlayerMapStatistic CreateEmptyPlayerMapStatistics(string mapName, Difficulty difficulty)
 		{
 			return new PlayerMapStatistic
 				{

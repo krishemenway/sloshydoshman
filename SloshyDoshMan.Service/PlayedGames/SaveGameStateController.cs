@@ -5,14 +5,13 @@ using Serilog;
 using SloshyDoshMan.Service.Extensions;
 using SloshyDoshMan.Service.Maps;
 using SloshyDoshMan.Service.Notifications;
-using SloshyDoshMan.Service.PlayedGames;
 using SloshyDoshMan.Service.Players;
 using SloshyDoshMan.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SloshyDoshMan.Service.PlayedGameState
+namespace SloshyDoshMan.Service.PlayedGames
 {
 	[Route("api/kf2/gamestate")]
 	public class SaveGameStateController : Controller

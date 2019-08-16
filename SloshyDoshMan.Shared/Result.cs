@@ -1,4 +1,6 @@
-﻿namespace SloshyDoshMan.Shared
+﻿using System;
+
+namespace SloshyDoshMan.Shared
 {
 	public class Result
 	{
@@ -8,6 +10,15 @@
 		public static Result Failure(string error)
 		{
 			return new Result { Success = false, ErrorMessage = error };
+		}
+
+		public Result<T> FailureOf<T>()
+		{
+			return new Result<T>()
+				{
+					Success = Success,
+					ErrorMessage = ErrorMessage,
+				};
 		}
 
 		public static readonly Result Successful = new Result { Success = true, ErrorMessage = null };

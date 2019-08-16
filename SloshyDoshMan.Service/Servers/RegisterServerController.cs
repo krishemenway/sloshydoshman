@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using SloshyDoshMan.Shared;
 
 namespace SloshyDoshMan.Service.Servers
 {
+	[ApiController]
 	[Route("api/servers")]
-	public class RegisterServerController : Controller
+	public class RegisterServerController : ControllerBase
 	{
 		public RegisterServerController(
 			IServerStore serverStore = null,
@@ -14,17 +16,19 @@ namespace SloshyDoshMan.Service.Servers
 			_registerServerRequestValidator = registerRequestValidator ?? new RegisterServerRequestValidator();
 		}
 
-		[HttpPost("register")]
+		[HttpPost(nameof(Register))]
 		[ProducesResponseType(200, Type = typeof(Result<IServer>))]
-		public IActionResult HandleRequest([FromBody] RegisterServerRequest request)
+		public ActionResult<Result<IServer>> Register([FromBody] RegisterServerRequest request)
 		{
 			if(!_registerServerRequestValidator.Validate(request, out var result))
 			{
-				return Ok(result);
+				return result.FailureOf<IServer>();
 			}
 
-			var server = _serverStore.CreateNewServer(request.ServerName, Request.HttpContext.Connection.RemoteIpAddress.ToString());
-			return Ok(Result<IServer>.Successful(server));
+			var remoteIPAddress = ControllerContext.HttpContext.Connection.RemoteIpAddress.ToString();
+			var server = _serverStore.CreateNewServer(request.ServerName, remoteIPAddress);
+
+			return Result<IServer>.Successful(server);
 		}
 
 		private readonly IServerStore _serverStore;

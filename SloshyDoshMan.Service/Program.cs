@@ -28,7 +28,7 @@ namespace SloshyDoshMan.Service
 			}
 		}
 
-		private static void SetupConfiguration(string[] args)
+		public static void SetupConfiguration(string[] args)
 		{
 			Configuration = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
@@ -38,7 +38,7 @@ namespace SloshyDoshMan.Service
 				.Build();
 		}
 
-		private static void SetupLogging()
+		public static void SetupLogging()
 		{
 			Log.Logger = new LoggerConfiguration()
 				.MinimumLevel.Information()

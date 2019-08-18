@@ -28,4 +28,4 @@ test:
     script:
         - "cd SloshyDoshMan.Tests"
         - "dotnet test --collect:\"XPlat Code Coverage\""
-        - "head ./TestResults/*/coverage.cobertura.xml 3"
+        - "head -3 ./TestResults/*/coverage.cobertura.xml"

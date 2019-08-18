@@ -11,19 +11,19 @@ build:web:
         - "npm run build"
     
 build:client:
-    image: microsoft/dotnet/core/sdk:2.2
+    image: mcr.microsoft.com/dotnet/core/sdk:2.2
     stage: build
     script:
         - "dotnet build SloshyDoshMan.Client"
 
 build:service:
-    image: microsoft/dotnet/core/sdk:2.2
+    image: mcr.microsoft.com/dotnet/core/sdk:2.2
     stage: build
     script:
         - "dotnet build SloshyDoshMan.Service"
 
 test:
-    image: microsoft/dotnet/core/sdk:2.2
+    image: mcr.microsoft.com/dotnet/core/sdk:2.2
     stage: test
     script:
         - "cd SloshyDoshMan.Tests"

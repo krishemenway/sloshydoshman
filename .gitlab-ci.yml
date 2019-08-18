@@ -26,4 +26,4 @@ test:
     image: microsoft/dotnet:latest
     stage: test
     script:
-        - "dotnet test SloshyDoshMan.Tests"
+        - "dotnet test SloshyDoshMan.Tests" --collect:"XPlat Code Coverage"

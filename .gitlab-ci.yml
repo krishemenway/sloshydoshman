@@ -23,6 +23,7 @@ build:service:
         - "dotnet build SloshyDoshMan.Service"
 
 test:
+    image: microsoft/dotnet:latest
     stage: test
     script:
         - "dotnet test SloshyDoshMan.Tests"

@@ -11,19 +11,21 @@ build:web:
         - "npm run build"
     
 build:client:
-    image: microsoft/dotnet:latest
+    image: microsoft/dotnet/core/sdk:2.2
     stage: build
     script:
         - "dotnet build SloshyDoshMan.Client"
 
 build:service:
-    image: microsoft/dotnet:latest
+    image: microsoft/dotnet/core/sdk:2.2
     stage: build
     script:
         - "dotnet build SloshyDoshMan.Service"
 
 test:
-    image: microsoft/dotnet:latest
+    image: microsoft/dotnet/core/sdk:2.2
     stage: test
     script:
-        - "dotnet test SloshyDoshMan.Tests --collect:\"XPlat Code Coverage\""
+        - "cd SloshyDoshMan.Tests"
+        - "dotnet test --collect:\"XPlat Code Coverage\""
+        - "less ./TestResults/*/coverage.cobertura.xml"

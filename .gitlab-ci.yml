@@ -1,13 +1,25 @@
-image: microsoft/dotnet:latest
-
 stages:
     - build
     - test
 
-build:
+build:web:
+    image: node:10.13.0
+    stage: build
+    script:
+        - "cd SloshyDoshMan.Web"
+        - "npm ci"
+        - "npm run build"
+    
+build:client:
+    image: microsoft/dotnet:latest
     stage: build
     script:
         - "dotnet build SloshyDoshMan.Client"
+
+build:service:
+    image: microsoft/dotnet:latest
+    stage: build
+    script:
         - "dotnet build SloshyDoshMan.Service"
 
 test:

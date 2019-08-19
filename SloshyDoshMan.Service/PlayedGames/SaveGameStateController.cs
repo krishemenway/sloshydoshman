@@ -80,7 +80,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 		private void SaveAllPlayers(GameState newGameState)
 		{
-			_playerStore.SaveAllPlayers(newGameState.Players);
+			_playerStore.SavePlayers(newGameState.Players);
 		}
 
 		private bool PlayersWonGame(GameState newGameState, IPlayedGame currentGame)
@@ -139,7 +139,6 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 		private void RemoveOrFixInvalidPlayers(GameState newGameState)
 		{
-			var existingPlayers = _playerStore.FindPlayersByName(newGameState.Players.Select(x => x.Name).ToList());
 			newGameState.Players = newGameState.Players.GroupBy(x => x.Name).Select(x => x.First()).ToList();
 		}
 

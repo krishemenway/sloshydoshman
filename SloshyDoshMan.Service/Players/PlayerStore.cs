@@ -7,90 +7,19 @@ namespace SloshyDoshMan.Service.Players
 {
 	public interface IPlayerStore
 	{
-		void FixSteamId(long oldSteamId, PlayerGameState playerGameState);
 		bool TryFindPlayer(long steamId, out Player player);
-		List<Player> FindPlayersByName(List<string> names);
-
-		void SaveAllPlayers(IReadOnlyList<PlayerGameState> players);
-		void SavePlayer(PlayerGameState playerGameState);
-
 		IReadOnlyList<Player> Search(string query);
+
+		void SavePlayers(IReadOnlyList<PlayerGameState> players);
 	}
 
 	public class PlayerStore : IPlayerStore
 	{
-		public void SaveAllPlayers(IReadOnlyList<PlayerGameState> players)
+		public void SavePlayers(IReadOnlyList<PlayerGameState> players)
 		{
 			foreach(var player in players)
 			{
 				SavePlayer(player);
-			}
-		}
-
-		public void SavePlayer(PlayerGameState playerGameState)
-		{
-			const string sql = @"
-				WITH upsert AS (
-					UPDATE player 
-					SET name=@Name, last_known_ip=@IPAddress, last_played_time=now()
-					WHERE steam_id=@SteamID
-					RETURNING *
-				)
-
-				INSERT INTO player
-				(steam_id, name, last_known_ip) 
-				SELECT @SteamID, @Name, @IPAddress
-				WHERE NOT EXISTS (SELECT * FROM upsert);
-
-				INSERT INTO player_ip 
-				(steam_id, ip_address)
-				SELECT
-					@SteamID as steam_id,
-					@IPAddress as ip_address
-				WHERE NOT EXISTS (
-					SELECT *
-					FROM (
-						SELECT ip_address
-						FROM player_ip
-						WHERE steam_id=@SteamID
-						ORDER BY started_using_time desc
-						LIMIT 1
-					) as last_recorded_ip
-					WHERE 
-						last_recorded_ip.ip_address = @IPAddress
-				);";
-			
-			using (var connection = Database.CreateConnection())
-			{
-				connection.Execute(sql, new { playerGameState.SteamId, playerGameState.Name, playerGameState.IPAddress });
-			}
-		}
-		public void FixSteamId(long oldSteamId, PlayerGameState playerGameState)
-		{
-			const string sql = @"
-				UPDATE player
-				SET steam_id = @SteamId
-				WHERE steam_id = @OldSteamId;
-
-				UPDATE player_ip
-				SET steam_id = @SteamId
-				WHERE steam_id = @OldSteamId;
-
-				UPDATE player_ping_sample
-				SET steam_id = @SteamId
-				WHERE steam_id = @OldSteamId;
-
-				UPDATE player_played_game
-				SET steam_id = @SteamId
-				WHERE steam_id = @OldSteamId;
-
-				UPDATE player_played_wave
-				SET steam_id = @SteamId
-				WHERE steam_id = @OldSteamId;";
-
-			using (var connection = Database.CreateConnection())
-			{
-				connection.Execute(sql, new { playerGameState.SteamId, oldSteamId });
 			}
 		}
 
@@ -128,19 +57,42 @@ namespace SloshyDoshMan.Service.Players
 			}
 		}
 
-		public List<Player> FindPlayersByName(List<string> names)
+		private void SavePlayer(PlayerGameState playerGameState)
 		{
 			const string sql = @"
+				WITH upsert AS (
+					UPDATE player 
+					SET name=@Name, last_known_ip=@IPAddress, last_played_time=now()
+					WHERE steam_id=@SteamID
+					RETURNING *
+				)
+
+				INSERT INTO player
+				(steam_id, name, last_known_ip) 
+				SELECT @SteamID, @Name, @IPAddress
+				WHERE NOT EXISTS (SELECT * FROM upsert);
+
+				INSERT INTO player_ip 
+				(steam_id, ip_address)
 				SELECT
-					steam_id as SteamId,
-					name,
-					last_known_ip as LastKnownIP
-				FROM player
-				WHERE name = ANY(@Names)";
+					@SteamID as steam_id,
+					@IPAddress as ip_address
+				WHERE NOT EXISTS (
+					SELECT *
+					FROM (
+						SELECT ip_address
+						FROM player_ip
+						WHERE steam_id=@SteamID
+						ORDER BY started_using_time desc
+						LIMIT 1
+					) as last_recorded_ip
+					WHERE 
+						last_recorded_ip.ip_address = @IPAddress
+				);";
 
 			using (var connection = Database.CreateConnection())
 			{
-				return connection.Query<Player>(sql, new { Names = names }).ToList();
+				connection.Execute(sql, new { playerGameState.SteamId, playerGameState.Name, playerGameState.IPAddress });
 			}
 		}
 	}

@@ -14,7 +14,7 @@ namespace SloshyDoshMan.Tests
 			Program.SetupConfiguration(new string[0]);
 		}
 
-		public ActionTargets Targets => ActionTargets.Default;
+		public ActionTargets Targets => ActionTargets.Test;
 
 		public void AfterTest(ITest test)
 		{

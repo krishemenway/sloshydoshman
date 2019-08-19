@@ -7,12 +7,20 @@ namespace SloshyDoshMan.Service.Servers
 		bool Validate(RegisterServerRequest request, out Result result);
 	}
 
-	class RegisterServerRequestValidator : IRegisterServerRequestValidator
+	public class RegisterServerRequestValidator : IRegisterServerRequestValidator
 	{
 		public bool Validate(RegisterServerRequest request, out Result result)
 		{
-			result = null;
+			if (!string.IsNullOrEmpty(request.ServerName) && request.ServerName.Length > 1024)
+			{
+				result = Result.Failure($"Server name must be between 1 and {MaxServerNameLength}");
+				return false;
+			}
+
+			result = Result.Successful;
 			return true;
 		}
+
+		public const int MaxServerNameLength = 1024;
 	}
 }

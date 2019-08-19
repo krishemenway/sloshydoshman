@@ -13,7 +13,7 @@ namespace SloshyDoshMan.Service.Maps
 		IReadOnlyList<IMap> FindCoreMaps();
 		IReadOnlyList<(string MapName, Difficulty Difficulty)> FindCoreMapDifficulties();
 
-		bool FindMap(string mapName, out IMap map);
+		bool TryFindMap(string mapName, out IMap map);
 	}
 
 	public class MapStore : IMapStore
@@ -33,7 +33,7 @@ namespace SloshyDoshMan.Service.Maps
 			return LazyCoreMapDifficulties.Value;
 		}
 
-		public bool FindMap(string mapName, out IMap map)
+		public bool TryFindMap(string mapName, out IMap map)
 		{
 			return LazyMapList.Value.TryGetValue(mapName.ToLower(), out map);
 		}

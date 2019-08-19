@@ -131,7 +131,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 		private void FixMapName(GameState newGameState)
 		{
-			if (_mapStore.FindMap(newGameState.Map, out var map))
+			if (_mapStore.TryFindMap(newGameState.Map, out var map))
 			{
 				newGameState.Map = map.Name;
 			}

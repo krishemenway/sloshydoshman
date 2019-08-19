@@ -19,7 +19,7 @@ namespace SloshyDoshMan.Service.Maps
 		[ProducesResponseType(200, Type = typeof(Result<MapStatisticsRepsonse>))]
 		public ActionResult<Result<MapStatisticsRepsonse>> MapStatistics([FromQuery] MapStatisticsRequest request)
 		{
-			if (!_mapStore.FindMap(request.MapName, out var map))
+			if (!_mapStore.TryFindMap(request.MapName, out var map))
 			{
 				return Result<MapStatisticsRepsonse>.Failure($"Unknown Map: {request.MapName}");
 			}

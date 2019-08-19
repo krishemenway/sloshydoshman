@@ -18,14 +18,14 @@ namespace SloshyDoshMan.Service.Players
 			_playerStore = playerStore ?? new PlayerStore();
 		}
 
-		[HttpGet("profile")]
+		[HttpGet(nameof(Profile))]
 		[ProducesResponseType(200, Type = typeof(Result<PlayerProfile>))]
-		public IActionResult HandleRequest([FromQuery]PlayerProfileRequest request)
+		public ActionResult<Result<PlayerProfile>> Profile([FromQuery]PlayerProfileRequest request)
 		{
 			if (!_playerStore.TryFindPlayer(request.SteamId, out var player))
 			{
 				Log.Information("Unable to find profile for steam id: {SteamId}", request.SteamId);
-				return Json(Result<PlayerProfile>.Failure("Unable to find profile for steam id"));
+				return Result<PlayerProfile>.Failure("Unable to find profile for steam id");
 			}
 
 			var playerViewModel = new PlayerProfile
@@ -37,7 +37,7 @@ namespace SloshyDoshMan.Service.Players
 					PerkStatistics = _playerStatisticsStore.FindPerkStatistics(request.SteamId),
 				};
 
-			return Json(Result<PlayerProfile>.Successful(playerViewModel));
+			return Result<PlayerProfile>.Successful(playerViewModel);
 		}
 
 		private readonly IPlayerStatisticsStore _playerStatisticsStore;

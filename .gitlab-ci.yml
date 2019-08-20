@@ -9,18 +9,27 @@ build:web:
         - "cd SloshyDoshMan.Web"
         - "npm ci"
         - "npm run build"
+    artifacts:
+        paths:
+            - SloshyDoshMan.Web/dist
     
 build:client:
     image: mcr.microsoft.com/dotnet/core/sdk:2.2
     stage: build
     script:
         - "dotnet build SloshyDoshMan.Client"
+    artifacts:
+        paths:
+            - SloshyDoshMan.Client/bin/
 
 build:service:
     image: mcr.microsoft.com/dotnet/core/sdk:2.2
     stage: build
     script:
         - "dotnet build SloshyDoshMan.Service"
+    artifacts:
+        paths:
+            - SloshyDoshMan.Service/bin/
 
 test:
     image: mcr.microsoft.com/dotnet/core/sdk:2.2

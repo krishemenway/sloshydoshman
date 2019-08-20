@@ -10,26 +10,29 @@ build:web:
         - "npm ci"
         - "npm run build"
     artifacts:
+        name: "$CI_JOB_NAME"
         paths:
             - SloshyDoshMan.Web/dist
-    
+
 build:client:
     image: mcr.microsoft.com/dotnet/core/sdk:2.2
     stage: build
     script:
-        - "dotnet build SloshyDoshMan.Client"
+        - "dotnet publish SloshyDoshMan.Client -o ../client"
     artifacts:
+        name: "$CI_JOB_NAME"
         paths:
-            - SloshyDoshMan.Client/bin/
+            - client
 
 build:service:
     image: mcr.microsoft.com/dotnet/core/sdk:2.2
     stage: build
     script:
-        - "dotnet build SloshyDoshMan.Service"
+        - "dotnet publish SloshyDoshMan.Service -o ../service"
     artifacts:
+        name: "$CI_JOB_NAME"
         paths:
-            - SloshyDoshMan.Service/bin/
+            - service
 
 test:
     image: mcr.microsoft.com/dotnet/core/sdk:2.2

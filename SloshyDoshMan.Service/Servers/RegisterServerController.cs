@@ -10,10 +10,12 @@ namespace SloshyDoshMan.Service.Servers
 	{
 		public RegisterServerController(
 			IServerStore serverStore = null,
-			IRegisterServerRequestValidator registerRequestValidator = null)
+			IRegisterServerRequestValidator registerRequestValidator = null,
+			Func<string> findRemoteIPAddressFunc = null)
 		{
 			_serverStore = serverStore ?? new ServerStore();
 			_registerServerRequestValidator = registerRequestValidator ?? new RegisterServerRequestValidator();
+			_findRemoteIPAddressFunc = findRemoteIPAddressFunc ?? (() => ControllerContext.HttpContext.Connection.RemoteIpAddress.ToString());
 		}
 
 		[HttpPost(nameof(Register))]
@@ -25,13 +27,12 @@ namespace SloshyDoshMan.Service.Servers
 				return result.FailureOf<IServer>();
 			}
 
-			var remoteIPAddress = ControllerContext.HttpContext.Connection.RemoteIpAddress.ToString();
-			var server = _serverStore.CreateNewServer(request.ServerName, remoteIPAddress);
-
+			var server = _serverStore.CreateNewServer(request.ServerName, _findRemoteIPAddressFunc());
 			return Result<IServer>.Successful(server);
 		}
 
 		private readonly IServerStore _serverStore;
 		private readonly IRegisterServerRequestValidator _registerServerRequestValidator;
+		private readonly Func<string> _findRemoteIPAddressFunc;
 	}
 }

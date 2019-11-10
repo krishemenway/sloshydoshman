@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace SloshyDoshMan.Service
 {
 	public class Startup
 	{
-		public Startup(IConfiguration configuration, IHostingEnvironment environment)
+		public Startup(IConfiguration configuration, IWebHostEnvironment environment)
 		{
 			Configuration = configuration;
 			ContentPathRoot = environment.ContentRootPath;
@@ -19,21 +17,19 @@ namespace SloshyDoshMan.Service
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddMvcCore().AddJsonFormatters(FixJsonCamelCasing);
+			services.AddMvcCore().AddJsonOptions(FixJsonCamelCasing);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+		public void Configure(IApplicationBuilder app)
 		{
-			app.UseMvc();
+			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 		}
 
-		private void FixJsonCamelCasing(JsonSerializerSettings settings)
+		private void FixJsonCamelCasing(JsonOptions options)
 		{
-			if (settings.ContractResolver is DefaultContractResolver resolver)
-			{
-				resolver.NamingStrategy = null;  // <<!-- this removes the camelcasing
-			}
+			// this unsets the default behavior (camelCase); "what you see is what you get" is now default
+			options.JsonSerializerOptions.PropertyNamingPolicy = null;
 		}
 
 		public IConfiguration Configuration { get; }

@@ -1,15 +1,10 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SloshyDoshMan.Service.Servers;
 using SloshyDoshMan.Shared;
 using System;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SloshyDoshMan.Tests.Servers
 {
@@ -37,13 +32,9 @@ namespace SloshyDoshMan.Tests.Servers
 
 			_registerServerRequestValidator = new Mock<IRegisterServerRequestValidator>();
 
-			_registerServerController = new RegisterServerController(_serverStore.Object, _registerServerRequestValidator.Object)
-			{
-				ControllerContext = new ControllerContext
-				{
-					HttpContext = new HttpContextWithConnectionInfo(new ConnectionInfoWithIPAddress() { RemoteIpAddress = GivenRequestIPAddress }),
-				}
-			};
+			_findRemoteIPAddressFunc = () => GivenRequestIPAddress.ToString();
+
+			_registerServerController = new RegisterServerController(_serverStore.Object, _registerServerRequestValidator.Object, _findRemoteIPAddressFunc);
 		}
 
 		[Test]
@@ -85,34 +76,7 @@ namespace SloshyDoshMan.Tests.Servers
 
 		private Mock<IServerStore> _serverStore;
 		private Mock<IRegisterServerRequestValidator> _registerServerRequestValidator;
-
+		private Func<string> _findRemoteIPAddressFunc;
 		private RegisterServerController _registerServerController;
-
-		private class HttpContextWithConnectionInfo : DefaultHttpContext
-		{
-			public HttpContextWithConnectionInfo(ConnectionInfo connectionInfo)
-			{
-				_connection = connectionInfo;
-			}
-
-			public override ConnectionInfo Connection => _connection;
-
-			private ConnectionInfo _connection { get; set; }
-		}
-
-		private class ConnectionInfoWithIPAddress : ConnectionInfo
-		{
-			public override string Id { get; set; }
-			public override IPAddress RemoteIpAddress { get; set; }
-			public override int RemotePort { get; set; }
-			public override IPAddress LocalIpAddress { get; set; }
-			public override int LocalPort { get; set; }
-			public override X509Certificate2 ClientCertificate { get; set; }
-
-			public override Task<X509Certificate2> GetClientCertificateAsync(CancellationToken cancellationToken = default)
-			{
-				return Task<X509Certificate2>.Factory.StartNew(() => new X509Certificate2());
-			}
-		}
 	}
 }

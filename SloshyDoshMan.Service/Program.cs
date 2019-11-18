@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace SloshyDoshMan.Service
@@ -31,7 +32,7 @@ namespace SloshyDoshMan.Service
 		public static void SetupConfiguration(string[] args)
 		{
 			Configuration = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
+				.SetBasePath(ExecutablePath)
 				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
 				.AddCommandLine(args)
@@ -67,6 +68,6 @@ namespace SloshyDoshMan.Service
 		public static IConfigurationRoot Configuration { get; private set; }
 		public static IWebHost WebHost { get; private set; }
 
-		public static string ExecutablePath => Directory.GetCurrentDirectory();
+		public static string ExecutablePath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 	}
 }

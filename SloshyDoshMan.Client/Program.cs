@@ -3,6 +3,7 @@ using Serilog;
 using Serilog.Events;
 using SloshyDoshMan.Shared;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -22,7 +23,7 @@ namespace SloshyDoshMan.Client
 		public static void SetupConfiguration(string[] args)
 		{
 			Configuration = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
+				.SetBasePath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName))
 				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
 				.AddCommandLine(args)

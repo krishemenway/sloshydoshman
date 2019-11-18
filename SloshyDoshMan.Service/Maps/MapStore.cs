@@ -64,7 +64,7 @@ namespace SloshyDoshMan.Service.Maps
 				.ToList();
 		}
 
-		private static Stream MapsResourceStream => File.Open(Path.Combine(Startup.ContentPathRoot, "maps.json"), FileMode.Open);
+		private static Stream MapsResourceStream => File.Open(Path.Combine(Program.ExecutablePath, "maps.json"), FileMode.Open);
 
 		private static Lazy<IReadOnlyDictionary<string, IMap>> LazyMapList = new Lazy<IReadOnlyDictionary<string, IMap>>(LoadMapList);
 		private static Lazy<IReadOnlyDictionary<string, IMap>> LazyCoreMaps = new Lazy<IReadOnlyDictionary<string, IMap>>(LoadCoreMaps);

@@ -26,7 +26,7 @@ namespace SloshyDoshMan.Service.Perks
 			}
 		}
 
-		private static Stream PerksResourceStream => File.Open(Path.Combine(Startup.ContentPathRoot, "perks.json"), FileMode.Open);
+		private static Stream PerksResourceStream => File.Open(Path.Combine(Program.ExecutablePath, "perks.json"), FileMode.Open);
 		private static readonly Lazy<IReadOnlyList<Perk>> LazyPerkList = new Lazy<IReadOnlyList<Perk>>(LoadPerkList);
 	}
 }

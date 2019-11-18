@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace SloshyDoshMan.Shared
@@ -33,7 +32,6 @@ namespace SloshyDoshMan.Shared
 
 		public List<PlayerGameState> Players { get; set; }
 
-		[JsonIgnore]
 		public GameLength GameLength
 		{
 			get { return GameLengthHelpers.DetermineGameLengthFromLength(TotalWaves); }

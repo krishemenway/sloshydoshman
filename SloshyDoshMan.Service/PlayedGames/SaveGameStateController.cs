@@ -42,14 +42,22 @@ namespace SloshyDoshMan.Service.PlayedGames
 			RemoveOrFixInvalidPlayers(newGameState);
 			SaveAllPlayers(newGameState);
 
-			Log.Information("Refreshing with Game State: {GameState}", JsonConvert.SerializeObject(newGameState));
+			Log.Information("Refreshing with Game State: {@GameState}", newGameState);
 
 			if (!_playedGameStore.TryFindCurrentGame(newGameState.ServerId, out var currentGame))
 			{
 				if (newGameState.CurrentWave == 1)
 				{
-					currentGame = StartNewGame(newGameState);
-					UpdatePlayerRecords(newGameState, currentGame);
+					if (newGameState.GameType == "Survival")
+					{
+						currentGame = StartNewGame(newGameState);
+						UpdatePlayerRecords(newGameState, currentGame);
+					}
+					else
+					{
+						Log.Information("Received State with Unsupported GameType: {GameType} - Ignoring Message.");
+						return Json(Result.Successful);
+					}
 				}
 				else
 				{

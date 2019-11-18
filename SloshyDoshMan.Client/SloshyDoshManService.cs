@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+﻿using Serilog;
 using SloshyDoshMan.Shared;
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 
 namespace SloshyDoshMan.Client
 {
@@ -14,21 +14,12 @@ namespace SloshyDoshMan.Client
 
 	public class SloshyDoshManService : ISloshyDoshManStatsService
 	{
-		public SloshyDoshManService(ILogger<SloshyDoshManService> logger = null)
-		{
-			_logger = logger ?? Program.LoggerFactory.CreateLogger<SloshyDoshManService>();
-		}
-
 		public void SaveGameState(GameState gameState)
 		{
 			using (var httpClient = new HttpClient())
 			{
-				var serializedGameState = JsonConvert.SerializeObject(gameState);
-
-				_logger.LogInformation($"Received Game State: {serializedGameState}");
-
 				httpClient
-					.PostAsync(new Uri(SaveGameStatePath), new StringContent(serializedGameState, Encoding.UTF8, "application/json"))
+					.PostAsync(new Uri(SaveGameStatePath), new StringContent(JsonSerializer.Serialize(gameState), Encoding.UTF8, "application/json"))
 					.ContinueWith(task =>
 					{
 						if (task.IsFaulted || task.IsCanceled)
@@ -46,10 +37,10 @@ namespace SloshyDoshMan.Client
 		{
 			using (var httpClient = new HttpClient())
 			{
-				_logger.LogInformation($"Registering Server");
+				Log.Information("Registering Server @ {RegisterServerPath}", RegisterServerPath);
 
 				var response = httpClient
-					.PostAsync(new Uri(RegisterServerPath), new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"))
+					.PostAsync(new Uri(RegisterServerPath), new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
 					.ContinueWith(task =>
 					{
 						if (task.IsFaulted || task.IsCanceled)
@@ -61,14 +52,14 @@ namespace SloshyDoshMan.Client
 					});
 
 				var responseContent = response.Result.Content.ReadAsStringAsync().Result;
-				var result = JsonConvert.DeserializeObject<Result<Server>>(responseContent);
+				var result = JsonSerializer.Deserialize<Result<Server>>(responseContent);
 
 				if (!result.Success)
 				{
 					throw new Exception(result.ErrorMessage);
 				}
 
-				_logger.LogInformation($"Registered Server: {result.Data.ServerId}");
+				Log.Information("Registered Server: {ServerId}", result.Data.ServerId);
 				Program.ServerId = result.Data.ServerId;
 			}
 		}
@@ -78,7 +69,5 @@ namespace SloshyDoshMan.Client
 
 		private static string RegisterServerPath => LazyRegisterServerPath.Value;
 		private static Lazy<string> LazyRegisterServerPath => new Lazy<string>(() => $"http://{Program.Settings.SloshyDoshManServiceHost}:{Program.Settings.SloshyDoshManServicePort}/api/servers/register");
-
-		private readonly ILogger<SloshyDoshManService> _logger;
 	}
 }

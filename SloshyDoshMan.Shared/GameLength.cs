@@ -5,10 +5,10 @@ namespace SloshyDoshMan.Shared
 {
 	public enum GameLength
 	{
+		Unknown,
 		Short,
 		Normal,
 		Long,
-		Unknown
 	}
 
 	public static class GameLengthHelpers
@@ -20,7 +20,7 @@ namespace SloshyDoshMan.Shared
 
 		public static GameLength DetermineGameLengthFromLength(int totalWaves)
 		{
-			return TotalWavesForGameLength.Single(x => x.Value == totalWaves).Key;
+			return TotalWavesForGameLength.SingleOrDefault(x => x.Value == totalWaves).Key;
 		}
 
 		private static readonly IReadOnlyDictionary<GameLength, int> TotalWavesForGameLength 

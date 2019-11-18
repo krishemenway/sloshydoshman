@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using Serilog;
+using Serilog.Events;
 using SloshyDoshMan.Shared;
 using System;
 using System.IO;
@@ -12,17 +12,32 @@ namespace SloshyDoshMan.Client
 	{
 		public static void Main(string[] args)
 		{
+			SetupLogging();
+			SetupConfiguration(args);
+			ShowSettings();
+			RegisterServer();
+			StartMonitoring();
+		}
+
+		public static void SetupConfiguration(string[] args)
+		{
 			Configuration = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
 				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
 				.AddCommandLine(args)
 				.Build();
+		}
 
-			AddLogging();
-			ShowSettings();
-			RegisterServer();
-			StartMonitoring();
+		public static void SetupLogging()
+		{
+			Log.Logger = new LoggerConfiguration()
+				.MinimumLevel.Information()
+				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+				.Enrich.FromLogContext()
+				.WriteTo.Console()
+				.WriteTo.RollingFile("app-{Date}.log")
+				.CreateLogger();
 		}
 
 		private static void RegisterServer()
@@ -33,19 +48,14 @@ namespace SloshyDoshMan.Client
 			}
 			catch (Exception e)
 			{
-				LoggerFactory.CreateLogger<Program>().LogError($"Failure during server registration: {e.Message}; {e.StackTrace}", e);
+				Log.Error(e, $"Failure during server registration: {e.Message}; {e.StackTrace}");
 			}
-		}
-
-		private static void AddLogging()
-		{
-			LoggerFactory.AddConsole();
 		}
 
 		private static void ShowSettings()
 		{
-			LoggerFactory.CreateLogger<Program>().LogInformation($"Using settings: {JsonConvert.SerializeObject(Settings)}");
-			LoggerFactory.CreateLogger<Program>().LogInformation($"Change your settings by adding EnvironmentVariables or modifying the appsettings.json or using command line parameters");
+			Log.Information("Using settings: {@Settings}", Settings);
+			Log.Information($"Change your settings by adding EnvironmentVariables or modifying the appsettings.json or using command line parameters");
 		}
 
 		private static void StartMonitoring()
@@ -61,7 +71,6 @@ namespace SloshyDoshMan.Client
 			Monitor.StopMonitoring();
 		}
 
-		public static readonly LoggerFactory LoggerFactory = new LoggerFactory();
 		public static readonly Settings Settings = new Settings();
 		public static Guid? ServerId { get; set; }
 		private static readonly IKillingFloor2AdminMonitor Monitor = new KillingFloor2AdminMonitor();

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Serilog;
 using SloshyDoshMan.Shared;
 using System;
 using System.Linq;
@@ -39,6 +39,7 @@ namespace SloshyDoshMan.Client
 			{
 				var oldGameState = CurrentGameState;
 				CurrentGameState = _killingFloor2AdminScraper.GetCurrentGameState();
+				Log.Information("Received Game State: {@CurrentGameState}", CurrentGameState);
 
 				if (oldGameState != null && ShouldSendAdvertisement(oldGameState, CurrentGameState))
 				{
@@ -54,11 +55,11 @@ namespace SloshyDoshMan.Client
 			{
 				aggregateException.InnerExceptions
 					.Select(x => x.Message).ToList()
-					.ForEach((exception) => { Program.LoggerFactory.CreateLogger<KillingFloor2AdminMonitor>().LogError(exception, "Something went wrong refreshing game state"); });
+					.ForEach((exception) => { Log.Error(exception, "Something went wrong refreshing game state"); });
 			}
 			catch (Exception exception)
 			{
-				Program.LoggerFactory.CreateLogger<KillingFloor2AdminMonitor>().LogError(exception, "Something went wrong refreshing game state");
+				Log.Error(exception, "Something went wrong refreshing game state");
 			}
 
 			RefreshStateTimer.Start();

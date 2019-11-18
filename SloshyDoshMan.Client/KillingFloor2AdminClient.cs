@@ -1,5 +1,10 @@
-﻿using SloshyDoshMan.Shared;
+﻿using AngleSharp;
+using AngleSharp.Dom;
+using AngleSharp.Io;
+using SloshyDoshMan.Shared;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,8 +15,8 @@ namespace SloshyDoshMan.Client
 {
 	public interface IKillingFloor2AdminClient
 	{
-		string GetPlayersContent();
-		string GetScoreboardContent();
+		IDocument GetPlayersContent();
+		IDocument GetScoreboardContent();
 
 		void SendMessage(string message);
 	}
@@ -48,17 +53,17 @@ namespace SloshyDoshMan.Client
 			}
 		}
 
-		public string GetPlayersContent()
+		public IDocument GetPlayersContent()
 		{
-			return GetContentFromUri(CreateKF2AdminServerPath("/ServerAdmin/current/players"));
+			return BrowsingContext.New().OpenAsync(GetContentFromUri(CreateKF2AdminServerPath("/ServerAdmin/current/players"))).Result;
 		}
 
-		public string GetScoreboardContent()
+		public IDocument GetScoreboardContent()
 		{
-			return GetContentFromUri(CreateKF2AdminServerPath("/ServerAdmin/current/info"));
+			return BrowsingContext.New().OpenAsync(GetContentFromUri(CreateKF2AdminServerPath("/ServerAdmin/current/info"))).Result;
 		}
 
-		private string GetContentFromUri(Uri uri)
+		private IResponse GetContentFromUri(Uri uri)
 		{
 			using (var client = new HttpClient())
 			{
@@ -83,7 +88,13 @@ namespace SloshyDoshMan.Client
 					throw new InvalidAdminCrendentialsException();
 				}
 
-				return response.Content.ReadAsStringAsync().Result;
+				return new AdminClientResponse
+				{
+					StatusCode = response.StatusCode,
+					Address = new Url(response.RequestMessage.RequestUri.AbsoluteUri),
+					Content = response.Content.ReadAsStreamAsync().Result,
+					Headers = new Dictionary<string, string>(),
+				};
 			}
 		}
 
@@ -93,5 +104,20 @@ namespace SloshyDoshMan.Client
 		}
 
 		private string AuthorizationHeader => Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Program.Settings.KF2AdminUserName}:{Program.Settings.KF2AdminPassword}"));
+	}
+
+	public class AdminClientResponse : IResponse
+	{
+		public HttpStatusCode StatusCode { get; set; }
+
+		public Url Address { get; set; }
+
+		public IDictionary<string, string> Headers { get; set; }
+
+		public Stream Content { get; set; }
+
+		public void Dispose()
+		{
+		}
 	}
 }

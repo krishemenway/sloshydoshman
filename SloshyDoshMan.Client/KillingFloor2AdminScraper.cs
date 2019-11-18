@@ -1,4 +1,4 @@
-﻿using CsQuery;
+﻿using AngleSharp.Dom;
 using SloshyDoshMan.Shared;
 using System;
 using System.Collections.Generic;
@@ -21,9 +21,9 @@ namespace SloshyDoshMan.Client
 
 		public string FindServerName()
 		{
-			var scoreboardContent = CQ.Create(_killingFloor2AdminClient.GetScoreboardContent());
-			var currentGameElements = scoreboardContent.Select("#currentGame").Children();
-			return currentGameElements[1].InnerText;
+			var scoreboardContent = _killingFloor2AdminClient.GetScoreboardContent();
+			var currentGameElements = scoreboardContent.GetElementById("currentGame").Children;
+			return currentGameElements[1].TextContent;
 		}
 
 		public GameState GetCurrentGameState()
@@ -33,27 +33,27 @@ namespace SloshyDoshMan.Client
 				throw new Exception("No ServerId received from server. Make sure you can reach the SloshyDoshMan service API from this client.");
 			}
 
-			var playerMetadataContent = CQ.Create(_killingFloor2AdminClient.GetPlayersContent());
-			var scoreboardContent = CQ.Create(_killingFloor2AdminClient.GetScoreboardContent());
+			var playerMetadataContent = _killingFloor2AdminClient.GetPlayersContent();
+			var scoreboardContent = _killingFloor2AdminClient.GetScoreboardContent();
 
-			if(scoreboardContent.Select("#loginform").Count() > 0 || playerMetadataContent.Select("#loginform").Count() > 0)
+			if(scoreboardContent.GetElementById("loginform") != null || playerMetadataContent.GetElementById("loginform") != null)
 			{
 				throw new InvalidOperationException("Cannot connect to KF2 Admin because Http Auth is not enabled. Make sure that bHttpAuth=true in KFWebAdmin.ini");
 			}
 
 			try
 			{
-				var currentGameElements = scoreboardContent.Select("#currentGame").Children();
-				var currentRulesElements = scoreboardContent.Select("#currentRules").Children();
-				var waveParts = currentRulesElements[1].InnerText.Split('/');
+				var currentGameElements = scoreboardContent.GetElementById("currentGame").Children;
+				var currentRulesElements = scoreboardContent.GetElementById("currentRules").Children;
+				var waveParts = currentRulesElements[1].TextContent.Split('/');
 
 				return new GameState
 				{
 					ServerId = Program.ServerId.Value,
-					ServerName = currentGameElements[1].InnerText,
-					Map = currentGameElements[7].Attributes["title"],
-					Difficulty = currentRulesElements[3].InnerText,
-					GameType = currentGameElements[5].InnerText,
+					ServerName = currentGameElements[1].TextContent,
+					Map = currentGameElements[7].Attributes["title"].Value,
+					Difficulty = currentRulesElements[3].TextContent,
+					GameType = currentGameElements[5].TextContent,
 
 					CurrentWave = Convert.ToInt32(waveParts[0]),
 					TotalWaves = Convert.ToInt32(waveParts[1]),
@@ -67,23 +67,23 @@ namespace SloshyDoshMan.Client
 			}
 		}
 
-		private static List<PlayerGameState> ParsePlayerData(CQ scoreboardContent, CQ playerMetadataContent)
+		private static List<PlayerGameState> ParsePlayerData(IDocument scoreboardContent, IDocument playerMetadataContent)
 		{
 			var allPlayerMetadata = ParsePlayerMetadata(playerMetadataContent);
-			var allPlayers = scoreboardContent.Select("#players tbody tr");
+			var allPlayers = scoreboardContent.QuerySelectorAll("#players tbody tr");
 
 			var playerGameStates = new List<PlayerGameState>();
 
 			foreach(var playerStateElement in allPlayers)
 			{
-				var playerStateElements = playerStateElement.ChildElements.ToList();
+				var playerStateElements = playerStateElement.Children;
 
-				if(playerStateElements.Count == 1) // the only element is informing "There are no players"
+				if(playerStateElements.Count() == 1) // the only element is informing "There are no players"
 				{
 					continue;
 				}
 				
-				var name = playerStateElements[1].InnerText;
+				var name = playerStateElements[1].TextContent;
 				var matchedPlayerMetadata = allPlayerMetadata.FirstOrDefault(x => x.Name == name);
 				
 				if(matchedPlayerMetadata != null)
@@ -96,15 +96,15 @@ namespace SloshyDoshMan.Client
 						IPAddress = matchedPlayerMetadata.IPAddress,
 						UniqueNetId = matchedPlayerMetadata.UniqueNetId,
 
-						Perk = playerStateElements[2].InnerText,
-						Dosh = Convert.ToInt32(playerStateElements[3].InnerText),
-						Kills = Convert.ToInt32(playerStateElements[5].InnerText),
-						Ping = Convert.ToInt32(playerStateElements[6].InnerText)
+						Perk = playerStateElements[2].TextContent,
+						Dosh = Convert.ToInt32(playerStateElements[3].TextContent),
+						Kills = Convert.ToInt32(playerStateElements[5].TextContent),
+						Ping = Convert.ToInt32(playerStateElements[6].TextContent)
 					};
 
-					if(!string.IsNullOrWhiteSpace(playerStateElements[4].InnerText))
+					if(!string.IsNullOrWhiteSpace(playerStateElements[4].TextContent))
 					{
-						playerGameState.Health = Convert.ToInt32(playerStateElements[4].InnerText);
+						playerGameState.Health = Convert.ToInt32(playerStateElements[4].TextContent);
 					}
 
 					playerGameStates.Add(playerGameState);
@@ -114,25 +114,25 @@ namespace SloshyDoshMan.Client
 			return playerGameStates;
 		}
 
-		private static List<PlayersListData> ParsePlayerMetadata(CQ playerListContent)
+		private static List<PlayersListData> ParsePlayerMetadata(IDocument playerListContent)
 		{
 			var playerListData = new List<PlayersListData>();
 
-			foreach(var playerListItemWrapper in playerListContent.Select("#players tbody tr"))
+			foreach(var playerListItemWrapper in playerListContent.QuerySelectorAll("#players tbody tr"))
 			{
-				var playerListItems = playerListItemWrapper.ChildElements.ToList();
+				var playerListItems = playerListItemWrapper.Children;
 
-				if (playerListItems.Count == 1)
+				if (playerListItems.Count() == 1)
 				{
 					continue;
 				}
 
 				var player = new PlayersListData
 				{
-					Name = playerListItems[1].InnerText,
-					IPAddress = playerListItems[3].InnerText,
-					UniqueNetId = playerListItems[4].InnerText,
-					SteamID = Convert.ToInt64(playerListItems[5].InnerText),
+					Name = playerListItems[1].TextContent,
+					IPAddress = playerListItems[3].TextContent,
+					UniqueNetId = playerListItems[4].TextContent,
+					SteamID = Convert.ToInt64(playerListItems[5].TextContent),
 				};
 
 				playerListData.Add(player);

@@ -6,6 +6,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 {
 	public interface IScoreboard
 	{
+		int TotalKills { get; }
 		IReadOnlyList<IScoreboardPlayer> Players { get; }
 	}
 
@@ -17,6 +18,8 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 	public interface IScoreboardPlayer
 	{
+		string SteamId { get; set; }
+		string UserName { get; set; }
 		Dictionary<string, PlayerWaveInfo> PlayerWaveInfo { get; set; }
 	}
 

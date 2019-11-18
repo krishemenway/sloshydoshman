@@ -1,8 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SloshyDoshMan.Service;
 using SloshyDoshMan.Service.Perks;
-using System;
 using System.Collections.Generic;
 
 namespace SloshyDoshMan.Tests.Perks
@@ -13,7 +11,6 @@ namespace SloshyDoshMan.Tests.Perks
 		[SetUp]
 		public void SetUp()
 		{
-			Startup.ContentPathRoot = Environment.CurrentDirectory;
 			_perkStore = new PerkStore();
 		}
 

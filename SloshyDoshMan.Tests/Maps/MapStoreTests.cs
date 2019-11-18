@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SloshyDoshMan.Service;
 using SloshyDoshMan.Service.Maps;
 using SloshyDoshMan.Shared;
 using System;
@@ -15,7 +14,6 @@ namespace SloshyDoshMan.Tests.Maps
 		[SetUp]
 		public void SetUp()
 		{
-			Startup.ContentPathRoot = Environment.CurrentDirectory;
 			_mapStore = new MapStore();
 		}
 

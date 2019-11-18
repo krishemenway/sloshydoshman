@@ -12,6 +12,8 @@ namespace SloshyDoshMan.Service.PlayedGames
 		string GameType { get; set; }
 		string Map { get; set; }
 		string Difficulty { get; set; }
+
+		[JsonConverter(typeof(StringEnumConverter))]
 		GameLength Length { get; set; }
 
 		int ReachedWave { get; set; }

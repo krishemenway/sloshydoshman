@@ -15,10 +15,10 @@ namespace SloshyDoshMan.Service
 
 		private static string DatabaseConnectionString => $"Host={Host};Username={User};Password={Password};Database={DatabaseName}";
 
-		private static string Host => Program.Configuration.GetValue<string>("DatabaseHost");
-		private static string DatabaseName => Program.Configuration.GetValue<string>("DatabaseName");
+		private static string Host => Program.Configuration.GetValue<string>("SloshyDoshManDatabaseHost");
+		private static string DatabaseName => Program.Configuration.GetValue<string>("SloshyDoshManDatabaseName");
 
-		private static string User => Program.Configuration.GetValue<string>("DatabaseUser");
-		private static string Password => Program.Configuration.GetValue<string>("DatabasePassword");
+		private static string User => Program.Configuration.GetValue<string>("SloshyDoshManDatabaseUser");
+		private static string Password => Program.Configuration.GetValue<string>("SloshyDoshManDatabasePassword");
 	}
 }

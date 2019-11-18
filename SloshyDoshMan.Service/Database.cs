@@ -13,9 +13,11 @@ namespace SloshyDoshMan.Service
 			return connection;
 		}
 
-		private static string DatabaseConnectionString => $"Host={Host};Username={User};Password={Password};Database={DatabaseName}";
+		private static string DatabaseConnectionString => $"Host={Host};Username={User};Password={Password};Database={DatabaseName};Port={Port}";
 
 		private static string Host => Program.Configuration.GetValue<string>("SloshyDoshManDatabaseHost");
+		private static string Port => Program.Configuration.GetValue<string>("SloshyDoshManDatabasePort");
+
 		private static string DatabaseName => Program.Configuration.GetValue<string>("SloshyDoshManDatabaseName");
 
 		private static string User => Program.Configuration.GetValue<string>("SloshyDoshManDatabaseUser");

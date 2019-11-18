@@ -15,7 +15,7 @@ build:web:
             - SloshyDoshMan.Web/dist
 
 build:client:
-    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    image: mcr.microsoft.com/dotnet/core/sdk:3.0
     stage: build
     script:
         - "dotnet publish SloshyDoshMan.Client -o ../client"

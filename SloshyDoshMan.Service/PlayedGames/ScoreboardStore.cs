@@ -17,14 +17,14 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 	public interface IScoreboardPlayer
 	{
-		Dictionary<int, PlayerWaveInfo> PlayerWaveInfo { get; set; }
+		Dictionary<string, PlayerWaveInfo> PlayerWaveInfo { get; set; }
 	}
 
 	public class ScoreboardPlayer : IScoreboardPlayer
 	{
 		public string SteamId { get; set; }
 		public string UserName { get; set; }
-		public Dictionary<int, PlayerWaveInfo> PlayerWaveInfo { get; set; }
+		public Dictionary<string, PlayerWaveInfo> PlayerWaveInfo { get; set; }
 	}
 
 	public interface IScoreboardStore
@@ -74,7 +74,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 			{
 				UserName = records.First().Name,
 				SteamId = records.First().SteamId.ToString(),
-				PlayerWaveInfo = records.ToDictionary(x => x.Wave, x => new PlayerWaveInfo { Kills = x.Kills, Perk = x.Perk, Wave = x.Wave })
+				PlayerWaveInfo = records.ToDictionary(x => x.Wave.ToString(), x => new PlayerWaveInfo { Kills = x.Kills, Perk = x.Perk, Wave = x.Wave })
 			};
 		}
 	}

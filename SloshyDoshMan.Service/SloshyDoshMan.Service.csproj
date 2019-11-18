@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
-    <RootNamespace>SloshyDoshMan.Service</RootNamespace>
-    <AssemblyName>SloshyDoshMan.Service</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

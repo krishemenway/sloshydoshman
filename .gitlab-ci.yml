@@ -18,7 +18,7 @@ build:client:
     image: mcr.microsoft.com/dotnet/core/sdk:3.0
     stage: build
     script:
-        - "dotnet publish SloshyDoshMan.Client -o ../client"
+        - "dotnet publish SloshyDoshMan.Client --output ./client"
     artifacts:
         name: "$CI_JOB_NAME"
         paths:
@@ -28,7 +28,7 @@ build:service:
     image: mcr.microsoft.com/dotnet/core/sdk:3.0
     stage: build
     script:
-        - "dotnet publish SloshyDoshMan.Service -o ../service"
+        - "dotnet publish SloshyDoshMan.Service --output ./service"
     artifacts:
         name: "$CI_JOB_NAME"
         paths:

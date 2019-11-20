@@ -68,6 +68,6 @@ namespace SloshyDoshMan.Service
 		public static IConfigurationRoot Configuration { get; private set; }
 		public static IWebHost WebHost { get; private set; }
 
-		public static string ExecutablePath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+		public static string ExecutablePath { get; set; } = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 	}
 }

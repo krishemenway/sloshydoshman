@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using SloshyDoshMan.Service;
 using SloshyDoshMan.Service.Maps;
 using SloshyDoshMan.Shared;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace SloshyDoshMan.Tests.Maps
@@ -14,6 +16,7 @@ namespace SloshyDoshMan.Tests.Maps
 		[SetUp]
 		public void SetUp()
 		{
+			Program.ExecutablePath = Directory.GetCurrentDirectory();
 			_mapStore = new MapStore();
 		}
 

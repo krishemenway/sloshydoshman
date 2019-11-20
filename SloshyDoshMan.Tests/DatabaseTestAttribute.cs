@@ -2,6 +2,7 @@
 using NUnit.Framework.Interfaces;
 using SloshyDoshMan.Service;
 using System;
+using System.IO;
 using System.Transactions;
 
 namespace SloshyDoshMan.Tests
@@ -11,6 +12,7 @@ namespace SloshyDoshMan.Tests
 	{
 		static DatabaseTestsAttribute()
 		{
+			Program.ExecutablePath = Directory.GetCurrentDirectory();
 			Program.SetupConfiguration(new string[0]);
 		}
 

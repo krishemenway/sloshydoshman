@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,6 +34,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 	public interface IScoreboardStore
 	{
 		IScoreboard GetScoreboard(IPlayedGame game);
+		Dictionary<Guid, IScoreboard> GetScoreboards(IReadOnlyList<IPlayedGame> playedGames);
 	}
 
 	public class ScoreboardStore : IScoreboardStore
@@ -41,6 +43,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 		{
 			const string sql = @"
 				SELECT
+					ppw.played_game_id playedgameid,
 					p.steam_id as steamid,
 					p.name,
 					ppw.wave,
@@ -70,6 +73,48 @@ namespace SloshyDoshMan.Service.PlayedGames
 				};
 			}
 		}
+		
+		public Dictionary<Guid, IScoreboard> GetScoreboards(IReadOnlyList<IPlayedGame> playedGames)
+		{
+			const string sql = @"
+				SELECT
+					ppw.played_game_id playedgameid,
+					p.steam_id as steamid,
+					p.name,
+					ppw.wave,
+					ppw.kills,
+					ppw.perk
+				FROM player_played_wave ppw
+				INNER JOIN player p
+					ON p.steam_id = ppw.steam_id
+				INNER JOIN played_game pg
+					ON ppw.played_game_id = pg.played_game_id
+				WHERE
+					ppw.played_game_id = ANY(@PlayedGameIds)
+					AND wave > 0
+					AND perk != ''";
+
+			using (var connection = Database.CreateConnection())
+			{
+				return connection
+					.Query<PlayerWaveInfoRecord>(sql, new { PlayedGameIds = playedGames.Select(x => x.PlayedGameId).ToList() })
+					.GroupBy(x => x.PlayedGameId, x => x)
+					.ToDictionary(groupByGame => groupByGame.Key, playerWaveInfoRecordsForGame => CreateScoreboard(playerWaveInfoRecordsForGame.ToList()));
+			}
+		}
+
+		private IScoreboard CreateScoreboard(List<PlayerWaveInfoRecord> records)
+		{
+			var playerWaveScoreboards = records
+				.GroupBy(x => x.SteamId, x => x)
+				.Select(CreatePlayer)
+				.ToList();
+
+			return new Scoreboard
+			{
+				Players = playerWaveScoreboards
+			};
+		}
 
 		private ScoreboardPlayer CreatePlayer(IGrouping<long, PlayerWaveInfoRecord> records)
 		{
@@ -91,6 +136,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 	public class PlayerWaveInfoRecord
 	{
+		public Guid PlayedGameId { get; set; }
 		public long SteamId { get; set; }
 		public string Name { get; set; }
 		public int Wave { get; set; }

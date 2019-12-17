@@ -3,9 +3,7 @@ import * as $ from "jquery";
 import { layout, text, textColor, margin, padding, events, createStyles, redHandleContainer } from "AppStyles";
 import { map } from "Maps/MapStyles";
 import { perk } from "Perks/PerkStyles";
-import { Dictionary } from "CommonDataStructures/Dictionary";
-import { ResultOf } from "CommonDataStructures/ResultOf";
-import { GameViewModel ,PlayedGame,RecentGameResponse,ScoreboardPlayer } from "Server";
+import { GameViewModel, PlayedGame, RecentWinsResponse, ScoreboardPlayer } from "Server";
 import { GoToPlayedGame } from "GameView/PlayedGameComponent";
 import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
@@ -19,30 +17,21 @@ export class ServerRecentWinsViewModel {
 	constructor(params?: any) {
 		this.RecentWins = ko.observableArray();
 		this.SelectedRecentWin = ko.observable(null);
-		this.GamesByPlayedGameId = {};
 		this.RecentWinPlayers = ko.pureComputed(this.FindRecentWinPlayers, this);
 		this.RotateSelectedGameInterval = window.setInterval(this.SelectNextGame, 10000);
 
-		this.LoadServerStats(100, 0);
+		this.LoadServerStats();
 	}
 
 	public dipose() {
 		this.ClearGameRotation();
 	}
 
-	public GoToGame = (game: PlayedGame) => {
-		GoToPlayedGame(game.PlayedGameId);
+	public GoToGame = (game: GameViewModel) => {
+		GoToPlayedGame(game.PlayedGame.PlayedGameId);
 	}
 
-	public FindOrCreatePlayerGameData = (game: PlayedGame) : ko.Observable<GameViewModel|null> => {
-		if(!this.GamesByPlayedGameId[game.PlayedGameId]) {
-			this.GamesByPlayedGameId[game.PlayedGameId] = ko.observable(null);
-		}
-
-		return this.GamesByPlayedGameId[game.PlayedGameId];
-	}
-
-	public OnHover = (game: PlayedGame) : void => {
+	public OnHover = (game: GameViewModel) : void => {
 		this.SelectedRecentWin(game);
 		this.ClearGameRotation();
 	}
@@ -54,7 +43,7 @@ export class ServerRecentWinsViewModel {
 			return null;
 		}
 
-		let lastWaveForPlayer = player.PlayerWaveInfo[recentWin.TotalWaves+1];
+		let lastWaveForPlayer = player.PlayerWaveInfo[recentWin.PlayedGame.TotalWaves+1];
 
 		if(!lastWaveForPlayer) {
 			return null;
@@ -90,31 +79,10 @@ export class ServerRecentWinsViewModel {
 		}
 	}
 
-	private LoadServerStats = (gamesToSearch: number, startingAt: number) : void => {
-		$.get(`/webapi/games/recent?count=${gamesToSearch}&startingAt=${startingAt}`)
-		 .done((response: ResultOf<RecentGameResponse>) => {
-			let hasSearchedAllGames = startingAt + gamesToSearch >= response.Data.TotalGames;
-
-			response.Data.RecentGames
-				.filter((playedGame) => playedGame.PlayersWon)
-				.slice(0, this.DesiredRecentWins - this.RecentWins().length)
-				.forEach((recentWin) => {
-					this.RecentWins.push(recentWin);
-				});
-
-			if(this.RecentWins().length < this.DesiredRecentWins && !hasSearchedAllGames) {
-				this.LoadServerStats(gamesToSearch, startingAt + gamesToSearch);
-			} else if (this.RecentWins().length > 0) {
-				this.SelectedRecentWin(this.RecentWins()[0]);
-				this.LoadPlayerDataForRecentWins();
-			}
-		});
-	}
-
-	private LoadPlayerDataForRecentWins = () : void => {
-		this.RecentWins().forEach(playedGame => {
-			$.get(`/webapi/games/profile?playedGameId=${playedGame.PlayedGameId}`)
-			 .done((response: ResultOf<GameViewModel>) => this.FindOrCreatePlayerGameData(playedGame)(response.Data));
+	private LoadServerStats = () : void => {
+		$.get(`/webapi/games/recentWins`).done((response: RecentWinsResponse) => {
+			this.RecentWins(response.RecentWins.slice(0, 4));
+			this.SelectedRecentWin(this.RecentWins()[0]);
 		});
 	}
 
@@ -124,27 +92,20 @@ export class ServerRecentWinsViewModel {
 			return [];
 		}
 
-		let selectedWinGame = this.FindOrCreatePlayerGameData(recentWin)();
-		if (selectedWinGame === null) {
-			return [];
-		}
-
-		return selectedWinGame.Scoreboard.Players.filter((player) => {
-			if (recentWin === null || !player.PlayerWaveInfo[recentWin.TotalWaves+1]) {
+		return recentWin.Scoreboard.Players.filter((player) => {
+			if (recentWin === null || !player.PlayerWaveInfo[recentWin.PlayedGame.TotalWaves+1]) {
 				return false;
 			}
 
-			return !!player.PlayerWaveInfo[recentWin.TotalWaves+1].Perk;
+			return !!player.PlayerWaveInfo[recentWin.PlayedGame.TotalWaves+1].Perk;
 		});
 	}
 
-	public RecentWins: ko.ObservableArray<PlayedGame>;
-	public SelectedRecentWin: ko.Observable<PlayedGame|null>;
+	public RecentWins: ko.ObservableArray<GameViewModel>;
+	public SelectedRecentWin: ko.Observable<GameViewModel|null>;
 	public RecentWinPlayers: ko.Computed<ScoreboardPlayer[]>;
 
-	private DesiredRecentWins: number = 4;
 	private RotateSelectedGameInterval: number;
-	private GamesByPlayedGameId: Dictionary<ko.Observable<GameViewModel|null>>;
 }
 
 const styles = createStyles({
@@ -172,9 +133,9 @@ ko.components.register(Name, {
 			<div class="${text.font24} ${textColor.white} ${text.smallCaps}">Recent Wins</div>
 			<div data-bind="foreach: RecentWins">
 				<div class="${layout.width25} ${layout.inlineBlock} ${styles.recentWinGame}" data-bind="click: $component.GoToGame, event: {mouseover: $component.OnHover}, css: {selected: $component.SelectedRecentWin() === $data}">
-					<div class="${map.mapCover} ${margin.bottom}" style="min-height: 119px" data-bind="css: Map" />
-					<div class="${textColor.white} ${text.font14} ${text.center} ${margin.bottomHalf}" data-bind="text: Map" />
-					<div class="${textColor.gray} ${text.font14} ${text.center} ${margin.bottom}" data-bind="${MomentFormat("TimeFinished", "MMM Do YYYY")}" />
+					<div class="${map.mapCover} ${margin.bottom}" style="min-height: 119px" data-bind="css: PlayedGame.Map" />
+					<div class="${textColor.white} ${text.font14} ${text.center} ${margin.bottomHalf}" data-bind="text: PlayedGame.Map" />
+					<div class="${textColor.gray} ${text.font14} ${text.center} ${margin.bottom}" data-bind="${MomentFormat("PlayedGame.TimeFinished", "MMM Do YYYY")}" />
 				</div>
 			</div>
 

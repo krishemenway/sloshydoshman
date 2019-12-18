@@ -11,6 +11,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 		IPlayedGame FindPlayedGame(Guid playedGameId);
 		bool TryFindCurrentGame(Guid serverId, out IPlayedGame playedGame);
 		IReadOnlyList<IPlayedGame> FindRecentGames(int totalRecentGames, int startingAt);
+		IReadOnlyList<IPlayedGame> FindRecentWins(int countToFind);
 		IReadOnlyList<IPlayedGame> FindAllGames(long steamId);
 
 		IPlayedGame StartNewGame(GameState newGameState);
@@ -123,6 +124,33 @@ namespace SloshyDoshMan.Service.PlayedGames
 			{
 				return connection
 					.Query<PlayedGameRecord>(sql, new { steamId })
+					.Select(CreateGame)
+					.ToList();
+			}
+		}
+
+		public IReadOnlyList<IPlayedGame> FindRecentWins(int countToFind)
+		{
+			const string sql = @"
+				SELECT
+					played_game_id as PlayedGameId,
+					map,
+					game_type as GameType,
+					game_length as GameLength,
+					game_difficulty as GameDifficulty,
+					reached_wave as ReachedWave,
+					time_started as TimeStarted,
+					time_finished as TimeFinished,
+					players_won as PlayersWon
+				FROM played_game pg
+				WHERE pg.players_won = true
+				ORDER BY pg.time_started DESC
+				LIMIT @CountToFind";
+
+			using (var connection = Database.CreateConnection())
+			{
+				return connection
+					.Query<PlayedGameRecord>(sql, new { CountToFind = countToFind })
 					.Select(CreateGame)
 					.ToList();
 			}

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json.Serialization;
 
 namespace SloshyDoshMan.Service
 {
@@ -29,6 +30,7 @@ namespace SloshyDoshMan.Service
 		{
 			// this unsets the default behavior (camelCase); "what you see is what you get" is now default
 			options.JsonSerializerOptions.PropertyNamingPolicy = null;
+			options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 		}
 
 		public IConfiguration Configuration { get; }

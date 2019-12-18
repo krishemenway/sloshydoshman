@@ -1,6 +1,6 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
-import { layout, text, textColor, padding, events, createStyles, redHandleContainer, margin } from "AppStyles";
+import { layout, text, textColor, padding, events, createStyles, redHandleContainer, margin, marginMobile } from "AppStyles";
 import { ResultOf } from "CommonDataStructures/ResultOf";
 import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
 import { PaginationComponent } from "Pagination/PaginationComponent";
@@ -118,34 +118,36 @@ const styles = createStyles({
 ko.components.register(Name, {
 	viewModel: PlayerSearchViewModel,
 	template: `
-		<div class="${styles.playerSearch} ${redHandleContainer.container} ${textColor.white}">
-			<div class="${text.font24} ${text.smallCaps}">Search for player</div>
+		<div class="${styles.playerSearch} ${textColor.white} ${marginMobile.horizontal}">
+			<div class="${text.font24} ${textColor.white} ${text.smallCaps} ${text.center} ${margin.topHalf} ${margin.bottomHalf}">Search for player</div>
 
-			<div class="${styles.searchTextWrapper}">
-				<input class="${styles.search} ${text.font24} ${layout.width100}" type="search" ref="searchBox" data-bind="textInput: Query" />
-			</div>
+			<div class="${redHandleContainer.container}">
+				<div class="${styles.searchTextWrapper}">
+					<input class="${styles.search} ${text.font24} ${layout.width100}" type="search" ref="searchBox" data-bind="textInput: Query" />
+				</div>
 
-			<!-- ko if: SearchResultsFailureMessage() -->
-			<div class="${text.center} ${margin.vertical}" data-bind="text: SearchResultsFailureMessage"></div>
-			<!-- /ko -->
-
-			<!-- ko if: SearchResultsPage().length > 0 -->
-			<ul class="${textColor.white}">
-				<!-- ko foreach: SearchResultsPage() -->
-				<li class="${padding.all} ${layout.width100} ${styles.searchResult} ${events.clickable}" data-bind="click: $component.GoToPlayer, html: UserName"></li>
+				<!-- ko if: SearchResultsFailureMessage() -->
+				<div class="${text.center} ${margin.vertical}" data-bind="text: SearchResultsFailureMessage"></div>
 				<!-- /ko -->
 
-				<!-- ko if: TotalItemCount() > SearchResultsPageSize -->
-					<!-- ko foreach: new Array(SearchResultsPageSize - SearchResultsPage().length) -->
-						<li class="${padding.all} ${layout.width100} ${styles.searchResult}">&nbsp;</li>
+				<!-- ko if: SearchResultsPage().length > 0 -->
+				<ul class="${textColor.white}">
+					<!-- ko foreach: SearchResultsPage() -->
+					<li class="${padding.all} ${layout.width100} ${styles.searchResult} ${events.clickable}" data-bind="click: $component.GoToPlayer, html: UserName"></li>
 					<!-- /ko -->
+
+					<!-- ko if: TotalItemCount() > SearchResultsPageSize -->
+						<!-- ko foreach: new Array(SearchResultsPageSize - SearchResultsPage().length) -->
+							<li class="${padding.all} ${layout.width100} ${styles.searchResult}">&nbsp;</li>
+						<!-- /ko -->
+					<!-- /ko -->
+
+				</ul>
 				<!-- /ko -->
 
-			</ul>
-			<!-- /ko -->
-
-			<!-- ko if: SearchResults().length > 0 -->
-			<div class="${textColor.white}" data-bind="${PaginationComponent("SelectedPage", "TotalItemCount", "SearchResultsPageSize")}" />
-			<!-- /ko -->
+				<!-- ko if: SearchResults().length > 0 -->
+				<div class="${textColor.white}" data-bind="${PaginationComponent("SelectedPage", "TotalItemCount", "SearchResultsPageSize")}" />
+				<!-- /ko -->
+			</div>
 		</div>`,
 });

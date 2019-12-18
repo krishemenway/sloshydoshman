@@ -1,6 +1,6 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
-import { text, textColor, margin, layout, redHandleContainer } from "AppStyles";
+import { text, textColor, margin, layout, redHandleContainer, layoutMobile, marginMobile } from "AppStyles";
 import { ResultOf } from "CommonDataStructures/ResultOf";
 import { PieChartData, ChartJSPieChart } from "ChartJS/ChartJSPieChartBindingHandler";
 
@@ -65,14 +65,15 @@ class ServerStatisticsViewModel {
 ko.components.register(Name, {
 	viewModel: ServerStatisticsViewModel,
 	template: `
-		<div class="${text.font36} ${textColor.white} ${text.smallCaps} ${text.center} ${margin.topHalf}">server statistics</div>
-		<div class="${layout.flexRow}" data-bind="with: Stats">
-			<div class="${redHandleContainer.container} ${layout.width50} ${margin.rightHalf}">
+		<div class="${text.font24} ${textColor.white} ${text.smallCaps} ${text.center} ${margin.topHalf} ${margin.bottomHalf}">server statistics</div>
+
+		<div class="${marginMobile.horizontal} ${layout.flexRow} ${layoutMobile.flexColumn}" data-bind="with: Stats">
+			<div class="${redHandleContainer.container} ${layout.width50} ${layoutMobile.width100} ${margin.rightHalf} ${marginMobile.clear} ${marginMobile.bottom}">
 				<div class="${text.font28} ${text.inset} ${textColor.gray9f} ${text.bold} ${text.toUpper} ${text.center} ${margin.bottom}">Perks Played</div>
 				<canvas data-bind="${ChartJSPieChart("$component.PerkTotalWavesData")}" />
 			</div>
 
-			<div class="${redHandleContainer.container} ${layout.width50} ${margin.leftHalf}">
+			<div class="${redHandleContainer.container} ${layout.width50} ${layoutMobile.width100} ${margin.leftHalf} ${marginMobile.clear} ${marginMobile.bottom}">
 				<div class="${text.font28} ${text.inset} ${textColor.gray9f} ${text.bold} ${text.toUpper} ${text.center} ${margin.bottom}">Kills Per Perk</div>
 				<canvas data-bind="${ChartJSPieChart("$component.PerkTotalKillsData")}" />
 			</div>

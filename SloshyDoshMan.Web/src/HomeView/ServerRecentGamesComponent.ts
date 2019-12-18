@@ -1,6 +1,6 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
-import { padding, text, textColor, margin, layout, events, background, redHandleContainer } from "AppStyles";
+import { padding, text, textColor, margin, layout, events, background, redHandleContainer, marginMobile, layoutMobile } from "AppStyles";
 import { ResultOf } from "CommonDataStructures/ResultOf";
 import { PlayedGame, RecentGameResponse } from "Server";
 import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
@@ -54,8 +54,8 @@ class ServerRecentGamesModel {
 ko.components.register(Name, {
 	viewModel: ServerRecentGamesModel,
 	template: `
-		<div>
-			<div class="${text.font36} ${textColor.white} ${text.smallCaps} ${text.center} ${margin.topHalf}">all games</div>
+		<div class="${marginMobile.horizontal}">
+			<div class="${text.font24} ${textColor.white} ${text.smallCaps} ${text.center} ${margin.topHalf} ${margin.bottomHalf}">all games</div>
 			<div class="${redHandleContainer.container} ${textColor.white}">
 				<table class="${background.bgAlternateDarken} ${margin.bottom} ${text.font14} ${text.center} ${layout.width100}">
 					<thead><tr><td></td><td></td><td class="${text.center}">Length</td><td class="${text.center}">Waves</td></tr></thead>
@@ -64,7 +64,7 @@ ko.components.register(Name, {
 						<tr class="${events.clickable}" style="line-height: 26px" data-bind="click: $component.SelectGame">
 							<td class="${padding.half} ${text.left}" style="width: 69%">
 								<!-- ko text: Map --><!-- /ko -->&nbsp;
-								<span class="${textColor.gray} ${margin.left}" data-bind="${MomentFormat("TimeStarted", "MMMM Do, YYYY")}" />
+								<span class="${textColor.gray} ${margin.left} ${marginMobile.clear} ${layoutMobile.block}" data-bind="${MomentFormat("TimeStarted", "MMMM Do, YYYY")}" />
 							</td>
 							<td class="${padding.half} ${text.center}" style="width: 11%; min-width: 106px" data-bind="text: Difficulty"></td>
 							<td class="${padding.half} ${text.center} ${layout.width10}" data-bind="text: Length"></td>

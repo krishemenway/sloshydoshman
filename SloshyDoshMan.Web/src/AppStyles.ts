@@ -102,6 +102,18 @@ export const layout = createStyles({
 	width10: { width: "10%" },
 }).attach().classes;
 
+export const layoutMobile = createStyles({
+	block: {"@media only screen and (max-width: 600px)": { display: "block" } },
+	flexColumn: {
+		"@media only screen and (max-width: 600px)": {
+			display: "flex",
+			flexDirection: "column",
+		},
+	},
+	width50: { "@media only screen and (max-width: 600px)": { width: "50%" } },
+	width100: { "@media only screen and (max-width: 600px)": { width: "100%" } },
+}).attach().classes;
+
 export const textColor = createStyles({
 	white: { color: "#E8E8E8" },
 	gray: { color: "#555555" },
@@ -134,6 +146,35 @@ export const margin = createStyles({
 	bottom : { marginBottom: "10px", },
 	bottomHalf: { marginBottom: "5px", },
 	bottomDouble: { marginBottom: "20px", },
+}).attach().classes;
+
+export const marginMobile = createStyles({
+	clear: { "@media only screen and (max-width: 600px)": { margin: "0" } },
+
+	all: { "@media only screen and (max-width: 600px)": { margin: "10px" } },
+	half: { "@media only screen and (max-width: 600px)": { margin: "5px" } },
+
+	vertical: { "@media only screen and (max-width: 600px)": { marginTop: "10px", marginBottom: "10px" } },
+	verticalHalf: { "@media only screen and (max-width: 600px)": { marginTop: "5px", marginBottom: "5px" } },
+
+	horizontal: { "@media only screen and (max-width: 600px)": { marginLeft: "10px", marginRight: "10px" } },
+	horizontalHalf: { "@media only screen and (max-width: 600px)": { marginLeft: "5px", marginRight: "5px" } },
+
+	right: { "@media only screen and (max-width: 600px)": { marginRight: "10px" } },
+	rightHalf: { "@media only screen and (max-width: 600px)": { marginRight: "5px" } },
+	rightDouble: { "@media only screen and (max-width: 600px)": { marginRight: "20px" } },
+
+	left : { "@media only screen and (max-width: 600px)": { marginLeft: "10px" } },
+	leftHalf: { "@media only screen and (max-width: 600px)": { marginLeft: "5px" } },
+	leftDouble: { "@media only screen and (max-width: 600px)": { marginLeft: "20px" } },
+
+	top: { "@media only screen and (max-width: 600px)": { marginTop: "10px" } },
+	topHalf: { "@media only screen and (max-width: 600px)": { marginTop: "5px" } },
+	topDouble: { "@media only screen and (max-width: 600px)": { marginTop: "20px" } },
+
+	bottom : { "@media only screen and (max-width: 600px)": { marginBottom: "10px" } },
+	bottomHalf: { "@media only screen and (max-width: 600px)": { marginBottom: "5px" } },
+	bottomDouble: { "@media only screen and (max-width: 600px)": { marginBottom: "20px" } },
 }).attach().classes;
 
 export const padding = createStyles({

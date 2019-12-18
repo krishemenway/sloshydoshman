@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using SloshyDoshMan.Shared;
+﻿using SloshyDoshMan.Shared;
 using System;
 
 namespace SloshyDoshMan.Service.PlayedGames
@@ -13,7 +11,6 @@ namespace SloshyDoshMan.Service.PlayedGames
 		string Map { get; set; }
 		string Difficulty { get; set; }
 
-		[JsonConverter(typeof(StringEnumConverter))]
 		GameLength Length { get; set; }
 
 		int ReachedWave { get; set; }
@@ -31,7 +28,6 @@ namespace SloshyDoshMan.Service.PlayedGames
 		public string Map { get; set; }
 		public string Difficulty { get; set; }
 
-		[JsonConverter(typeof(StringEnumConverter))]
 		public GameLength Length { get; set; }
 		
 		public int ReachedWave { get; set; }

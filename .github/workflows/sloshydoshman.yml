@@ -1,0 +1,52 @@
+name: sloshydoshman
+on: [push]
+
+jobs:
+  build-service:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.102
+    - name: Build with dotnet
+      run: dotnet publish SloshyDoshMan.Service --configuration Release --output ./service
+    - uses: actions/upload-artifact@v1
+      with:
+        name: service
+        path: ./service
+
+  build-client:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.102
+    - name: Build with dotnet
+      run: dotnet publish SloshyDoshMan.Client --configuration Release --output ./client
+    - uses: actions/upload-artifact@v1
+      with:
+        name: client
+        path: ./client
+
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: npm ci
+      working-directory: ./SloshyDoshMan.Web
+    - run: npm run build
+      working-directory: ./SloshyDoshMan.Web
+    - uses: actions/upload-artifact@v1
+      with:
+        name: web
+        path: ./SloshyDoshMan.Web/dist

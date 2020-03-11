@@ -35,5 +35,6 @@ export const map = createStyles({
 		"&.KF-SteamFortress": { backgroundImage: "url('/Maps/KF-SteamFortress-480x240.jpg');" },
 		"&.KF-AshwoodAsylum": { backgroundImage: "url('/Maps/KF-AshwoodAsylum-480x240.jpg');" },
 		"&.KF-Sanitarium": { backgroundImage: "url('/Maps/KF-Sanitarium-480x240.jpg');" },
+		"&.KF-Biolapse": { backgroundImage: "url('/Maps/KF-Biolapse-480x240.jpg');" },
 	},
 }).attach().classes;

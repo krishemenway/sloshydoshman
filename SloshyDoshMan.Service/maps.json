@@ -7,6 +7,7 @@
 	{ "Name": "KF-BarmwichTown", "IsWorkshop": true },
 	{ "Name": "KF-BikiniAtoll", "IsWorkshop": true },
 	{ "Name": "KF-Biohazard", "IsWorkshop": true },
+	{ "Name": "KF-Biolapse", "IsWorkshop": false },
 	{ "Name": "KF-BioticsLab", "IsWorkshop": true },
 	{ "Name": "KF-BioticsLab2009-F1", "IsWorkshop": true },
 	{ "Name": "KF-BlackForest", "IsWorkshop": false },

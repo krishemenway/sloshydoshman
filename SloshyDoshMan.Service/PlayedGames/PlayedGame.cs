@@ -7,14 +7,15 @@ namespace SloshyDoshMan.Service.PlayedGames
 	{
 		Guid PlayedGameId { get; }
 
-		string GameType { get; set; }
-		string Map { get; set; }
-		string Difficulty { get; set; }
+		string GameType { get; }
+		string Map { get; }
+		string Difficulty { get; }
 
-		GameLength Length { get; set; }
+		GameLength Length { get; }
 
-		int ReachedWave { get; set; }
+		int ReachedWave { get; }
 		int TotalWaves { get; }
+		bool PlayersWon { get; }
 
 		DateTime TimeStarted { get; set; }
 		DateTime? TimeFinished { get; set; }

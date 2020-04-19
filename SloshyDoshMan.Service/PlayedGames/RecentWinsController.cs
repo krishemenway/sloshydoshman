@@ -25,7 +25,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 			return new RecentWinsResponse
 			{
-				RecentWins = recentWins.Select(playedGame => new PlayedGameProfile { PlayedGame = playedGame, Scoreboard = scoreboards[playedGame.PlayedGameId] }).ToList(),
+				RecentWins = recentWins.Select(playedGame => PlayedGameProfile.Create(playedGame, scoreboards)).ToList(),
 			};
 		}
 

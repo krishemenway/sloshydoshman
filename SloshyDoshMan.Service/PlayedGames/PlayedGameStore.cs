@@ -8,8 +8,11 @@ namespace SloshyDoshMan.Service.PlayedGames
 {
 	public interface IPlayedGameStore
 	{
-		IPlayedGame FindPlayedGame(Guid playedGameId);
+		IReadOnlyList<IPlayedGame> AllCurrentGames();
 		bool TryFindCurrentGame(Guid serverId, out IPlayedGame playedGame);
+		
+		IPlayedGame FindPlayedGame(Guid playedGameId);
+
 		IReadOnlyList<IPlayedGame> FindRecentGames(int totalRecentGames, int startingAt);
 		IReadOnlyList<IPlayedGame> FindRecentWins(int countToFind);
 		IReadOnlyList<IPlayedGame> FindAllGames(long steamId);
@@ -23,21 +26,29 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 	public class PlayedGameStore : IPlayedGameStore
 	{
-		public int GetTotalGamesCount()
+		public IReadOnlyList<IPlayedGame> AllCurrentGames()
 		{
 			const string sql = @"
-				SELECT COUNT(*) 
-				FROM played_game pg
-				WHERE EXISTS (
-					SELECT * 
-					FROM player_played_wave ppw
-					WHERE pg.played_game_id = ppw.played_game_id
-					AND wave > 0
-				)";
+				SELECT
+					played_game_id as PlayedGameId,
+					map,
+					game_type as GameType,
+					game_length as GameLength,
+					game_difficulty as GameDifficulty,
+					reached_wave as ReachedWave,
+					time_started as TimeStarted,
+					time_finished as TimeFinished,
+					players_won as PlayersWon
+				FROM played_game
+				WHERE 
+					time_finished IS NULL
+				ORDER BY
+					time_started DESC
+				LIMIT 1";
 
 			using (var connection = Database.CreateConnection())
 			{
-				return connection.QuerySingle<int>(sql);
+				return connection.Query<PlayedGameRecord>(sql).Select(CreateGame).ToList();
 			}
 		}
 
@@ -186,6 +197,24 @@ namespace SloshyDoshMan.Service.PlayedGames
 					.Query<PlayedGameRecord>(sql, new { RecentGameCount = totalRecentGames, StartingAt = startingAt })
 					.Select(CreateGame)
 					.ToList();
+			}
+		}
+
+		public int GetTotalGamesCount()
+		{
+			const string sql = @"
+				SELECT COUNT(*) 
+				FROM played_game pg
+				WHERE EXISTS (
+					SELECT * 
+					FROM player_played_wave ppw
+					WHERE pg.played_game_id = ppw.played_game_id
+					AND wave > 0
+				)";
+
+			using (var connection = Database.CreateConnection())
+			{
+				return connection.QuerySingle<int>(sql);
 			}
 		}
 

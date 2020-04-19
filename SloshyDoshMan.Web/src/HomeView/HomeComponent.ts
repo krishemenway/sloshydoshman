@@ -1,5 +1,6 @@
 import * as ko from "knockout";
 import { margin, text, textColor } from "../AppStyles";
+import { CurrentGamesComponent } from "HomeView/CurrentGamesComponent";
 import { ServerRecentWinsComponent } from "HomeView/ServerRecentWinsComponent";
 import { ServerRecentGamesComponent } from "HomeView/ServerRecentGamesComponent";
 import { ServerStatisticsComponent } from "HomeView/ServerStatisticsComponent";
@@ -18,6 +19,7 @@ ko.components.register(HomeComponentName, {
 	viewModel: HomeViewModel,
 	template: `
 		<div>
+			<div class="${margin.bottom}" data-bind="${CurrentGamesComponent()}" />
 			<div class="${margin.bottom}" data-bind="${ServerRecentWinsComponent()}" />
 			<div class="${margin.bottom}" data-bind="${PlayerSearchComponent()}" />
 			<div class="${margin.bottom}" data-bind="${ServerRecentGamesComponent()}" />

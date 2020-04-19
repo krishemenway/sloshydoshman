@@ -1,5 +1,9 @@
 import {Dictionary} from './CommonDataStructures/Dictionary';
 
+export interface CurrentGamesResponse {
+	CurrentGames: GameViewModel[];
+}
+
 export interface RecentWinsResponse {
 	RecentWins: GameViewModel[];
 }

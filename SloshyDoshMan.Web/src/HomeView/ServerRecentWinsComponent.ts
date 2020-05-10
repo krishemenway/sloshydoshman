@@ -3,7 +3,7 @@ import * as $ from "jquery";
 import { layout, text, textColor, margin, padding, events, createStyles, redHandleContainer, marginMobile } from "AppStyles";
 import { map } from "Maps/MapStyles";
 import { perk } from "Perks/PerkStyles";
-import { GameViewModel, PlayedGame, RecentWinsResponse, ScoreboardPlayer } from "Server";
+import { GameViewModel, RecentWinsResponse, ScoreboardPlayer } from "Server";
 import { GoToPlayedGame } from "GameView/PlayedGameComponent";
 import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";

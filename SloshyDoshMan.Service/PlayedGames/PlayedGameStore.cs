@@ -43,8 +43,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 				WHERE 
 					time_finished IS NULL
 				ORDER BY
-					time_started DESC
-				LIMIT 1";
+					time_started DESC";
 
 			using (var connection = Database.CreateConnection())
 			{

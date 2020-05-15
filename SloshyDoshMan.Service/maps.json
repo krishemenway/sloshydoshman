@@ -21,6 +21,7 @@
 	{ "Name": "KF-Deadline", "IsWorkshop": true },
 	{ "Name": "KF-DeadShore", "IsWorkshop": true },
 	{ "Name": "KF-DeathSentenceFinal", "IsWorkshop": true },
+	{ "Name": "KF-Desolation", "IsWorkshop": false },
 	{ "Name": "KF-Entryway", "IsWorkshop": true },
 	{ "Name": "KF-EvacuationPoint", "IsWorkshop": false },
 	{ "Name": "KF-Farmhouse", "IsWorkshop": false },

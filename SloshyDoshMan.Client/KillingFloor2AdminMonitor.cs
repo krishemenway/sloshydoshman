@@ -39,7 +39,8 @@ namespace SloshyDoshMan.Client
 			{
 				var oldGameState = CurrentGameState;
 				CurrentGameState = _killingFloor2AdminScraper.GetCurrentGameState();
-				Log.Information("Received Game State: {@CurrentGameState}", CurrentGameState);
+
+				Log.Debug("Received Game State: {@CurrentGameState}", CurrentGameState);
 
 				if (oldGameState != null && ShouldSendAdvertisement(oldGameState, CurrentGameState))
 				{

@@ -30,12 +30,7 @@ module.exports = {
 	plugins: [
 		new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
 		new CopyPlugin([
-			{ from: "./src/CommonImages/**/*.{jpg,png}", to: "./CommonImages", flatten: true },
-			{ from: "./src/ServerImages/*", to: "./CommonImages/server-images", flatten: true },
-			{ from: "./src/Maps/*.jpg", to: "./Maps", flatten: true },
-			{ from: "./src/Perks/*.png", to: "./Perks", flatten: true },
 			{ from: "./src/favicon.ico", to: ".", flatten: true },
-			{ from: "./src/robots.txt", to: ".", flatten: true },
 			{ from: "./src/**/*.html", to: ".", flatten: true },
 		]),
 	],

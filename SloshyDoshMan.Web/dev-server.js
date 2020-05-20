@@ -3,8 +3,9 @@ const request = require('request')
 const app = express()
 const port = 3000
 
-app.use("/webapi", function(req, res) {
-    var url = 'https://www.sloshydoshman.com/webapi' + req.url
+app.use(express.static("dist"))
+app.use("/", function(req, res) {
+    var url = 'http://192.168.1.25:8098' + req.url
     var r = null
 
     if (req.method === 'POST') {
@@ -14,6 +15,6 @@ app.use("/webapi", function(req, res) {
     }
   
     req.pipe(r).pipe(res)
-})
-app.use(express.static("dist"))
+});
+
 app.listen(port, () => console.log(`Dev Server started on port ${port}!`))

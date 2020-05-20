@@ -31,7 +31,7 @@ jobs:
       run: dotnet publish SloshyDoshMan.Client --configuration Release --output ./client
     - uses: actions/upload-artifact@v1
       with:
-        name: client
+        name: service
         path: ./client
 
   build-web:
@@ -48,5 +48,5 @@ jobs:
       working-directory: ./SloshyDoshMan.Web
     - uses: actions/upload-artifact@v1
       with:
-        name: web
+        name: service
         path: ./SloshyDoshMan.Web/dist

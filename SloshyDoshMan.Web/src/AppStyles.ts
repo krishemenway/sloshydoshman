@@ -41,7 +41,7 @@ export const redHandleContainer = createStyles({
 		backgroundColor: "rgba(32, 32, 32, .4)",
 		borderStyle: "solid",
 		borderWidth: "10px",
-		borderImage: "url('/CommonImages/handle-corners-red.png') 10 10 10 10 repeat",
+		borderImage: "url('/corners.png') 10 10 10 10 repeat",
 		padding: "10px",
 	},
 	header: {

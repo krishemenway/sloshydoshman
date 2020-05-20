@@ -20,15 +20,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="SloshyDoshMan.Service.json">
+    <None Include="SloshyDoshMan.Service.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="maps.json">
+    </None>
+    <None Include="maps.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="perks.json">
+    </None>
+    <None Include="perks.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
     <None Include="MapImages\*.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

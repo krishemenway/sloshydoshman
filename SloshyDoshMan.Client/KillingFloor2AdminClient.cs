@@ -23,34 +23,22 @@ namespace SloshyDoshMan.Client
 
 	public class KillingFloor2AdminClient : IKillingFloor2AdminClient
 	{
+		public KillingFloor2AdminClient(ISettings settings = null)
+		{
+			_settings = settings ?? Program.Settings;
+		}
+
 		public void SendMessage(string message)
 		{
-			using (var client = new HttpClient())
-			{
-				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", AuthorizationHeader);
-				
-				var content = new StringContent($"message={HttpUtility.UrlEncode(message)}&teamsay=-1", Encoding.UTF8, "application/x-www-form-urlencoded");
-				var requestTask = client
-					.PostAsync(CreateKF2AdminServerPath("/ServerAdmin/current/chat+frame+data"), content)
-					.ContinueWith(task =>
-					{
-						if (task.IsFaulted || task.IsCanceled)
-						{
-							throw new KF2ServerOfflineException();
-						}
+			PostContentToUri(CreateKF2AdminServerPath("/ServerAdmin/current/chat+frame+data"), $"message={HttpUtility.UrlEncode(message)}&teamsay=-1");
+		}
 
-						return task.Result;
-					});
+		public void ChangeMap(string map)
+		{
+			var uri = CreateKF2AdminServerPath("/ServerAdmin/current/change");
+			var postContent = $"gametype=KFGameContent.KFGameInfo_Survival&map={map}&mutatorGroupCount=0&urlextra={HttpUtility.UrlEncode(FindUrlExtraForChangeMap())}&action=change";
 
-				var response = requestTask.Result;
-
-				if (response.StatusCode == HttpStatusCode.Unauthorized)
-				{
-					throw new InvalidAdminCrendentialsException();
-				}
-
-				response.Content.ReadAsStringAsync().Wait();
-			}
+			PostContentToUri(uri, postContent);
 		}
 
 		public IDocument GetPlayersContent()
@@ -98,12 +86,49 @@ namespace SloshyDoshMan.Client
 			}
 		}
 
-		private Uri CreateKF2AdminServerPath(string path)
+		private void PostContentToUri(Uri uri, string formContent)
 		{
-			return new Uri($"http://{Program.Settings.KF2AdminHost}:{Program.Settings.KF2AdminPort}{path}");
+			using (var client = new HttpClient())
+			{
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", AuthorizationHeader);
+
+				var requestTask = client
+					.PostAsync(uri, new StringContent(formContent, Encoding.UTF8, "application/x-www-form-urlencoded"))
+					.ContinueWith(task =>
+					{
+						if (task.IsFaulted || task.IsCanceled)
+						{
+							throw new KF2ServerOfflineException();
+						}
+
+						return task.Result;
+					});
+
+				var response = requestTask.Result;
+
+				if (response.StatusCode == HttpStatusCode.Unauthorized)
+				{
+					throw new InvalidAdminCrendentialsException();
+				}
+
+				response.Content.ReadAsStringAsync().Wait();
+			}
 		}
 
-		private string AuthorizationHeader => Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Program.Settings.KF2AdminUserName}:{Program.Settings.KF2AdminPassword}"));
+		private string FindUrlExtraForChangeMap()
+		{
+			var content = BrowsingContext.New().OpenAsync(GetContentFromUri(CreateKF2AdminServerPath("/ServerAdmin/current/change"))).Result;
+			return content.QuerySelector("#urlextra").GetAttribute("value");
+		}
+
+		private Uri CreateKF2AdminServerPath(string path)
+		{
+			return new Uri($"http://{_settings.KF2AdminHost}:{_settings.KF2AdminPort}{path}");
+		}
+
+		private string AuthorizationHeader => Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_settings.KF2AdminUserName}:{_settings.KF2AdminPassword}"));
+
+		private ISettings _settings;
 	}
 
 	public class AdminClientResponse : IResponse

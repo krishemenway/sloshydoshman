@@ -2,20 +2,44 @@
 
 namespace SloshyDoshMan.Client
 {
-	public class Settings
+	public interface ISettings
 	{
-		public string KF2AdminHost => Program.Configuration.GetValue<string>("KF2AdminHost");
-		public int KF2AdminPort => Program.Configuration.GetValue<int>("KF2AdminPort");
+		string KF2AdminHost { get; }
+		int KF2AdminPort { get; }
 
-		public string KF2AdminUserName => Program.Configuration.GetValue<string>("KF2AdminUserName");
-		public string KF2AdminPassword => Program.Configuration.GetValue<string>("KF2AdminPassword");
+		string KF2AdminUserName { get; }
+		string KF2AdminPassword { get; }
 
-		public double RefreshIntervalInMilliseconds => Program.Configuration.GetValue<double>("RefreshIntervalInMilliseconds");
+		double RefreshIntervalInMilliseconds { get; }
 
-		public bool EnableAdvertisement => Program.Configuration.GetValue<bool>("EnableAdvertisement");
-		public string AdvertisementMessage => Program.Configuration.GetValue<string>("AdvertisementMessage");
+		bool EnableAdvertisement { get; }
+		string AdvertisementMessage { get; }
 
-		public string SloshyDoshManServiceHost => Program.Configuration.GetValue<string>("SloshyDoshManServiceHost");
-		public int SloshyDoshManServicePort => Program.Configuration.GetValue<int>("SloshyDoshManServicePort");
+		string SloshyDoshManServiceHost { get; }
+		int SloshyDoshManServicePort { get; }
+	}
+
+	public class Settings : ISettings
+	{
+		public Settings(IConfiguration configuration = null)
+		{
+			_configuration = configuration ?? Program.Configuration;
+		}
+
+		public string KF2AdminHost => _configuration.GetValue<string>("KF2AdminHost");
+		public int KF2AdminPort => _configuration.GetValue<int>("KF2AdminPort");
+
+		public string KF2AdminUserName => _configuration.GetValue<string>("KF2AdminUserName");
+		public string KF2AdminPassword => _configuration.GetValue<string>("KF2AdminPassword");
+
+		public double RefreshIntervalInMilliseconds => _configuration.GetValue<double>("RefreshIntervalInMilliseconds");
+
+		public bool EnableAdvertisement => _configuration.GetValue<bool>("EnableAdvertisement");
+		public string AdvertisementMessage => _configuration.GetValue<string>("AdvertisementMessage");
+
+		public string SloshyDoshManServiceHost => _configuration.GetValue<string>("SloshyDoshManServiceHost");
+		public int SloshyDoshManServicePort => _configuration.GetValue<int>("SloshyDoshManServicePort");
+
+		private IConfiguration _configuration;
 	}
 }

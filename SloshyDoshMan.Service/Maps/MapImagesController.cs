@@ -4,6 +4,7 @@ using System.IO;
 
 namespace SloshyDoshMan.Service.Maps
 {
+	[Route("Maps")]
 	public class MapImagesController : ControllerBase
 	{
 		public MapImagesController(IMemoryCache memoryCache)
@@ -11,7 +12,7 @@ namespace SloshyDoshMan.Service.Maps
 			_memoryCache = memoryCache;
 		}
 
-		[HttpGet("Maps/{Map}-480x240")]
+		[HttpGet("{Map}-480x240")]
 		public FileContentResult MapImage480(string map)
 		{
 			return File(TryReadFileContents($"MapImages/{map}-480x240.jpg"), "image/jpg");

@@ -1,8 +1,8 @@
 import * as ko from "knockout";
 import { layout, margin, textColor, text, padding, events, createStyles, redHandleContainer } from "AppStyles";
-import { perk } from "Perks/PerkStyles";
 import { Scoreboard, ScoreboardPlayer } from "Server";
 import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
+import { PerkIconComponent } from "Perks/PerkIconComponent";
 
 var GameScoreboard : string = "GameScoreboard";
 export function GameScoreboardComponent(scoreboard: string, totalWaves: string|number) {
@@ -78,7 +78,7 @@ ko.components.register(GameScoreboard, {
 
 						<!-- ko foreach: new Array($component.TotalWaves+1) -->
 						<td class="${padding.half} ${text.center}" data-bind="with: player.PlayerWaveInfo[$index()+1]">
-							<div class="${perk.perkIcon} ${perk.width32} ${layout.blockCenter}" data-bind="css: Perk, attr: {title: Perk}" />
+							<!-- ko ${PerkIconComponent("Perk")} --><!-- /ko -->
 							<div class="${text.center}" data-bind="text: Kills" />
 						</td>
 						<!-- /ko -->

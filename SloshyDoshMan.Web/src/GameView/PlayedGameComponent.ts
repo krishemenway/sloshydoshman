@@ -1,7 +1,6 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
-import { layout, margin, textColor, text, createStyles, redHandleContainer } from "AppStyles";
-import { map } from "Maps/MapStyles";
+import { layout, margin, textColor, text, createStyles, redHandleContainer, background } from "AppStyles";
 import { ResultOf } from "CommonDataStructures/ResultOf";
 import { GameViewModel } from "Server";
 import { GoToView } from "App";
@@ -84,7 +83,7 @@ ko.components.register(PlayedGameName, {
 				</div>
 
 				<div class="${redHandleContainer.container} ${layout.flexWrapContent} ${margin.leftHalf}">
-					<div class="${map.mapCover}" style="width: 480px; height: 240px" data-bind="css: PlayedGame.Map">
+					<div class="${background.cover}" style="width: 480px; height: 240px" data-bind="style: { backgroundImage: 'url(\\'/Maps/'+PlayedGame.Map+'-480x240\\')' }">
 						<!-- ko if: PlayedGame.PlayersWon --><div class="${styles.bossDefeatedBanner}">Boss Defeated!</div><!-- /ko -->
 					</div>
 				</div>

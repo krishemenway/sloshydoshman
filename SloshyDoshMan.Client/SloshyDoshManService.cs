@@ -65,9 +65,9 @@ namespace SloshyDoshMan.Client
 		}
 
 		private static string SaveGameStatePath => LazySaveGameStatePath.Value;
-		private static Lazy<string> LazySaveGameStatePath => new Lazy<string>(() => $"http://{Program.Settings.SloshyDoshManServiceHost}:{Program.Settings.SloshyDoshManServicePort}/api/kf2/gamestate/save");
+		private static Lazy<string> LazySaveGameStatePath => new Lazy<string>(() => $"http://{Program.Settings.SloshyDoshManServiceHost}:{Program.Settings.SloshyDoshManServicePort}/API/GameState/Save");
 
 		private static string RegisterServerPath => LazyRegisterServerPath.Value;
-		private static Lazy<string> LazyRegisterServerPath => new Lazy<string>(() => $"http://{Program.Settings.SloshyDoshManServiceHost}:{Program.Settings.SloshyDoshManServicePort}/api/servers/register");
+		private static Lazy<string> LazyRegisterServerPath => new Lazy<string>(() => $"http://{Program.Settings.SloshyDoshManServiceHost}:{Program.Settings.SloshyDoshManServicePort}/API/Servers/Register");
 	}
 }

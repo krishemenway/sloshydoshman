@@ -5,7 +5,7 @@ using System.Linq;
 namespace SloshyDoshMan.Service.PlayedGames
 {
 	[ApiController]
-	[Route("webapi/games")]
+	[Route("WebAPI/Games")]
 	public class CurrentGamesController : ControllerBase
 	{
 		public CurrentGamesController(

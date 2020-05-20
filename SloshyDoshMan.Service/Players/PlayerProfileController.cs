@@ -5,7 +5,7 @@ using SloshyDoshMan.Shared;
 
 namespace SloshyDoshMan.Service.Players
 {
-	[Route("webapi/players")]
+	[Route("WebAPI/Players")]
 	public class PlayerProfileController : Controller
 	{
 		public PlayerProfileController(

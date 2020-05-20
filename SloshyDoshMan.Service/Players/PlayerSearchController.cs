@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SloshyDoshMan.Service.Players
 {
-	[Route("webapi/players")]
+	[Route("WebAPI/Players")]
 	public class PlayerSearchController : Controller
 	{
 		public PlayerSearchController(IPlayerStore playerStore = null)

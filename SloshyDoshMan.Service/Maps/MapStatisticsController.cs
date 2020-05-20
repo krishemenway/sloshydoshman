@@ -4,7 +4,7 @@ using SloshyDoshMan.Shared;
 namespace SloshyDoshMan.Service.Maps
 {
 	[ApiController]
-	[Route("webapi/maps")]
+	[Route("WebAPI/maps")]
 	public class MapStatisticsController : ControllerBase
 	{
 		public MapStatisticsController(

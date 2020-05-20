@@ -4,7 +4,7 @@ using SloshyDoshMan.Shared;
 namespace SloshyDoshMan.Service.PlayedGames
 {
 	[ApiController]
-	[Route("webapi/games")]
+	[Route("WebAPI/Games")]
 	public class OverallStatsController : ControllerBase
 	{
 		public OverallStatsController(IOverallStatsStore overallStatsStore = null)

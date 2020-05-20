@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using Serilog;
 using SloshyDoshMan.Service.Extensions;
 using SloshyDoshMan.Service.Maps;
@@ -34,15 +33,15 @@ namespace SloshyDoshMan.Service.PlayedGames
 			_mapStore = mapStore ?? new MapStore();
 		}
 
-		[HttpPost("save")]
+		[HttpPost(nameof(Save))]
 		[ProducesResponseType(200, Type = typeof(Result))]
-		public IActionResult HandleRequest([FromBody] GameState newGameState)
+		public ActionResult<Result> Save([FromBody] GameState newGameState)
 		{
 			FixMapName(newGameState);
 			RemoveOrFixInvalidPlayers(newGameState);
 			SaveAllPlayers(newGameState);
 
-			Log.Information("Refreshing with Game State: {@GameState}", newGameState);
+			Log.Debug("Refreshing with Game State: {@GameState}", newGameState);
 
 			if (!_playedGameStore.TryFindCurrentGame(newGameState.ServerId, out var currentGame))
 			{
@@ -56,13 +55,13 @@ namespace SloshyDoshMan.Service.PlayedGames
 					else
 					{
 						Log.Information("Received State with Unsupported GameType: {GameType} - Ignoring Message.");
-						return Json(Result.Successful);
+						return Result.Successful;
 					}
 				}
 				else
 				{
-					Log.Information("No game is running - Ignoring message");
-					return Json(Result.Successful);
+					Log.Debug("No game is running - Ignoring message");
+					return Result.Successful;
 				}
 			}
 			else if (MapHasChanged(newGameState, currentGame))
@@ -83,7 +82,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 				}
 			}
 
-			return Json(Result.Successful);
+			return Result.Successful;
 		}
 
 		private void SaveAllPlayers(GameState newGameState)

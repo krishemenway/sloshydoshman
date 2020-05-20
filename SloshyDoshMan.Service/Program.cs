@@ -33,7 +33,7 @@ namespace SloshyDoshMan.Service
 		{
 			Configuration = new ConfigurationBuilder()
 				.SetBasePath(ExecutablePath)
-				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+				.AddJsonFile("service-settings.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
 				.AddCommandLine(args)
 				.Build();
@@ -46,7 +46,7 @@ namespace SloshyDoshMan.Service
 				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
 				.Enrich.FromLogContext()
 				.WriteTo.Console()
-				.WriteTo.RollingFile("app-{Date}.log")
+				.WriteTo.RollingFile("service-{Date}.log")
 				.CreateLogger();
 		}
 
@@ -68,6 +68,9 @@ namespace SloshyDoshMan.Service
 		public static IConfigurationRoot Configuration { get; private set; }
 		public static IWebHost WebHost { get; private set; }
 
-		public static string ExecutablePath { get; set; } = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+		public static string ExecutablePath { get; set; } = Process.GetCurrentProcess().MainModule.FileName;
+		public static string ExecutableFolderPath { get; } = Path.GetDirectoryName(ExecutablePath);
+
+		public static string FilePathInExecutableFolder(string fileName) => Path.Combine(ExecutableFolderPath, fileName);
 	}
 }

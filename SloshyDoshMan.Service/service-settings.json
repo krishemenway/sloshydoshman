@@ -1,0 +1,10 @@
+﻿{
+	"EnablePushNotification": false,
+	"SloshyDoshManPushServiceHost": "notconfigured",
+	"SloshyDoshManDatabaseHost": "flop",
+	"SloshyDoshManDatabasePort": 5432,
+	"SloshyDoshManDatabaseName": "sloshydoshman",
+	"SloshyDoshManDatabaseUser": "kf2statsuser",
+	"SloshyDoshManDatabasePassword": "1D93E84A-1C34-4BC2-9E8E-289B98F5CF3A",
+	"WebPort": 8098
+}

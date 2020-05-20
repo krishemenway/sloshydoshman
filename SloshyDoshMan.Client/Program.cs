@@ -24,7 +24,7 @@ namespace SloshyDoshMan.Client
 		{
 			Configuration = new ConfigurationBuilder()
 				.SetBasePath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName))
-				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+				.AddJsonFile("client-settings.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
 				.AddCommandLine(args)
 				.Build();
@@ -37,7 +37,7 @@ namespace SloshyDoshMan.Client
 				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
 				.Enrich.FromLogContext()
 				.WriteTo.Console()
-				.WriteTo.RollingFile("app-{Date}.log")
+				.WriteTo.RollingFile("client-{Date}.log")
 				.CreateLogger();
 		}
 

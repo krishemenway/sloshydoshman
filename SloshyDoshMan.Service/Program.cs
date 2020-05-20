@@ -42,7 +42,7 @@ namespace SloshyDoshMan.Service
 		public static void SetupLogging()
 		{
 			Log.Logger = new LoggerConfiguration()
-				.MinimumLevel.Information()
+				.ReadFrom.Configuration(Program.Configuration)
 				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
 				.Enrich.FromLogContext()
 				.WriteTo.Console()

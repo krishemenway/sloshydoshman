@@ -6,5 +6,15 @@
 	"SloshyDoshManDatabaseName": "sloshydoshman",
 	"SloshyDoshManDatabaseUser": "kf2statsuser",
 	"SloshyDoshManDatabasePassword": "1D93E84A-1C34-4BC2-9E8E-289B98F5CF3A",
-	"WebPort": 8098
+	"WebPort": 8098,
+
+	"Serilog": {
+		"MinimumLevel": {
+			"Default": "Information",
+			"Override": {
+				"Microsoft": "Warning",
+				"System": "Warning"
+			}
+		}
+	}
 }

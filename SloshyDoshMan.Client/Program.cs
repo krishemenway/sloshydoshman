@@ -13,8 +13,8 @@ namespace SloshyDoshMan.Client
 	{
 		public static void Main(string[] args)
 		{
-			SetupLogging();
 			SetupConfiguration(args);
+			SetupLogging();
 			ShowSettings();
 			RegisterServer();
 			StartMonitoring();
@@ -22,12 +22,14 @@ namespace SloshyDoshMan.Client
 
 		public static void SetupConfiguration(string[] args)
 		{
-			Configuration = new ConfigurationBuilder()
+			var configuration = new ConfigurationBuilder()
 				.SetBasePath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName))
 				.AddJsonFile("SloshyDoshMan.Client.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
 				.AddCommandLine(args)
 				.Build();
+
+			Settings = new Settings(configuration);
 		}
 
 		public static void SetupLogging()
@@ -73,11 +75,9 @@ namespace SloshyDoshMan.Client
 			Monitor.StopMonitoring();
 		}
 
-		public static readonly Settings Settings = new Settings();
+		public static Settings Settings { get; private set; }
 		public static Guid? ServerId { get; set; }
 		private static readonly IKillingFloor2AdminMonitor Monitor = new KillingFloor2AdminMonitor();
-
-		public static IConfiguration Configuration { get; private set; }
 
 		private static ManualResetEvent QuitEvent = new ManualResetEvent(false);
 	}

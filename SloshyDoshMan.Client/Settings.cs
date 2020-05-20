@@ -26,9 +26,9 @@ namespace SloshyDoshMan.Client
 
 	public class Settings : ISettings
 	{
-		public Settings(IConfiguration configuration = null)
+		public Settings(IConfiguration configuration)
 		{
-			_configuration = configuration ?? Program.Configuration;
+			_configuration = configuration;
 		}
 
 		public string KF2AdminHost => _configuration.GetValue<string>("KF2AdminHost");

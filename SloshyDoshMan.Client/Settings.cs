@@ -17,6 +17,9 @@ namespace SloshyDoshMan.Client
 
 		string SloshyDoshManServiceHost { get; }
 		int SloshyDoshManServicePort { get; }
+
+		string PreferMap { get; }
+		int PreferMapWaitTimeInMinutes { get; }
 	}
 
 	public class Settings : ISettings
@@ -39,6 +42,9 @@ namespace SloshyDoshMan.Client
 
 		public string SloshyDoshManServiceHost => _configuration.GetValue<string>("SloshyDoshManServiceHost");
 		public int SloshyDoshManServicePort => _configuration.GetValue<int>("SloshyDoshManServicePort");
+
+		public string PreferMap => _configuration.GetValue<string>("PreferMap");
+		public int PreferMapWaitTimeInMinutes => _configuration.GetValue<int>("PreferMapWaitTimeInMinutes");
 
 		private IConfiguration _configuration;
 	}

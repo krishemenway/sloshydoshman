@@ -1,15 +1,18 @@
 ﻿{
-  "KF2AdminHost": "localhost",
-  "KF2AdminPort": 3005,
+	"KF2AdminHost": "localhost",
+	"KF2AdminPort": 3005,
 
-  "KF2AdminUserName": "admin",
-  "KF2AdminPassword": "password",
+	"KF2AdminUserName": "admin",
+	"KF2AdminPassword": "password",
 
-  "RefreshIntervalInMilliseconds": 15000,
+	"RefreshIntervalInMilliseconds": 15000,
  
-  "EnableAdvertisement": true,
-  "AdvertisementMessage": "View stats for games played on this server @ sloshydoshman.com",
+	"EnableAdvertisement": true,
+	"AdvertisementMessage": "View stats for games played on this server @ sloshydoshman.com",
 
-  "SloshyDoshManServiceHost": "localhost",
-  "SloshyDoshManServicePort": 8098
+	"SloshyDoshManServiceHost": "localhost",
+	"SloshyDoshManServicePort": 8098,
+
+	"PreferMap": "KF-Desolation",
+	"PreferMapWaitTimeInMinutes":  60
 }

@@ -17,11 +17,13 @@ namespace SloshyDoshMan.Client
 		public KillingFloor2AdminMonitor(
 			IKillingFloor2AdminScraper killingFloor2AdminScraper = null,
 			IKillingFloor2AdminClient killingFloor2AdminClient = null,
-			ISloshyDoshManStatsService sloshyDoshManService = null)
+			ISloshyDoshManStatsService sloshyDoshManService = null,
+			ISettings settings = null)
 		{
 			_killingFloor2AdminClient = killingFloor2AdminClient ?? new KillingFloor2AdminClient();
 			_killingFloor2AdminScraper = killingFloor2AdminScraper ?? new KillingFloor2AdminScraper();
 			_sloshyDoshManService = sloshyDoshManService ?? new SloshyDoshManService();
+			_settings = settings ?? Program.Settings;
 		}
 
 		public void StartMonitoring()
@@ -50,6 +52,12 @@ namespace SloshyDoshMan.Client
 				if (oldGameState == null || GameStateHasChanged(oldGameState, CurrentGameState))
 				{
 					_sloshyDoshManService.SaveGameState(CurrentGameState);
+					LastSavedGameStateTime = DateTimeOffset.Now;
+				}
+
+				if (!string.IsNullOrEmpty(_settings.PreferMap) && DateTimeOffset.Now - LastSavedGameStateTime > TimeSpan.FromHours(1))
+				{
+					_killingFloor2AdminClient.ChangeMap(_settings.PreferMap);
 				}
 			}
 			catch (AggregateException aggregateException)
@@ -114,10 +122,12 @@ namespace SloshyDoshMan.Client
 
 		private GameState CurrentGameState { get; set; }
 		private Timer RefreshStateTimer { get; set; }
+		private DateTimeOffset LastSavedGameStateTime { get; set; }
 
 		private readonly IKillingFloor2AdminScraper _killingFloor2AdminScraper;
 		private readonly ISloshyDoshManStatsService _sloshyDoshManService;
-		private IKillingFloor2AdminClient _killingFloor2AdminClient;
+		private readonly IKillingFloor2AdminClient _killingFloor2AdminClient;
+		private readonly ISettings _settings;
 	}
 
 	public static class IntExtensions

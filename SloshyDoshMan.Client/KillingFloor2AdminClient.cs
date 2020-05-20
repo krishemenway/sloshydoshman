@@ -19,6 +19,7 @@ namespace SloshyDoshMan.Client
 		IDocument GetScoreboardContent();
 
 		void SendMessage(string message);
+		void ChangeMap(string map);
 	}
 
 	public class KillingFloor2AdminClient : IKillingFloor2AdminClient

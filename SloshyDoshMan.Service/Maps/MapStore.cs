@@ -43,7 +43,7 @@ namespace SloshyDoshMan.Service.Maps
 
 		public bool TryFindMap(string mapName, out IMap map)
 		{
-			map = FindAllMaps().FirstOrDefault(x => x.Name == mapName);
+			map = FindAllMaps().FirstOrDefault(x => x.Name.Equals(mapName, StringComparison.CurrentCultureIgnoreCase));
 			return map != null;
 		}
 

@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="client-settings.json">
+    <Content Include="SloshyDoshMan.Client.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

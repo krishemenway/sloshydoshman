@@ -33,7 +33,7 @@ namespace SloshyDoshMan.Service
 		{
 			var configuration = new ConfigurationBuilder()
 				.SetBasePath(ExecutableFolderPath)
-				.AddJsonFile("service-settings.json", optional: false, reloadOnChange: true)
+				.AddJsonFile("SloshyDoshMan.Service.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
 				.AddCommandLine(args)
 				.Build();
@@ -49,7 +49,7 @@ namespace SloshyDoshMan.Service
 				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
 				.Enrich.FromLogContext()
 				.WriteTo.Console()
-				.WriteTo.RollingFile("service-{Date}.log")
+				.WriteTo.RollingFile("SloshyDoshMan.Service-{Date}.log")
 				.CreateLogger();
 		}
 

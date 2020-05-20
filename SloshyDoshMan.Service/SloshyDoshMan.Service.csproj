@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="service-settings.json">
+    <Content Update="SloshyDoshMan.Service.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="maps.json">

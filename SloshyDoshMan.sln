@@ -14,8 +14,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{316386F3-FECE-46E4-8C93-0198B907FC21}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		.gitlab-ci.yml = .gitlab-ci.yml
 		README.md = README.md
+		.github\workflows\sloshydoshman.yml = .github\workflows\sloshydoshman.yml
 	EndProjectSection
 EndProject
 Global

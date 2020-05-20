@@ -64,6 +64,7 @@ namespace SloshyDoshMan.Client
 
 		private static void StartMonitoring()
 		{
+			Monitor = new KillingFloor2AdminMonitor();
 			Console.CancelKeyPress += (sender, eArgs) =>
 			{
 				QuitEvent.Set();
@@ -77,7 +78,7 @@ namespace SloshyDoshMan.Client
 
 		public static Settings Settings { get; private set; }
 		public static Guid? ServerId { get; set; }
-		private static readonly IKillingFloor2AdminMonitor Monitor = new KillingFloor2AdminMonitor();
+		private static IKillingFloor2AdminMonitor Monitor { get; set; }
 
 		private static ManualResetEvent QuitEvent = new ManualResetEvent(false);
 	}

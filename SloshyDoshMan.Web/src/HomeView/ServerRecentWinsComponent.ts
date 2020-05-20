@@ -1,12 +1,11 @@
 import * as ko from "knockout";
 import * as $ from "jquery";
-import { layout, text, textColor, margin, padding, events, createStyles, redHandleContainer, marginMobile } from "AppStyles";
-import { map } from "Maps/MapStyles";
-import { perk } from "Perks/PerkStyles";
+import { layout, text, textColor, margin, padding, events, createStyles, redHandleContainer, marginMobile, background } from "AppStyles";
 import { GameViewModel, RecentWinsResponse, ScoreboardPlayer } from "Server";
 import { GoToPlayedGame } from "GameView/PlayedGameComponent";
 import { MomentFormat } from "KnockoutHelpers/MomentFormatDateBindingHandler";
 import { GoToPlayerProfile } from "PlayerView/PlayerProfileComponent";
+import { PerkIconComponent } from "Perks/PerkIconComponent";
 
 var Name : string = "ServerRecentWins";
 export function ServerRecentWinsComponent() {
@@ -135,7 +134,7 @@ ko.components.register(Name, {
 			<div class="${redHandleContainer.container}">
 				<div data-bind="foreach: RecentWins">
 					<div class="${layout.width25} ${layout.inlineBlock} ${styles.recentWinGame}" data-bind="click: $component.GoToGame, event: {mouseover: $component.OnHover}, css: {selected: $component.SelectedRecentWin() === $data}">
-						<div class="${map.mapCover} ${margin.bottom}" style="min-height: 119px" data-bind="css: PlayedGame.Map" />
+						<div class="${background.cover} ${margin.bottom}" style="min-height: 119px" data-bind="style: { backgroundImage: 'url(\\'/Maps/'+PlayedGame.Map+'-480x240\\')' }" />
 						<div class="${textColor.white} ${text.font14} ${text.center} ${margin.bottomHalf}" data-bind="text: PlayedGame.Map" />
 						<div class="${textColor.gray} ${text.font14} ${text.center} ${margin.bottom}" data-bind="${MomentFormat("PlayedGame.TimeFinished", "MMM Do YYYY")}" />
 					</div>
@@ -144,7 +143,7 @@ ko.components.register(Name, {
 				<div class="${layout.flexRow}">
 					<!-- ko foreach: RecentWinPlayers -->
 					<div class="${layout.flexEvenDistribution} ${textColor.white} ${text.center} ${styles.recentWinPlayer} ${padding.all} ${events.clickable}" data-bind="click: $component.GoToPlayer">
-						<div class="${perk.perkIcon} ${perk.width32}" data-bind="css: $component.FindPerkForRecentWin($data)" />
+						<!-- ko ${PerkIconComponent("$component.FindPerkForRecentWin($data)")} --><!-- /ko -->
 						<div class="${text.font12} ${text.center}" data-bind="html: UserName" />
 					</div>
 					<!-- /ko -->

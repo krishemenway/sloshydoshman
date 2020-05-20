@@ -1,8 +1,8 @@
 import * as ko from "knockout";
 import { textColor, margin, layout, text } from "AppStyles";
-import { perk } from "Perks/PerkStyles";
 import { PlayerViewModel } from "Server";
 import { NumberWithCommas } from "KnockoutHelpers/NumberWithCommasBindingHandler";
+import { PerkIconComponent } from "Perks/PerkIconComponent";
 
 export var ComponentName = "PlayerPerkStatistics";
 export function PlayerPerkStatisticsComponent(playerViewModelParameter: string) {
@@ -24,9 +24,9 @@ ko.components.register(ComponentName, {
 
 			<!-- ko foreach: PerkStatistics -->
 				<div class="${margin.bottom} ${layout.inlineBlock} ${layout.width50}">
-					<div class="${margin.bottomHalf}">
-						<span class="${layout.vertMiddle} ${perk.perkIcon} ${perk.width32}" data-bind="css: Perk, attr: {title: Perk}"></span>
-						<span class="${layout.vertMiddle} ${margin.left} ${text.font16} ${text.smallCaps}" data-bind="text: Perk" />
+					<div class="${margin.bottomHalf} ${layout.flexRow} ${layout.flexCenter}">
+						<!-- ko ${PerkIconComponent("Perk")} --><!-- /ko -->
+						<span class="${margin.left} ${text.font16} ${text.smallCaps}" data-bind="text: Perk" />
 					</div>
 
 					<div class="${layout.flexRow}" style="margin-left: 42px; margin-right: 8px;">

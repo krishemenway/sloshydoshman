@@ -18,6 +18,12 @@ export const background = createStyles({
 			backgroundColor: "rgba(50,50,50,0.15)",
 		},
 	},
+	cover: {
+		background: "no-repeat transparent",
+		backgroundSize: "cover",
+		position: "relative",
+		overflow: "hidden",
+	},
 }).attach().classes;
 
 export const events = createStyles({
@@ -85,6 +91,9 @@ export const layout = createStyles({
 	flexWrapContent: {
 		flexGrow: 0,
 		flexBasis: 0,
+	},
+	flexCenter: {
+		alignItems: "center",
 	},
 	blockCenter: { 
 		marginLeft: "auto",

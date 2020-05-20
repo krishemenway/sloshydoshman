@@ -12,7 +12,6 @@ namespace SloshyDoshMan.Tests
 	{
 		static DatabaseTestsAttribute()
 		{
-			Program.ExecutablePath = Directory.GetCurrentDirectory();
 			Program.SetupConfiguration(new string[0]);
 		}
 

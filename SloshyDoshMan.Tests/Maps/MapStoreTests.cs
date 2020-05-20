@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
-using SloshyDoshMan.Service;
 using SloshyDoshMan.Service.Maps;
 using SloshyDoshMan.Shared;
 using System;
@@ -16,8 +16,8 @@ namespace SloshyDoshMan.Tests.Maps
 		[SetUp]
 		public void SetUp()
 		{
-			Program.ExecutablePath = Directory.GetCurrentDirectory();
-			_mapStore = new MapStore();
+			var configuration = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("maps.json").Build());
+			_mapStore = new MapStore(configuration);
 		}
 
 		[Test]
@@ -62,6 +62,13 @@ namespace SloshyDoshMan.Tests.Maps
 			ThenFoundMap.Should().BeTrue();
 			ThenMap.Name.Should().Be("KF-Outpost");
 			ThenMap.IsWorkshop.Should().BeFalse();
+		}
+
+		[Test]
+		public void ShouldNotHaveTwoMapsWithSameName()
+		{
+			WhenFindingAllMaps();
+			ThenMaps.GroupBy(x => x.Name).Should().OnlyContain(x => x.Count() == 1);
 		}
 
 		private void WhenTryFindMap(string mapName)

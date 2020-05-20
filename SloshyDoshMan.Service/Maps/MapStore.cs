@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
 using SloshyDoshMan.Shared;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace SloshyDoshMan.Service.Maps
@@ -18,56 +17,44 @@ namespace SloshyDoshMan.Service.Maps
 
 	public class MapStore : IMapStore
 	{
+		public MapStore(Lazy<IConfigurationRoot> configuration = null)
+		{
+			_configuration = configuration ?? LazyConfiguration;
+		}
+
 		public IReadOnlyList<IMap> FindAllMaps()
 		{
-			return LazyMapList.Value.Values.ToList();
+			return _configuration.Value.Get<MapConfiguration>().Maps;
 		}
 
 		public IReadOnlyList<IMap> FindCoreMaps()
 		{
-			return LazyCoreMaps.Value.Values.ToList();
+			return FindAllMaps().Where(map => !map.IsWorkshop).ToList();
 		}
 
 		public IReadOnlyList<(string MapName, Difficulty Difficulty)> FindCoreMapDifficulties()
 		{
-			return LazyCoreMapDifficulties.Value;
-		}
-
-		public bool TryFindMap(string mapName, out IMap map)
-		{
-			return LazyMapList.Value.TryGetValue(mapName.ToLower(), out map);
-		}
-
-		private static IReadOnlyDictionary<string, IMap> LoadMapList()
-		{
-			using (var streamReader = new StreamReader(MapsResourceStream))
-			{
-				return JsonConvert
-					.DeserializeObject<IReadOnlyList<Map>>(streamReader.ReadToEnd())
-					.ToDictionary(map => map.Name.ToLower(), map => map as IMap);
-			}
-		}
-
-		private static IReadOnlyDictionary<string, IMap> LoadCoreMaps()
-		{
-			return LazyMapList.Value.Values
-				.Where(map => !map.IsWorkshop)
-				.ToDictionary(map => map.Name, map => map);
-		}
-
-		private static IReadOnlyList<(string MapName, Difficulty Difficulty)> LoadCoreMapDifficulties()
-		{
 			var allDifficulties = Enum.GetValues(typeof(Difficulty)).Cast<Difficulty>();
 
-			return LazyCoreMaps.Value.Values
+			return FindCoreMaps()
 				.SelectMany(map => allDifficulties.Select(difficulty => (MapName: map.Name, Difficulty: difficulty)))
 				.ToList();
 		}
 
-		private static Stream MapsResourceStream => File.Open(Path.Combine(Program.ExecutablePath, "maps.json"), FileMode.Open);
+		public bool TryFindMap(string mapName, out IMap map)
+		{
+			map = FindAllMaps().FirstOrDefault(x => x.Name == mapName);
+			return map != null;
+		}
 
-		private static Lazy<IReadOnlyDictionary<string, IMap>> LazyMapList = new Lazy<IReadOnlyDictionary<string, IMap>>(LoadMapList);
-		private static Lazy<IReadOnlyDictionary<string, IMap>> LazyCoreMaps = new Lazy<IReadOnlyDictionary<string, IMap>>(LoadCoreMaps);
-		private static Lazy<IReadOnlyList<(string MapName, Difficulty Difficulty)>> LazyCoreMapDifficulties = new Lazy<IReadOnlyList<(string MapName, Difficulty Difficulty)>>(LoadCoreMapDifficulties);
+		private readonly Lazy<IConfigurationRoot> _configuration;
+
+		private static readonly Lazy<IConfigurationRoot> LazyConfiguration
+			= new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("maps.json", optional: false, reloadOnChange: true).Build());
+	}
+
+	public class MapConfiguration
+	{
+		public List<Map> Maps { get; set; }
 	}
 }

@@ -12,12 +12,12 @@ namespace SloshyDoshMan.Service
 	{
 		public static void Main(string[] args)
 		{
-			SetupLogging();
-
 			try
 			{
-				SetupConfiguration(args);
-				StartWebHost();
+				var configuration = SetupConfiguration(args);
+
+				SetupLogging(configuration);
+				StartWebHost(configuration);
 			}
 			catch (Exception exception)
 			{
@@ -29,20 +29,23 @@ namespace SloshyDoshMan.Service
 			}
 		}
 
-		public static void SetupConfiguration(string[] args)
+		public static IConfiguration SetupConfiguration(string[] args)
 		{
-			Configuration = new ConfigurationBuilder()
-				.SetBasePath(ExecutablePath)
+			var configuration = new ConfigurationBuilder()
+				.SetBasePath(ExecutableFolderPath)
 				.AddJsonFile("service-settings.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
 				.AddCommandLine(args)
 				.Build();
+
+			Settings = new Settings(configuration);
+			return configuration;
 		}
 
-		public static void SetupLogging()
+		public static void SetupLogging(IConfiguration configuration)
 		{
 			Log.Logger = new LoggerConfiguration()
-				.ReadFrom.Configuration(Program.Configuration)
+				.ReadFrom.Configuration(configuration)
 				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
 				.Enrich.FromLogContext()
 				.WriteTo.Console()
@@ -50,27 +53,23 @@ namespace SloshyDoshMan.Service
 				.CreateLogger();
 		}
 
-		private static void StartWebHost()
+		private static void StartWebHost(IConfiguration configuration)
 		{
 			WebHost = new WebHostBuilder()
 				.UseKestrel()
-				.UseConfiguration(Configuration)
+				.UseConfiguration(configuration)
 				.UseStartup<Startup>()
 				.UseSerilog()
-				.UseUrls($"http://*:{WebPort}")
+				.UseUrls($"http://*:{Settings.WebPort}")
 				.Build();
 
 			WebHost.Run();
 		}
 
-		public static int WebPort => Configuration.GetValue<int>("WebPort");
-
-		public static IConfigurationRoot Configuration { get; private set; }
+		public static ISettings Settings { get; private set; }
 		public static IWebHost WebHost { get; private set; }
 
-		public static string ExecutablePath { get; set; } = Process.GetCurrentProcess().MainModule.FileName;
+		public static string ExecutablePath { get; } = Process.GetCurrentProcess().MainModule.FileName;
 		public static string ExecutableFolderPath { get; } = Path.GetDirectoryName(ExecutablePath);
-
-		public static string FilePathInExecutableFolder(string fileName) => Path.Combine(ExecutableFolderPath, fileName);
 	}
 }

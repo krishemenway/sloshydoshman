@@ -1,12 +1,14 @@
-﻿[
-	{ "Name": "Berserker" },
-	{ "Name": "Firebug" },
-	{ "Name": "Support" },
-	{ "Name": "Commando" },
-	{ "Name": "Demolitionist" },
-	{ "Name": "Field Medic" },
-	{ "Name": "Gunslinger" },
-	{ "Name": "Survivalist" },
-	{ "Name": "SWAT" },
-	{ "Name": "Sharpshooter" }
-]
+﻿{
+	"Perks": [
+		{ "Name": "Berserker" },
+		{ "Name": "Firebug" },
+		{ "Name": "Support" },
+		{ "Name": "Commando" },
+		{ "Name": "Demolitionist" },
+		{ "Name": "Field Medic" },
+		{ "Name": "Gunslinger" },
+		{ "Name": "Survivalist" },
+		{ "Name": "SWAT" },
+		{ "Name": "Sharpshooter" }
+	]
+}

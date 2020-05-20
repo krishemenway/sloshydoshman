@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace SloshyDoshMan.Service.Perks
 {
@@ -13,20 +11,24 @@ namespace SloshyDoshMan.Service.Perks
 
 	public class PerkStore : IPerkStore
 	{
+		public PerkStore(Lazy<IConfigurationRoot> configuration = null)
+		{
+			_configuration = configuration ?? LazyConfiguration;
+		}
+
 		public IReadOnlyList<Perk> FindAllPerks()
 		{
-			return LazyPerkList.Value.ToList();
+			return _configuration.Value.Get<PerksConfiguration>().Perks;
 		}
 
-		private static IReadOnlyList<Perk> LoadPerkList()
-		{
-			using (var streamReader = new StreamReader(PerksResourceStream))
-			{
-				return JsonConvert.DeserializeObject<IReadOnlyList<Perk>>(streamReader.ReadToEnd());
-			}
-		}
+		private readonly Lazy<IConfigurationRoot> _configuration;
 
-		private static Stream PerksResourceStream => File.Open(Path.Combine(Program.ExecutablePath, "perks.json"), FileMode.Open);
-		private static readonly Lazy<IReadOnlyList<Perk>> LazyPerkList = new Lazy<IReadOnlyList<Perk>>(LoadPerkList);
+		private static readonly Lazy<IConfigurationRoot> LazyConfiguration
+			= new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("perks.json", optional: false, reloadOnChange: true).Build());
+	}
+
+	public class PerksConfiguration
+	{
+		public List<Perk> Perks { get; set; }
 	}
 }

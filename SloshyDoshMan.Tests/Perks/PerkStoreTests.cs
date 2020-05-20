@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
-using SloshyDoshMan.Service;
 using SloshyDoshMan.Service.Perks;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -13,8 +14,8 @@ namespace SloshyDoshMan.Tests.Perks
 		[SetUp]
 		public void SetUp()
 		{
-			Program.ExecutablePath = Directory.GetCurrentDirectory();
-			_perkStore = new PerkStore();
+			var configuration = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("perks.json").Build());
+			_perkStore = new PerkStore(configuration);
 		}
 
 		[Test]

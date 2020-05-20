@@ -17,15 +17,15 @@ namespace SloshyDoshMan.Service.Notifications
 	{
 		public PushNotificationSender(
 			HttpClient httpClient = null,
-			IConfiguration configuration = null)
+			ISettings settings = null)
 		{
 			_httpClient = httpClient ?? new HttpClient();
-			_configuration = configuration ?? Program.Configuration;
+			_settings = settings ?? Program.Settings;
 		}
 
 		public Result NotifyAll(string typeName, string title, string content)
 		{
-			if (!PushNotificationEnabled)
+			if (!_settings.EnablePushNotification)
 			{
 				return Result.Successful;
 			}
@@ -50,12 +50,10 @@ namespace SloshyDoshMan.Service.Notifications
 			}
 		}
 
-		private string SendPushNotificationUri => $"http://{PushServiceHost}/internal/api/notifications/send";
-		private string PushServiceHost => _configuration.GetValue<string>("SloshyDoshManPushServiceHost");
-		private bool PushNotificationEnabled => _configuration.GetValue<bool>("EnablePushNotification");
+		private string SendPushNotificationUri => $"http://{_settings.SloshyDoshManPushServiceHost}/internal/api/notifications/send";
 
 		private readonly HttpClient _httpClient;
-		private readonly IConfiguration _configuration;
+		private readonly ISettings _settings;
 
 		public class PushNotificationDetails
 		{

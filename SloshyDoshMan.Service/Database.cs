@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using Npgsql;
+﻿using Npgsql;
+using System.Collections.Generic;
 using System.Data.Common;
 
 namespace SloshyDoshMan.Service
@@ -13,14 +13,15 @@ namespace SloshyDoshMan.Service
 			return connection;
 		}
 
-		private static string DatabaseConnectionString => $"Host={Host};Username={User};Password={Password};Database={DatabaseName};Port={Port}";
+		private static readonly IReadOnlyList<string> ConnectionStringParts = new[]
+		{
+			$"Host={Program.Settings.SloshyDoshManDatabaseHost};",
+			$"Username={Program.Settings.SloshyDoshManDatabaseUser};",
+			$"Password={Program.Settings.SloshyDoshManDatabasePassword};",
+			$"Database={Program.Settings.SloshyDoshManDatabaseName};",
+			$"Port={Program.Settings.SloshyDoshManDatabasePort}"
+		};
 
-		private static string Host => Program.Configuration.GetValue<string>("SloshyDoshManDatabaseHost");
-		private static string Port => Program.Configuration.GetValue<string>("SloshyDoshManDatabasePort");
-
-		private static string DatabaseName => Program.Configuration.GetValue<string>("SloshyDoshManDatabaseName");
-
-		private static string User => Program.Configuration.GetValue<string>("SloshyDoshManDatabaseUser");
-		private static string Password => Program.Configuration.GetValue<string>("SloshyDoshManDatabasePassword");
+		private static string DatabaseConnectionString = string.Join("", ConnectionStringParts);
 	}
 }

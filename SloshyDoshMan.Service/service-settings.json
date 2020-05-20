@@ -8,6 +8,8 @@
 	"SloshyDoshManDatabasePassword": "1D93E84A-1C34-4BC2-9E8E-289B98F5CF3A",
 	"WebPort": 8098,
 
+	"ServerRegistrationKey": "DefaultServerRegistrationKey",
+
 	"Serilog": {
 		"MinimumLevel": {
 			"Default": "Information",

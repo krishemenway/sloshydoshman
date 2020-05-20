@@ -5,6 +5,7 @@ using SloshyDoshMan.Service.Extensions;
 using SloshyDoshMan.Service.Maps;
 using SloshyDoshMan.Service.Notifications;
 using SloshyDoshMan.Service.Players;
+using SloshyDoshMan.Service.Servers;
 using SloshyDoshMan.Shared;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ using System.Linq;
 
 namespace SloshyDoshMan.Service.PlayedGames
 {
-	[Route("api/kf2/gamestate")]
-	public class SaveGameStateController : Controller
+	[Route("API/GameState")]
+	public class SaveGameStateController : ControllerBase
 	{
 		public SaveGameStateController(
 			IPlayedGameStore playedGameStore = null, 
@@ -21,7 +22,8 @@ namespace SloshyDoshMan.Service.PlayedGames
 			IPlayerPlayedWaveStore playerPlayedWaveStore = null,
 			IPlayerPlayedGameStore playerPlayedGameStore = null,
 			IPushNotificationSender pushNotificationSender = null,
-			IMapStore mapStore = null)
+			IMapStore mapStore = null,
+			IServerStore serverStore = null)
 		{
 			_playedGameStore = playedGameStore ?? new PlayedGameStore();
 			_playerStore = playerStore ?? new PlayerStore();
@@ -31,12 +33,19 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 			_pushNotificationSender = pushNotificationSender ?? new PushNotificationSender();
 			_mapStore = mapStore ?? new MapStore();
+			_serverStore = serverStore ?? new ServerStore();
 		}
 
 		[HttpPost(nameof(Save))]
 		[ProducesResponseType(200, Type = typeof(Result))]
 		public ActionResult<Result> Save([FromBody] GameState newGameState)
 		{
+			if (!_serverStore.TryFindServer(newGameState.ServerId, out _))
+			{
+				Log.Information("Attempt to save game state with unknown ServerId: {ServerId}", newGameState.ServerId);
+				return Result.Failure("Invalid ServerId");
+			}
+
 			FixMapName(newGameState);
 			RemoveOrFixInvalidPlayers(newGameState);
 			SaveAllPlayers(newGameState);
@@ -159,6 +168,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 		private readonly IPushNotificationSender _pushNotificationSender;
 		private readonly IMapStore _mapStore;
+		private readonly IServerStore _serverStore;
 
 		private static IMemoryCache SteamIdsAliveInFinalWaveByServerIdMemoryCache { get; set; } = new MemoryCache(new MemoryCacheOptions());
 	}

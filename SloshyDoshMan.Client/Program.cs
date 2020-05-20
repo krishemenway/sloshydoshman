@@ -45,11 +45,12 @@ namespace SloshyDoshMan.Client
 		{
 			try
 			{
-				new SloshyDoshManService().RegisterServer(new RegisterServerRequest { KF2ServerIP = Settings.KF2AdminHost });
+				new SloshyDoshManService().RegisterServer(new RegisterServerRequest { KF2ServerIP = Settings.KF2AdminHost, RegistrationKey = Settings.ServerRegistrationKey });
 			}
-			catch (Exception e)
+			catch (Exception exception)
 			{
-				Log.Error(e, $"Failure during server registration: {e.Message}; {e.StackTrace}");
+				Log.Error(exception, $"Failure during server registration: {exception.Message}; {exception.StackTrace}");
+				throw exception;
 			}
 		}
 

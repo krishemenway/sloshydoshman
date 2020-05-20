@@ -5,7 +5,7 @@ using SloshyDoshMan.Shared;
 namespace SloshyDoshMan.Service.Servers
 {
 	[ApiController]
-	[Route("api/servers")]
+	[Route("API/Servers")]
 	public class RegisterServerController : ControllerBase
 	{
 		public RegisterServerController(

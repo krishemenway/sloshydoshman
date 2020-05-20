@@ -20,6 +20,8 @@ namespace SloshyDoshMan.Client
 
 		string PreferMap { get; }
 		int PreferMapWaitTimeInMinutes { get; }
+
+		string ServerRegistrationKey { get; }
 	}
 
 	public class Settings : ISettings
@@ -45,6 +47,8 @@ namespace SloshyDoshMan.Client
 
 		public string PreferMap => _configuration.GetValue<string>("PreferMap");
 		public int PreferMapWaitTimeInMinutes => _configuration.GetValue<int>("PreferMapWaitTimeInMinutes");
+
+		public string ServerRegistrationKey => _configuration.GetValue<string>("ServerRegistrationKey");
 
 		private IConfiguration _configuration;
 	}

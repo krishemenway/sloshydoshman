@@ -6,7 +6,7 @@
 	"KF2AdminPassword": "password",
 
 	"RefreshIntervalInMilliseconds": 15000,
- 
+
 	"EnableAdvertisement": true,
 	"AdvertisementMessage": "View stats for games played on this server @ sloshydoshman.com",
 
@@ -14,5 +14,7 @@
 	"SloshyDoshManServicePort": 8098,
 
 	"PreferMap": "KF-Desolation",
-	"PreferMapWaitTimeInMinutes":  60
+	"PreferMapWaitTimeInMinutes": 60,
+
+	"ServerRegistrationKey": "DefaultServerRegistrationKey"
 }

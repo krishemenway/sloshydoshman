@@ -18,6 +18,8 @@ namespace SloshyDoshMan.Service
 		string SloshyDoshManPushServiceHost { get; }
 		bool EnablePushNotification { get; }
 
+		string ServerRegistrationKey { get; }
+
 		string FilePathInExecutableFolder(string fileName);
 	}
 
@@ -40,6 +42,8 @@ namespace SloshyDoshMan.Service
 
 		public string SloshyDoshManPushServiceHost => _configuration.GetValue<string>("SloshyDoshManPushServiceHost");
 		public bool EnablePushNotification => _configuration.GetValue<bool>("EnablePushNotification");
+
+		public string ServerRegistrationKey => _configuration.GetValue<string>("ServerRegistrationKey");
 
 		public string FilePathInExecutableFolder(string fileName) => Path.Combine(Program.ExecutableFolderPath, fileName);
 

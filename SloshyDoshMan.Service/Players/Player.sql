@@ -1,6 +1,6 @@
 CREATE TABLE public.player
 (
-    steam_id bigint NOT NULL,
+    steam_id varchar(22) NOT NULL,
     last_known_ip text COLLATE pg_catalog."default" NOT NULL,
     name text COLLATE pg_catalog."default" NOT NULL,
     last_played_time timestamp without time zone,

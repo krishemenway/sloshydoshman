@@ -20,7 +20,7 @@ namespace SloshyDoshMan.Tests.Players
 
 			GivenPlayersFromSearch = new List<Player>
 			{
-				new Player { SteamId = -1, Name = "PlayerName" },
+				new Player { SteamId = "-1", Name = "PlayerName" },
 			};
 
 			_playerStore = new Mock<IPlayerStore>();
@@ -34,7 +34,7 @@ namespace SloshyDoshMan.Tests.Players
 		{
 			WhenSearching();
 			ThenResult.Success.Should().BeTrue();
-			ThenResult.Data[0].SteamId.Should().Be(GivenPlayersFromSearch[0].SteamId.ToString());
+			ThenResult.Data[0].SteamId.Should().Be(GivenPlayersFromSearch[0].SteamId);
 			ThenResult.Data[0].UserName.Should().Be(GivenPlayersFromSearch[0].Name.ToString());
 			ThenResult.Data[0].MapStatistics.Should().BeEmpty();
 			ThenResult.Data[0].PerkStatistics.Should().BeEmpty();

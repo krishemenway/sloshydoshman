@@ -10,8 +10,8 @@ namespace SloshyDoshMan.Service.Players
 {
 	public interface IPlayerStatisticsStore
 	{
-		IReadOnlyList<PlayerMapStatistic> FindMapStatistics(long steamId);
-		IReadOnlyList<PlayerPerkStatistic> FindPerkStatistics(long steamId);
+		IReadOnlyList<PlayerMapStatistic> FindMapStatistics(string steamId);
+		IReadOnlyList<PlayerPerkStatistic> FindPerkStatistics(string steamId);
 	}
 
 	public class PlayerStatisticsStore : IPlayerStatisticsStore
@@ -24,7 +24,7 @@ namespace SloshyDoshMan.Service.Players
 			_perkStore = perkStore ?? new PerkStore();
 		}
 
-		public IReadOnlyList<PlayerMapStatistic> FindMapStatistics(long steamId)
+		public IReadOnlyList<PlayerMapStatistic> FindMapStatistics(string steamId)
 		{
 			const string sql = @"
 				SELECT
@@ -82,7 +82,7 @@ namespace SloshyDoshMan.Service.Players
 			}
 		}
 
-		public IReadOnlyList<PlayerPerkStatistic> FindPerkStatistics(long steamId)
+		public IReadOnlyList<PlayerPerkStatistic> FindPerkStatistics(string steamId)
 		{
 			const string sql = @"
 				SELECT 

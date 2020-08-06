@@ -1,6 +1,6 @@
 CREATE TABLE public.player_played_game
 (
-    steam_id bigint NOT NULL,
+    steam_id varchar(22) NOT NULL,
     played_game_id uuid NOT NULL,
     kills integer NOT NULL DEFAULT 0,
     CONSTRAINT px_player_played_game PRIMARY KEY (steam_id, played_game_id)

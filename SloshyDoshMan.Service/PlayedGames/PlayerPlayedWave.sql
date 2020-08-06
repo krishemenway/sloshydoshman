@@ -1,6 +1,6 @@
 CREATE TABLE public.player_played_wave
 (
-    steam_id bigint NOT NULL,
+    steam_id varchar(22) NOT NULL,
     wave integer NOT NULL,
     played_game_id uuid NOT NULL,
     kills integer NOT NULL DEFAULT 0,

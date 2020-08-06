@@ -7,7 +7,7 @@ namespace SloshyDoshMan.Service.Players
 {
 	public interface IPlayerStore
 	{
-		bool TryFindPlayer(long steamId, out Player player);
+		bool TryFindPlayer(string steamId, out Player player);
 		IReadOnlyList<Player> Search(string query);
 
 		void SavePlayers(IReadOnlyList<PlayerGameState> players);
@@ -40,7 +40,7 @@ namespace SloshyDoshMan.Service.Players
 			}
 		}
 
-		public bool TryFindPlayer(long steamId, out Player player)
+		public bool TryFindPlayer(string steamId, out Player player)
 		{
 			const string sql = @"
 				SELECT
@@ -101,6 +101,6 @@ namespace SloshyDoshMan.Service.Players
 	{
 		public string Name { get; set; }
 		public string LastKnownIP { get; set; }
-		public long SteamId { get; set; }
+		public string SteamId { get; set; }
 	}
 }

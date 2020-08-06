@@ -158,7 +158,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 			newGameState.Players = newGameState.Players.GroupBy(x => x.Name).Select(x => x.First()).ToList();
 		}
 
-		private Dictionary<long, bool> FindPlayersWithLivingStatusForServer(Guid serverId) => SteamIdsAliveInFinalWaveByServerIdMemoryCache.GetOrCreate(serverId, (entry) => new Dictionary<long, bool>());
+		private Dictionary<string, bool> FindPlayersWithLivingStatusForServer(Guid serverId) => SteamIdsAliveInFinalWaveByServerIdMemoryCache.GetOrCreate(serverId, (entry) => new Dictionary<string, bool>());
 
 		private readonly IPlayerStore _playerStore;
 		private readonly IPlayedGameStore _playedGameStore;

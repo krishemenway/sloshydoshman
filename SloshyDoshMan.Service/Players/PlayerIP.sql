@@ -1,6 +1,6 @@
 CREATE TABLE public.player_ip
 (
-    steam_id bigint NOT NULL,
+    steam_id varchar(22) NOT NULL,
     ip_address text COLLATE pg_catalog."default" NOT NULL,
     started_using_time timestamp without time zone NOT NULL DEFAULT now(),
     CONSTRAINT "PX_PlayerIP" PRIMARY KEY (steam_id, ip_address, started_using_time)

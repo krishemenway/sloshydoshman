@@ -17,49 +17,49 @@ namespace SloshyDoshMan.Tests.Players
 		[Test]
 		public void ShouldFindExistingPlayersByUsingExactNameInQuery()
 		{
-			GivenExistingPlayer(-1, "TestKF2PlayerName", "IPAdress");
+			GivenExistingPlayer("-1", "TestKF2PlayerName", "IPAdress");
 			WhenFindPlayersWithQuery("TestKF2PlayerName");
 			ThenPlayers.Should().HaveCount(1);
 			ThenPlayers[0].Name.Should().Be("TestKF2PlayerName");
 			ThenPlayers[0].LastKnownIP.Should().Be("IPAdress");
-			ThenPlayers[0].SteamId.Should().Be(-1);
+			ThenPlayers[0].SteamId.Should().Be("-1");
 		}
 
 		[Test]
 		public void ShouldFindExistingPlayersByUsingPartialMatchOfNameInQuery()
 		{
-			GivenExistingPlayer(-1, "TestKF2PlayerName", "IPAdress");
+			GivenExistingPlayer("-1", "TestKF2PlayerName", "IPAdress");
 			WhenFindPlayersWithQuery("KF2Player");
 			ThenPlayers.Should().HaveCount(1);
 			ThenPlayers[0].Name.Should().Be("TestKF2PlayerName");
 			ThenPlayers[0].LastKnownIP.Should().Be("IPAdress");
-			ThenPlayers[0].SteamId.Should().Be(-1);
+			ThenPlayers[0].SteamId.Should().Be("-1");
 		}
 
 		[Test]
 		public void ShouldNotFindPlayerWhenInvalidSteamIdIsReceived()
 		{
-			WhenTryFindPlayer(-1);
+			WhenTryFindPlayer("-1");
 			ThenFoundPlayer.Should().BeFalse();
 		}
 
 		[Test]
 		public void ShouldFindPlayerBySteamId()
 		{
-			GivenExistingPlayer(-1, "TestKF2PlayerName", "IPAdress");
-			WhenTryFindPlayer(-1);
+			GivenExistingPlayer("-1", "TestKF2PlayerName", "IPAdress");
+			WhenTryFindPlayer("-1");
 			ThenFoundPlayer.Should().BeTrue();
 			ThenPlayer.Name.Should().Be("TestKF2PlayerName");
 			ThenPlayer.LastKnownIP.Should().Be("IPAdress");
-			ThenPlayer.SteamId.Should().Be(-1);
+			ThenPlayer.SteamId.Should().Be("-1");
 		}
 
-		private void GivenExistingPlayer(long steamId, string name, string ipAddress)
+		private void GivenExistingPlayer(string steamId, string name, string ipAddress)
 		{
 			_playerStore.SavePlayers(new[] { new Shared.PlayerGameState { SteamId = steamId, Name = name, IPAddress = ipAddress } });
 		}
 
-		private void WhenTryFindPlayer(long steamId)
+		private void WhenTryFindPlayer(string steamId)
 		{
 			ThenFoundPlayer = _playerStore.TryFindPlayer(steamId, out var player);
 			ThenPlayer = player;

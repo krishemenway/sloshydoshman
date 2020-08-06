@@ -16,7 +16,7 @@ namespace SloshyDoshMan.Tests.Players
 		{
 			GivenRequest = new PlayerProfileRequest
 			{
-				SteamId = -1,
+				SteamId = "-1",
 			};
 
 			GivenPlayer = new Player
@@ -67,7 +67,7 @@ namespace SloshyDoshMan.Tests.Players
 			GivenPlayerExists();
 			WhenRequestingProfile();
 			ThenResult.Success.Should().BeTrue();
-			ThenResult.Data.SteamId.Should().Be(GivenRequest.SteamId.ToString());
+			ThenResult.Data.SteamId.Should().Be(GivenRequest.SteamId);
 			ThenResult.Data.UserName.Should().Be(GivenPlayer.Name);
 			ThenResult.Data.AllGames.Should().BeEquivalentTo(GivenAllGames);
 			ThenResult.Data.MapStatistics.Should().BeEquivalentTo(GivenMapStatistics);

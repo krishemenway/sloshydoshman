@@ -2,6 +2,6 @@
 {
 	public class PlayerProfileRequest
 	{
-		public long SteamId { get; set; }
+		public string SteamId { get; set; }
 	}
 }

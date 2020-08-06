@@ -1,6 +1,6 @@
 CREATE TABLE public.player_ping_sample
 (
-    steam_id bigint NOT NULL,
+    steam_id varchar(22) NOT NULL,
     ping integer NOT NULL,
     sampled_time timestamp without time zone NOT NULL DEFAULT now()
 ) WITH (OIDS = FALSE) TABLESPACE pg_default;

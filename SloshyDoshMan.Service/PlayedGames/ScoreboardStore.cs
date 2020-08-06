@@ -116,12 +116,12 @@ namespace SloshyDoshMan.Service.PlayedGames
 			};
 		}
 
-		private ScoreboardPlayer CreatePlayer(IGrouping<long, PlayerWaveInfoRecord> records)
+		private ScoreboardPlayer CreatePlayer(IGrouping<string, PlayerWaveInfoRecord> records)
 		{
 			return new ScoreboardPlayer
 			{
 				UserName = records.First().Name,
-				SteamId = records.First().SteamId.ToString(),
+				SteamId = records.First().SteamId,
 				PlayerWaveInfo = records.ToDictionary(x => x.Wave.ToString(), x => new PlayerWaveInfo { Kills = x.Kills, Perk = x.Perk, Wave = x.Wave })
 			};
 		}
@@ -137,7 +137,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 	public class PlayerWaveInfoRecord
 	{
 		public Guid PlayedGameId { get; set; }
-		public long SteamId { get; set; }
+		public string SteamId { get; set; }
 		public string Name { get; set; }
 		public int Wave { get; set; }
 		public string Perk { get; set; }

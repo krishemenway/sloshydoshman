@@ -2,7 +2,7 @@
 {
 	public class PlayerGameState
 	{
-		public long SteamId { get; set; }
+		public string SteamId { get; set; }
 		public string Name { get; set; }
 		public string IPAddress { get; set; }
 		public string UniqueNetId { get; set; }

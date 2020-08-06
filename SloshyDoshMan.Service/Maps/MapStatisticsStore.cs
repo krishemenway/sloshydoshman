@@ -67,14 +67,14 @@ namespace SloshyDoshMan.Service.Maps
 	
 	public class PlayerMapScore
 	{
-		public long SteamId { get; set; }
+		public string SteamId { get; set; }
 		public string Name { get; set; }
 		public int TotalScore { get; set; }
 	}
 
 	public class PlayerMapCompleteStatsRow
 	{
-		public long SteamId { get; set; }
+		public string SteamId { get; set; }
 		public string Name { get; set; }
 		public string Difficulty { get; set; }
 		public Difficulty GameDifficulty => DifficultyHelpers.Convert(Difficulty);

@@ -15,7 +15,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 
 		IReadOnlyList<IPlayedGame> FindRecentGames(int totalRecentGames, int startingAt);
 		IReadOnlyList<IPlayedGame> FindRecentWins(int countToFind);
-		IReadOnlyList<IPlayedGame> FindAllGames(long steamId);
+		IReadOnlyList<IPlayedGame> FindAllGames(string steamId);
 
 		IPlayedGame StartNewGame(GameState newGameState);
 		void EndGame(IPlayedGame currentPlayedGame, bool playersWon);
@@ -110,7 +110,7 @@ namespace SloshyDoshMan.Service.PlayedGames
 			}
 		}
 
-		public IReadOnlyList<IPlayedGame> FindAllGames(long steamId)
+		public IReadOnlyList<IPlayedGame> FindAllGames(string steamId)
 		{
 			const string sql = @"
 				SELECT

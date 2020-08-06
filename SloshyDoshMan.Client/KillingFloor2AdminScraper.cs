@@ -45,13 +45,16 @@ namespace SloshyDoshMan.Client
 			{
 				var currentGameElements = scoreboardContent.GetElementById("currentGame").Children;
 				var currentRulesElements = scoreboardContent.GetElementById("currentRules").Children;
+
+				var mapName = scoreboardContent.QuerySelector("dd.gs_map").TextContent;
+				var upperCasedMapIdentifier = currentGameElements[7].Attributes["title"].Value;
 				var waveParts = currentRulesElements[1].TextContent.Split('/');
 
 				return new GameState
 				{
 					ServerId = Program.ServerId.Value,
 					ServerName = currentGameElements[1].TextContent,
-					Map = currentGameElements[7].Attributes["title"].Value,
+					Map = DetermineMapName(upperCasedMapIdentifier, mapName),
 					Difficulty = currentRulesElements[3].TextContent,
 					GameType = currentGameElements[5].TextContent,
 
@@ -139,6 +142,18 @@ namespace SloshyDoshMan.Client
 			}
 
 			return playerListData;
+		}
+
+		private static string DetermineMapName(string upperCaseMapIdentifier, string mapName)
+		{
+			var likelyMapIdentifier = $"KF-{mapName.Replace(" ", "")}";
+
+			if (likelyMapIdentifier.ToUpper() == upperCaseMapIdentifier)
+			{
+				return likelyMapIdentifier;
+			}
+
+			return upperCaseMapIdentifier;
 		}
 
 		private readonly IKillingFloor2AdminClient _killingFloor2AdminClient;

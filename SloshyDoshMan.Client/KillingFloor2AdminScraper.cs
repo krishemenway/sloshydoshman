@@ -61,9 +61,9 @@ namespace SloshyDoshMan.Client
 					Players = ParsePlayerData(scoreboardContent, playerMetadataContent)
 				};
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				throw new Exception("Could not parse response from KF2 Admin server. Was there a KF2 patch recently? Did something change?");
+				throw new Exception("Could not parse response from KF2 Admin server. Was there a KF2 patch recently? Did something change?", exception);
 			}
 		}
 
@@ -132,7 +132,7 @@ namespace SloshyDoshMan.Client
 					Name = playerListItems[1].TextContent,
 					IPAddress = playerListItems[3].TextContent,
 					UniqueNetId = playerListItems[4].TextContent,
-					SteamID = Convert.ToInt64(playerListItems[5].TextContent),
+					SteamID = playerListItems[5].TextContent,
 				};
 
 				playerListData.Add(player);
@@ -146,7 +146,7 @@ namespace SloshyDoshMan.Client
 
 	public class PlayersListData
 	{
-		public long SteamID { get; set; }
+		public string SteamID { get; set; }
 		public string Name { get; set; }
 		public string IPAddress { get; set; }
 		public string UniqueNetId { get; set; }

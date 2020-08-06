@@ -36,8 +36,8 @@ export interface PlayerWaveInfo {
 }
 
 export interface Player {
-	Name : string;
-	SteamId : number;
+	Name: string;
+	SteamId: string;
 }
 
 export interface PlayerPerkStatistic {

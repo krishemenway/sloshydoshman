@@ -5,7 +5,7 @@
   "main": "server.js",
   "author": "thelinkstate",
   "engines": {
-    "node": "10.13.0"
+    "node": "15.0.1"
   },
   "repository": {
     "type": "git",
@@ -24,14 +24,14 @@
     "@types/jquery": "3.3.31",
     "@types/jss": "9.5.8",
     "clean-webpack-plugin": "3.0.0",
-    "copy-webpack-plugin": "5.1.1",
+    "copy-webpack-plugin": "6.1.1",
     "express": "4.17.1",
     "knockout": "3.5.1",
     "moment": "2.24.0",
     "request": "2.88.2",
     "ts-loader": "7.0.0",
     "typescript": "3.8.3",
-    "webpack": "4.42.1",
-    "webpack-cli": "3.3.11"
+    "webpack": "4.44.2",
+    "webpack-cli": "3.3.12"
   }
 }

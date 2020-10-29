@@ -29,10 +29,12 @@ module.exports = {
 
 	plugins: [
 		new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
-		new CopyPlugin([
-			{ from: "./src/favicon.ico", to: ".", flatten: true },
-			{ from: "./src/**/*.html", to: ".", flatten: true },
-		]),
+		new CopyPlugin({
+			patterns: [
+				{ from: "./src/favicon.ico", to: ".", flatten: true },
+				{ from: "./src/**/*.html", to: ".", flatten: true },
+			]
+		}),
 	],
 
 	externals: {

@@ -39,7 +39,7 @@ namespace SloshyDoshMan.Client
 				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
 				.Enrich.FromLogContext()
 				.WriteTo.Console()
-				.WriteTo.RollingFile("SloshyDoshMan.Client-{Date}.log")
+				.WriteTo.File("SloshyDoshMan.Client.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10)
 				.CreateLogger();
 		}
 
